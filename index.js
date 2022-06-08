@@ -1,5 +1,7 @@
 import inquirer from 'inquirer';
 
+console.info('\x1b[36m%s\x1b[0m','\n----------------  uTube  ----------------\n')
+
 inquirer.prompt([
     {
       name: 'url',
@@ -8,7 +10,7 @@ inquirer.prompt([
   ])
   .then(answers => {
     if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(answers.url)){
-      console.info("enter a valid youtube URL!");
+      console.info("\n  - enter a valid youtube URL! ❌");
       return
     }
     const url = new URL(answers.url)
@@ -16,12 +18,12 @@ inquirer.prompt([
     const playlist_id = url.searchParams.get('list')
 
     if(video_id){
-      console.info('\x1b[36m%s\x1b[0m','\n Youtube video found..\n\n')
+      console.info('\x1b[36m%s\x1b[0m','\n  - Youtube video found.. ✅\n\n')
     }
     else if(playlist_id){
-      console.info('\x1b[36m%s\x1b[0m','\n Youtube playlist found..\n\n')
+      console.info('\x1b[36m%s\x1b[0m','\n  - Youtube playlist found.. ✅\n\n')
     }
     else{
-      console.error('No valid video or playlist found')
+      console.error('\n  - No valid video or playlist found.. ❌')
     }
 });
