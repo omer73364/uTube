@@ -14,7 +14,12 @@ inquirer.prompt([{
   if(urlResult.type === 'video'){
     getVideoData(urlResult.id).then(data=>{
       console.log(data.title+'\n')
-      console.log(data.metadata.available_qualities)
+      inquirer.prompt([{
+        name: 'quality',
+        type: 'list',
+        choices: data.metadata.available_qualities,
+        message: 'Choose quality:'
+      }]).then(answers=>{console.log(answers)})
     })
   }
 });
