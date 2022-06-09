@@ -1,6 +1,6 @@
 export const getVideoOrListID = (link) => {
     if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(link)){
-        console.info("\n  - enter a valid youtube URL! ❌");
+        term.red("\n  - enter a valid youtube URL! ❌");
         return null
     }
     const url = new URL(link)
@@ -8,15 +8,16 @@ export const getVideoOrListID = (link) => {
     const playlist_id = url.searchParams.get('list')
 
     if(video_id){
-        console.info('\x1b[36m%s\x1b[0m','\n  - Youtube video found.. ✅\n\n')
+        term.cyan('\n  - Youtube video found ✅\n')
+        term('  - getting video data..\n\n')
         return {type:'video',id:video_id}
     }
     else if(playlist_id){
-        console.info('\x1b[36m%s\x1b[0m','\n  - Youtube playlist found.. ✅\n\n')
+        term.cyan('\n  - Youtube playlist found ✅\n')
         return {type:'list',id:playlist_id}
     }
     else{
-        console.error('\n  - No valid video or playlist found.. ❌')
+        term.red('\n  - No valid video or playlist found.. ❌')
         return null
     }
 }
