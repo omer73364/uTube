@@ -33,23 +33,23 @@ export const downloadVideo = (item,quality) =>{
     stream.pipe(fs.createWriteStream(`./${item.title}.mp4`));
     
     stream.on('start', () => {
-      console.info('[YOUTUBE.JS]', 'Starting now!');
+      console.info('[uTube]', 'Starting now!');
     });
       
     stream.on('info', (info) => {
-      console.info('[YOUTUBE.JS]', `Downloading ${item.title}`);
+      console.info('[uTube]', `Downloading ${item.title}`);
     });
       
     stream.on('progress', (info) => {
       process.stdout.clearLine();
       process.stdout.cursorTo(0);
-      process.stdout.write(`[YOUTUBE.JS] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
+      process.stdout.write(`[uTube] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
     });
       
     stream.on('end', () => {
       process.stdout.clearLine();
       process.stdout.cursorTo(0);
-      console.info('[YOUTUBE.JS]', 'Done!');
+      console.info('[uTube]', 'Done!');
     });
       
     stream.on('error', (err) => console.error('[ERROR]', err)); 
