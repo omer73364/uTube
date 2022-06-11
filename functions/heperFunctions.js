@@ -21,3 +21,36 @@ export const getVideoOrListID = (link) => {
         return null
     }
 }
+
+
+export const downloadVideo = (item,quality) =>{
+    const stream = youtube.download(item.id, {
+      format: 'mp4', // defaults to mp4
+      quality: quality, // falls back to 360p if a specific quality isn't available
+      type: 'videoandaudio' 
+    });
+      
+    stream.pipe(fs.createWriteStream(`./${item.title}.mp4`));
+    
+    stream.on('start', () => {
+      console.info('[YOUTUBE.JS]', 'Starting now!');
+    });
+      
+    stream.on('info', (info) => {
+      console.info('[YOUTUBE.JS]', `Downloading ${item.title}`);
+    });
+      
+    stream.on('progress', (info) => {
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+      process.stdout.write(`[YOUTUBE.JS] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
+    });
+      
+    stream.on('end', () => {
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+      console.info('[YOUTUBE.JS]', 'Done!');
+    });
+      
+    stream.on('error', (err) => console.error('[ERROR]', err)); 
+  }
