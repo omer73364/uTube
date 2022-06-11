@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 import terminal from 'terminal-kit'
-import { getVideoData } from './functions/getData.js';
+import { getListData, getVideoData } from './functions/getData.js';
 import { downloadVideo, getVideoOrListID } from './functions/heperFunctions.js';
 import Innertube from 'youtubei.js';
 import fs from 'fs'
@@ -17,6 +17,7 @@ inquirer.prompt([{
   },
 ]).then(answers => {
   const urlResult = getVideoOrListID(answers.url)
+
   if(urlResult?.type === 'video'){
     getVideoData(urlResult.id).then(data=>{
       term('  --------------------  \n')
@@ -31,6 +32,12 @@ inquirer.prompt([{
       }]).then(answers=>{
         downloadVideo({id:urlResult.id,title:data.title},answers.quality)
       })
+    })
+  }
+
+  if(urlResult?.type === 'list'){
+    getListData(urlResult.id).then(data=>{
+      console.log(data)
     })
   }
 });
