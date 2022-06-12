@@ -42,10 +42,10 @@ export const downloadVideo = (item,quality,listTitle,next) => {
       fs.mkdirSync(dir);
     }
 
-    stream.pipe(fs.createWriteStream(`${dir}/.${title}.mp4`));
+    stream.pipe(fs.createWriteStream(`${dir}/.${title}.mp4`)); // download to hidden file
   }
   else{
-    stream.pipe(fs.createWriteStream(`./.${title}.mp4`));
+    stream.pipe(fs.createWriteStream(`./.${title}.mp4`)); // download to hidden file
   }
   
   stream.on('start', () => {
@@ -66,6 +66,8 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
     console.info('  - [uTube]', 'Done!');
+
+    // show file after downloading
     if(listTitle){
       const dir = './'+listTitle;
       fs.rename(`${dir}/.${title}.mp4`,`${dir}/${title}.mp4`,function(err) {
@@ -78,6 +80,8 @@ export const downloadVideo = (item,quality,listTitle,next) => {
         if ( err ) console.log('  - ERROR: ' + err);
       })
     }
+  
+    term('\n  - Video Downloaded Successfully ✅\n')
   });
     
   stream.on('error', (err) => console.error('  - [ERROR]', err)); 
