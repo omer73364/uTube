@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import inquirer from 'inquirer';
 import terminal from 'terminal-kit'
 import { getListData, getVideoData } from './functions/getData.js';
