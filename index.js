@@ -11,54 +11,67 @@ global.term = terminal.terminal ;
 
 term.bold.cyan('\n----------------  uTube  ----------------\n\n')
 
-inquirer.prompt([{
+const { url } = await inquirer.prompt([{
     name: 'url',
     message: 'Enter (video/playlist) url:'
-  },
-]).then(answers => {
-  const urlResult = getVideoOrListID(answers.url)
+  }
+])
 
-  if(urlResult?.type === 'video'){
-    getVideoData(urlResult.id).then(data=>{
-      term('  --------------------  \n')
-      term.bold(`  - title: ${data.title}\n`)
-      term.bold(`  - description: ${data.description}\n`)
-      term('  --------------------  \n\n')
-      inquirer.prompt([{
-        name: 'quality',
-        type: 'list',
-        choices: data.metadata.available_qualities,
-        message: '- Choose quality:'
-      }]).then(answers=>{
-        downloadVideo({id:urlResult.id,title:data.title},answers.quality)
-      })
-    })
+const urlResult = getVideoOrListID(url)
+
+// if video
+if(urlResult?.type === 'video'){
+  
+  const { title, metadata } = await getVideoData(urlResult.id)
+
+  const videoData = {
+    id:urlResult.id,
+    title
   }
 
-  if(urlResult?.type === 'list'){
-    getListData(urlResult.id).then(data=>{
-      term('  --------------------  \n')
-      term.bold(`  - title: ${data.title}\n`)
-      term.bold(`  - videos: ${data.total_items}\n`)
-      term('  --------------------  \n\n')
-      getVideoData(data.items[0].id).then(video=>{
-        inquirer.prompt([{
-          name: 'quality',
-          type: 'list',
-          choices: video.metadata.available_qualities,
-          message: '- Choose quality:'
-        }]).then(answers=>{
-          inquirer.prompt([{
-            name: 'videos',
-            type: 'checkbox',
-            choices: data.items.map(i=>i.title),
-            message: '- Choose quality:'
-          }]).then(({videos})=>{
-            const items = data.items.filter(vid=>videos.includes(vid.title))
-            downloadList(data.title,items,answers.quality)
-          })
-        })
-      })
-    })
-  }
-});
+  term('  --------------------  \n')
+  term.bold(`  - title: ${title}\n`)
+  term('  --------------------  \n\n')
+
+  const { quality } = await inquirer.prompt([{
+    name: 'quality',
+    type: 'list',
+    choices: metadata.available_qualities,
+    message: '- Choose quality:'
+  }])
+
+  downloadVideo(videoData,quality)
+}
+
+// if playlist
+if(urlResult?.type === 'list'){
+
+  const  data  = await getListData(urlResult.id)
+
+  term('  --------------------  \n')
+  term.bold(`  - title: ${data.title}\n`)
+  term.bold(`  - videos: ${data.total_items}\n`)
+  term('  --------------------  \n\n')
+  
+  // get available qualities for first video
+  const video = await getVideoData(data.items[0].id)
+
+  const { quality } = await inquirer.prompt([{
+    name: 'quality',
+    type: 'list',
+    choices: video.metadata.available_qualities,
+    message: '- Choose quality:'
+  }])
+  
+  // select videos to be downloaded
+  const { videos } = await inquirer.prompt([{
+    name: 'videos',
+    type: 'checkbox',
+    choices: data.items.map(i=>i.title),
+    message: '- Choose videos to be downloaded:'
+  }])
+    
+  const items = data.items.filter(vid=>videos.includes(vid.title))
+  downloadList(data.title,items,quality)
+    
+}
