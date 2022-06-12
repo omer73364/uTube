@@ -28,7 +28,7 @@ inquirer.prompt([{
         name: 'quality',
         type: 'list',
         choices: data.metadata.available_qualities,
-        message: 'Choose quality:'
+        message: '  - Choose quality:'
       }]).then(answers=>{
         downloadVideo({id:urlResult.id,title:data.title},answers.quality)
       })

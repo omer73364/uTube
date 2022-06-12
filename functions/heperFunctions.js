@@ -1,25 +1,25 @@
 export const getVideoOrListID = (link) => {
-    if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(link)){
-      term.red("\n  - enter a valid youtube URL! ❌");
-      return null
-    }
-    const url = new URL(link)
-    const video_id = url.searchParams.get('v')
-    const playlist_id = url.searchParams.get('list')
+  if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(link)){
+    term.red("\n  - enter a valid youtube URL! ❌");
+    return null
+  }
+  const url = new URL(link)
+  const video_id = url.searchParams.get('v')
+  const playlist_id = url.searchParams.get('list')
 
-    if(video_id){
-      term.cyan('\n  - Youtube video found ✅\n')
-      term('  - getting video data..\n\n')
-      return {type:'video',id:video_id}
-    }
-    else if(playlist_id){
-      term.cyan('\n  - Youtube playlist found ✅\n')
-      return {type:'list',id:playlist_id}
-    }
-    else{
-      term.red('\n  - No valid video or playlist found.. ❌')
-      return null
-    }
+  if(video_id){
+    term.cyan('\n  - Youtube video found ✅\n')
+    term('  - getting video data..\n\n')
+    return {type:'video',id:video_id}
+  }
+  else if(playlist_id){
+    term.cyan('\n  - Youtube playlist found ✅\n')
+    return {type:'list',id:playlist_id}
+  }
+  else{
+    term.red('\n  - No valid video or playlist found.. ❌')
+    return null
+  }
 }
 
 export const downloadVideo = (item,quality,listTitle,next) => {
@@ -30,7 +30,6 @@ export const downloadVideo = (item,quality,listTitle,next) => {
   });
     
   let title = item.title.replace(/[|&:;$%@"<>()+,]/g, "")
-
   if(listTitle){ 
     const dir = './'+listTitle;
 
@@ -45,27 +44,27 @@ export const downloadVideo = (item,quality,listTitle,next) => {
   }
   
   stream.on('start', () => {
-    console.info('[uTube]', 'Starting now!');
+    console.info('  - [uTube]', 'Starting now!');
   });
     
   stream.on('info', (info) => {
-    console.info('[uTube]', `Downloading ${title}`);
+    console.info('  - [uTube]', `Downloading ${title}`);
   });
     
   stream.on('progress', (info) => {
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
-    process.stdout.write(`[uTube] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
+    process.stdout.write(`  - [uTube] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
   });
     
   stream.on('end', () => {
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
-    console.info('[uTube]', 'Done!');
-    next()
+    console.info('  - [uTube]', 'Done!');
+    if(listTitle) next()
   });
     
-  stream.on('error', (err) => console.error('[ERROR]', err)); 
+  stream.on('error', (err) => console.error('  - [ERROR]', err)); 
 }
 
 export const downloadList = (title,items,quality) => {
