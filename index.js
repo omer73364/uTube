@@ -28,7 +28,7 @@ inquirer.prompt([{
         name: 'quality',
         type: 'list',
         choices: data.metadata.available_qualities,
-        message: '  - Choose quality:'
+        message: '- Choose quality:'
       }]).then(answers=>{
         downloadVideo({id:urlResult.id,title:data.title},answers.quality)
       })
@@ -46,9 +46,17 @@ inquirer.prompt([{
           name: 'quality',
           type: 'list',
           choices: video.metadata.available_qualities,
-          message: 'Choose quality:'
+          message: '- Choose quality:'
         }]).then(answers=>{
-          downloadList(data.title,data.items,answers.quality)
+          inquirer.prompt([{
+            name: 'videos',
+            type: 'checkbox',
+            choices: data.items.map(i=>i.title),
+            message: '- Choose quality:'
+          }]).then(({videos})=>{
+            const items = data.items.filter(vid=>videos.includes(vid.title))
+            downloadList(data.title,items,answers.quality)
+          })
         })
       })
     })
