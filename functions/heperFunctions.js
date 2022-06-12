@@ -79,9 +79,9 @@ export const downloadVideo = (item,quality,listTitle,next) => {
       fs.rename(`./.${title}.mp4`,`./${title}.mp4`,function(err) {
         if ( err ) console.log('  - ERROR: ' + err);
       })
+      term.cyan('\n  - Video Downloaded Successfully ✅\n')
     }
   
-    term.cyan('\n  - Video Downloaded Successfully ✅\n')
   });
     
   stream.on('error', (err) => console.error('  - [ERROR]', err)); 
