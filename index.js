@@ -17,6 +17,7 @@ const { url } = await inquirer.prompt([{
   }
 ])
 
+// check if the url for (video) or (playlist)
 const urlResult = getVideoOrListID(url)
 
 // if video
@@ -68,7 +69,7 @@ if(urlResult?.type === 'list'){
     name: 'videos',
     type: 'checkbox',
     choices: data.items.map(i=>i.title),
-    message: '- Choose videos to be downloaded:'
+    message: '- Choose videos to be downloaded:\n\n'
   }])
     
   const items = data.items.filter(vid=>videos.includes(vid.title))

@@ -1,8 +1,11 @@
 export const getVideoOrListID = (link) => {
+  // check if url is a youtube valid url
   if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(link)){
     term.red("\n  - enter a valid youtube URL! ❌");
     return null
   }
+
+  // get params
   const url = new URL(link)
   const video_id = url.searchParams.get('v')
   const playlist_id = url.searchParams.get('list')
@@ -29,7 +32,9 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     type: 'videoandaudio' 
   });
     
-  let title = item.title.replace(/[|&:;$%@"<>()+,]/g, "")
+  let title = item.title.replace(/[|&:;$%@"<>()+,]/g, "") // to avoid naming errors
+
+  // download lists to folder with list name
   if(listTitle){ 
     const dir = './'+listTitle;
 
@@ -44,7 +49,7 @@ export const downloadVideo = (item,quality,listTitle,next) => {
   }
   
   stream.on('start', () => {
-    console.info('  - [uTube]', 'Starting now!');
+    console.info('  - [uTube]', 'Download Start!');
   });
     
   stream.on('info', (info) => {
