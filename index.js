@@ -48,7 +48,7 @@ inquirer.prompt([{
           choices: video.metadata.available_qualities,
           message: 'Choose quality:'
         }]).then(answers=>{
-          downloadList(data.items,answers.quality)
+          downloadList(data.title,data.items,answers.quality)
         })
       })
     })

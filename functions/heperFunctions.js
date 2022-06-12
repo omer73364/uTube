@@ -22,7 +22,7 @@ export const getVideoOrListID = (link) => {
     }
 }
 
-export const downloadVideo = (item,quality,next) => {
+export const downloadVideo = (item,quality,listTitle,next) => {
     const stream = youtube.download(item.id, {
       format: 'mp4', // defaults to mp4
       quality: quality, // falls back to 360p if a specific quality isn't available
@@ -30,7 +30,19 @@ export const downloadVideo = (item,quality,next) => {
     });
     
     let title = item.title.replace(/[|&:;$%@"<>()+,]/g, "")
-    stream.pipe(fs.createWriteStream(`./${title}.mp4`));
+
+    if(listTitle){ 
+      const dir = './'+listTitle;
+
+      if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+      }
+
+      stream.pipe(fs.createWriteStream(`${dir}/${title}.mp4`));
+    }
+    else{
+      stream.pipe(fs.createWriteStream(`./${title}.mp4`));
+    }
     
     stream.on('start', () => {
       console.info('[uTube]', 'Starting now!');
@@ -56,20 +68,21 @@ export const downloadVideo = (item,quality,next) => {
     stream.on('error', (err) => console.error('[ERROR]', err)); 
 }
 
-function* showPrices(i,l) {
-  while (i < l) {
-    yield i++;
-  }
+function* nextVideoIndex(i){
+  while(true) yield i++;
 }
-export const downloadList = (items,quality) => {
+
+export const downloadList = (title,ite,quality) => {
   let i = 0
-  let vidNum = showPrices(i,items.length)
+  let vidNum = nextVideoIndex(i)
+
+  const items = [ite[0],ite[2]]
 
   const downloadNext = () => {
     const index = vidNum.next().value
     if(index < items.length){
       term('\n');
-      downloadVideo(items[index],quality,downloadNext)
+      downloadVideo(items[index],quality,title,downloadNext)
     }
     else{
       term('\n  - Playlist Downloaded Successfully ✅\n')
