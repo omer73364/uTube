@@ -73,6 +73,6 @@ if(urlResult?.type === 'list'){
   }])
     
   const items = data.items.filter(vid=>videos.includes(vid.title))
-  downloadList(data.title,items,quality)
-    
+  term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`)
+  downloadList(data.title,items,quality)   
 }

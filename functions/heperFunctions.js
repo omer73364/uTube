@@ -81,7 +81,7 @@ export const downloadVideo = (item,quality,listTitle,next) => {
       })
     }
   
-    term('\n  - Video Downloaded Successfully ✅\n')
+    term.cyan('\n  - Video Downloaded Successfully ✅\n')
   });
     
   stream.on('error', (err) => console.error('  - [ERROR]', err)); 
@@ -96,7 +96,7 @@ export const downloadList = (title,items,quality) => {
       downloadVideo(items[index],quality,title,downloadNext)
     }
     else{
-      term('\n  - Playlist Downloaded Successfully ✅\n')
+      term.cyan('\n  - Playlist Downloaded Successfully ✅\n')
     }
   }
   downloadNext()
