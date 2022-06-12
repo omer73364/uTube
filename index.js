@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import terminal from 'terminal-kit'
 import { getListData, getVideoData } from './functions/getData.js';
-import { downloadVideo, getVideoOrListID } from './functions/heperFunctions.js';
+import { downloadList, downloadVideo, getVideoOrListID } from './functions/heperFunctions.js';
 import Innertube from 'youtubei.js';
 import fs from 'fs'
 
@@ -37,7 +37,20 @@ inquirer.prompt([{
 
   if(urlResult?.type === 'list'){
     getListData(urlResult.id).then(data=>{
-      console.log(data)
+      term('  --------------------  \n')
+      term.bold(`  - title: ${data.title}\n`)
+      term.bold(`  - videos: ${data.total_items}\n`)
+      term('  --------------------  \n\n')
+      getVideoData(data.items[0].id).then(video=>{
+        inquirer.prompt([{
+          name: 'quality',
+          type: 'list',
+          choices: video.metadata.available_qualities,
+          message: 'Choose quality:'
+        }]).then(answers=>{
+          downloadList(data.items,answers.quality)
+        })
+      })
     })
   }
 });
