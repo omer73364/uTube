@@ -15,6 +15,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "inquirer": "^8.2.4",
+    "ora": "^6.1.0",
     "terminal-kit": "^2.4.0",
     "youtubei.js": "^1.4.3"
   }

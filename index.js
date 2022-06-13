@@ -5,10 +5,11 @@ import terminal from 'terminal-kit'
 import { getListData, getVideoData } from './functions/getData.js';
 import { downloadList, downloadVideo, getVideoOrListID } from './functions/heperFunctions.js';
 import Innertube from 'youtubei.js';
+import {oraPromise} from 'ora';
 import fs from 'fs'
 
 global.fs = fs
-global.youtube = await new Innertube();
+global.youtube = await oraPromise(new Innertube(),'- Check internet connection..');
 global.term = terminal.terminal ;
 
 term.bold.cyan('\n----------------  uTube  ----------------\n\n')
@@ -25,7 +26,7 @@ const urlResult = getVideoOrListID(url)
 // if video
 if(urlResult?.type === 'video'){
   
-  const { title, metadata } = await getVideoData(urlResult.id)
+  const { title, metadata } = await oraPromise(getVideoData(urlResult.id),'- Get video data..')
 
   const videoData = {
     id:urlResult.id,
@@ -49,7 +50,7 @@ if(urlResult?.type === 'video'){
 // if playlist
 if(urlResult?.type === 'list'){
 
-  const  data  = await getListData(urlResult.id)
+  const  data  = await oraPromise(getListData(urlResult.id),'- Get playlist data..')
 
   term('  --------------------  \n')
   term.bold(`  - title: ${data.title}\n`)
@@ -57,7 +58,7 @@ if(urlResult?.type === 'list'){
   term('  --------------------  \n\n')
   
   // get available qualities for first video
-  const video = await getVideoData(data.items[0].id)
+  const video = await oraPromise(getVideoData(data.items[0].id),'- Get available qualities..')
 
   const { quality } = await inquirer.prompt([{
     name: 'quality',
