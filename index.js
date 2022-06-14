@@ -71,11 +71,11 @@ if(urlResult?.type === 'list'){
   const { videos } = await inquirer.prompt([{
     name: 'videos',
     type: 'checkbox',
-    choices: data.items.map(i=>i.title),
+    choices: data.items.map((v,i)=>`#${i+1} - ${v.title}`),
     message: '- Choose videos to be downloaded:\n\n'
   }])
     
-  const items = data.items.filter(vid=>videos.includes(vid.title))
+  const items = data.items.filter((vid,i)=>videos.includes(`#${i+1} - ${vid.title}`))
   term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`)
   downloadList(data.title,items,quality)   
 }
