@@ -32,7 +32,7 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     type: 'videoandaudio' 
   });
     
-  let title = item.title.replace(/[|&:;$%@"<>()+,]/g, "") // to avoid naming errors
+let title = item.title.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''); // to avoid naming errors
 
   // download lists to folder with list name
   if(listTitle){ 
