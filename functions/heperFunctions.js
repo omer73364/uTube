@@ -36,7 +36,7 @@ let title = item.title.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''
 
   // download lists to folder with list name
   if(listTitle){ 
-    const dir = './'+listTitle;
+    const dir = './'+title;
 
     if (!fs.existsSync(dir)){
       fs.mkdirSync(dir);
