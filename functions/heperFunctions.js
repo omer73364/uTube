@@ -32,11 +32,15 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     type: 'videoandaudio' 
   });
     
-let title = item.title.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''); // to avoid naming errors
+// to avoid naming errors
+let specialRemover = ( dir ) => dir.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+  
+let title = specialRemover(item.title);
+let listFolder = specialRemover(listTitle);
 
   // download lists to folder with list name
   if(listTitle){ 
-    const dir = './'+title;
+    const dir = './'+listFolder;
 
     if (!fs.existsSync(dir)){
       fs.mkdirSync(dir);
@@ -69,7 +73,7 @@ let title = item.title.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, ''
 
     // show file after downloading
     if(listTitle){
-      const dir = './'+listTitle;
+      const dir = './'+listFolder;
       fs.rename(`${dir}/.${title}.mp4`,`${dir}/${title}.mp4`,function(err) {
         if ( err ) console.log('  - ERROR: ' + err);
       })
