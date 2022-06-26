@@ -32,16 +32,15 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     type: 'videoandaudio' 
   });
     
-// to avoid naming errors
-let specialRemover = ( dir ) => dir.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
-  
-let title = specialRemover(item.title);
-let listFolder = specialRemover(listTitle);
+  // to avoid naming errors
+  let specialRemover = ( dir ) => dir.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+  let title = specialRemover(item.title);
 
   // download lists to folder with list name
   if(listTitle){ 
+    const listFolder = specialRemover(listTitle);
     const dir = './'+listFolder;
-
+    
     if (!fs.existsSync(dir)){
       fs.mkdirSync(dir);
     }
