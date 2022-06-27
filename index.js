@@ -8,10 +8,10 @@ import Innertube from 'youtubei.js';
 import {oraPromise} from 'ora';
 import fs from 'fs'
 
-console.clear()
-global.fs = fs
-global.term = terminal.terminal ;
 try{
+  console.clear()
+  global.fs = fs
+  global.term = terminal.terminal ;
   global.youtube = await oraPromise(new Innertube(),'- Check internet connection..');
 }
 catch(err){
@@ -35,29 +35,29 @@ if(urlResult?.type === 'video'){
   
   try{
     const { title, metadata } = await oraPromise(getVideoData(urlResult.id),'- Get video data..')
+    const videoData = {
+      id:urlResult.id,
+      title
+    }
+
+    term('  --------------------  \n')
+    term.bold(`  - title: ${title}\n`)
+    term('  --------------------  \n\n')
+
+    const { quality } = await inquirer.prompt([{
+      name: 'quality',
+      type: 'list',
+      choices: metadata.available_qualities,
+      message: '- Choose quality:'
+    }])
+
+    downloadVideo(videoData,quality)
   }
   catch(err){
     term.red('  - Internet Connection Error!')
     process.exit()
   }
 
-  const videoData = {
-    id:urlResult.id,
-    title
-  }
-
-  term('  --------------------  \n')
-  term.bold(`  - title: ${title}\n`)
-  term('  --------------------  \n\n')
-
-  const { quality } = await inquirer.prompt([{
-    name: 'quality',
-    type: 'list',
-    choices: metadata.available_qualities,
-    message: '- Choose quality:'
-  }])
-
-  downloadVideo(videoData,quality)
 }
 
 // if playlist
@@ -65,42 +65,36 @@ if(urlResult?.type === 'list'){
 
   try{
     const  data  = await oraPromise(getListData(urlResult.id),'- Get playlist data..')
-  }
-  catch(err){
-    term.red('  - Internet Connection Error!')
-    process.exit()
-  }
+    term('  --------------------  \n')
+    term.bold(`  - title: ${data.title}\n`)
+    term.bold(`  - videos: ${data.total_items}\n`)
+    term('  --------------------  \n\n')
 
-  term('  --------------------  \n')
-  term.bold(`  - title: ${data.title}\n`)
-  term.bold(`  - videos: ${data.total_items}\n`)
-  term('  --------------------  \n\n')
-  
-  // get available qualities for first video
-  try{
+    // get available qualities for first video
     const video = await oraPromise(getVideoData(data.items[0].id),'- Get available qualities..')
+
+    const { quality } = await inquirer.prompt([{
+      name: 'quality',
+      type: 'list',
+      choices: video.metadata.available_qualities,
+      message: '- Choose quality:'
+    }])
+    
+    // select videos to be downloaded
+    const { videos } = await inquirer.prompt([{
+      name: 'videos',
+      type: 'checkbox',
+      choices: data.items.map((v,i)=>`#${i+1} - ${v.title}`),
+      message: '- Choose videos to be downloaded:\n\n'
+    }])
+      
+    const items = data.items.filter((vid,i)=>videos.includes(`#${i+1} - ${vid.title}`))
+    term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`)
+    downloadList(data.title,items,quality)  
   }
   catch(err){
     term.red('  - Internet Connection Error!')
     process.exit()
   }
-
-  const { quality } = await inquirer.prompt([{
-    name: 'quality',
-    type: 'list',
-    choices: video.metadata.available_qualities,
-    message: '- Choose quality:'
-  }])
-  
-  // select videos to be downloaded
-  const { videos } = await inquirer.prompt([{
-    name: 'videos',
-    type: 'checkbox',
-    choices: data.items.map((v,i)=>`#${i+1} - ${v.title}`),
-    message: '- Choose videos to be downloaded:\n\n'
-  }])
-    
-  const items = data.items.filter((vid,i)=>videos.includes(`#${i+1} - ${vid.title}`))
-  term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`)
-  downloadList(data.title,items,quality)   
+ 
 }
