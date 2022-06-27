@@ -52,7 +52,7 @@ export const downloadVideo = (item,quality,listTitle,next) => {
   }
   
   stream.on('start', () => {
-    console.info('  - [uTube]', 'Download Start!');
+    console.info('  - [uTube]', 'Start Downloading..');
   });
     
   stream.on('info', (info) => {
@@ -80,7 +80,7 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     }
     else{
       fs.rename(`./.${title}.mp4`,`./${title}.mp4`,function(err) {
-        if ( err ) console.log('  - ERROR: ' + err);
+        if ( err ) console.log('  - ERROR: cannot start downloading, check your internet connection and try again!');
       })
       term.cyan('\n  - Video Downloaded Successfully ✅\n')
     }
