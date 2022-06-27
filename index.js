@@ -8,6 +8,7 @@ import Innertube from 'youtubei.js';
 import {oraPromise} from 'ora';
 import fs from 'fs'
 
+// initializing
 try{
   console.clear()
   global.fs = fs
@@ -19,8 +20,10 @@ catch(err){
   process.exit()
 }
 
+// hello uTube
 term.bold.cyan('\n----------------  uTube  ----------------\n\n')
 
+// ask for URL
 const { url } = await inquirer.prompt([{
     name: 'url',
     message: 'Enter (video/playlist) url:'
