@@ -33,7 +33,13 @@ const urlResult = getVideoOrListID(url)
 // if video
 if(urlResult?.type === 'video'){
   
-  const { title, metadata } = await oraPromise(getVideoData(urlResult.id),'- Get video data..')
+  try{
+    const { title, metadata } = await oraPromise(getVideoData(urlResult.id),'- Get video data..')
+  }
+  catch(err){
+    term.red('  - Internet Connection Error!')
+    process.exit()
+  }
 
   const videoData = {
     id:urlResult.id,
@@ -57,7 +63,13 @@ if(urlResult?.type === 'video'){
 // if playlist
 if(urlResult?.type === 'list'){
 
-  const  data  = await oraPromise(getListData(urlResult.id),'- Get playlist data..')
+  try{
+    const  data  = await oraPromise(getListData(urlResult.id),'- Get playlist data..')
+  }
+  catch(err){
+    term.red('  - Internet Connection Error!')
+    process.exit()
+  }
 
   term('  --------------------  \n')
   term.bold(`  - title: ${data.title}\n`)
@@ -65,7 +77,13 @@ if(urlResult?.type === 'list'){
   term('  --------------------  \n\n')
   
   // get available qualities for first video
-  const video = await oraPromise(getVideoData(data.items[0].id),'- Get available qualities..')
+  try{
+    const video = await oraPromise(getVideoData(data.items[0].id),'- Get available qualities..')
+  }
+  catch(err){
+    term.red('  - Internet Connection Error!')
+    process.exit()
+  }
 
   const { quality } = await inquirer.prompt([{
     name: 'quality',
