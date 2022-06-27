@@ -35,17 +35,17 @@ export const downloadVideo = (item,quality,listTitle,next) => {
   // to avoid naming errors
   let specialRemover = ( dir ) => dir.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, '');
   let title = specialRemover(item.title);
-
+  let listFolder;
+  
   // download lists to folder with list name
   if(listTitle){ 
-    const listFolder = specialRemover(listTitle);
-    const dir = './'+listFolder;
+    listFolder = './'+specialRemover(listTitle);
     
-    if (!fs.existsSync(dir)){
-      fs.mkdirSync(dir);
+    if (!fs.existsSync(listFolder)){
+      fs.mkdirSync(listFolder);
     }
 
-    stream.pipe(fs.createWriteStream(`${dir}/.${title}.mp4`)); // download to hidden file
+    stream.pipe(fs.createWriteStream(`${listFolder}/.${title}.mp4`)); // download to hidden file
   }
   else{
     stream.pipe(fs.createWriteStream(`./.${title}.mp4`)); // download to hidden file
@@ -71,9 +71,8 @@ export const downloadVideo = (item,quality,listTitle,next) => {
     console.info('  - [uTube]', 'Done!');
 
     // show file after downloading
-    if(listTitle){
-      const dir = './'+listFolder;
-      fs.rename(`${dir}/.${title}.mp4`,`${dir}/${title}.mp4`,function(err) {
+    if(listFolder){
+      fs.rename(`${listFolder}/.${title}.mp4`,`${listFolder}/${title}.mp4`,function(err) {
         if ( err ) console.log('  - ERROR: ' + err);
       })
       next()
