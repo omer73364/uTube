@@ -8,6 +8,7 @@ import Innertube from 'youtubei.js';
 import {oraPromise} from 'ora';
 import fs from 'fs'
 
+console.clear()
 global.fs = fs
 global.term = terminal.terminal ;
 try{
