@@ -9,8 +9,14 @@ import {oraPromise} from 'ora';
 import fs from 'fs'
 
 global.fs = fs
-global.youtube = await oraPromise(new Innertube(),'- Check internet connection..');
 global.term = terminal.terminal ;
+try{
+  global.youtube = await oraPromise(new Innertube(),'- Check internet connection..');
+}
+catch(err){
+  term.red('  - Internet Connection Error!')
+  process.exit()
+}
 
 term.bold.cyan('\n----------------  uTube  ----------------\n\n')
 
