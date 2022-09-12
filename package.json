@@ -1,6 +1,6 @@
 {
   "name": "utube-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "simple user friendly command line tool to download YouTube videos and playlists",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "homepage": "https://github.com/omer73364/uTube",
+  "bugs": {
+    "url": "https://github.com/omer73364/uTube/issues",
+    "email": "anwar733649039@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omer73364/uTube.git"
+  },
+  "keywords": [
+    "nodejs", "javascript", "cli", "downloader", "youtube", "terminal", "youtube-dl", "videos", "youtube-downloader"
+  ],
+  "author": "OMER ANWAR",
   "license": "MIT",
   "dependencies": {
     "fs": "^0.0.1-security",
