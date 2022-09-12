@@ -4,7 +4,7 @@
 ### uTube-cli is a command line tool to download YouTube videos and playlists.
 
 ![Web Page ScreenShot](https://i.ibb.co/VYw6ZST/Screenshot-from-2022-07-27-17-23-23.png)
-##### It's a node package so it's available for (Windows, Linux and Mac) operating systems, all you need is node.js installed on your system.
+It's a node package so it's available for (Windows, Linux and Mac) operating systems, all you need is node.js installed on your system.
 
 > 🛈 uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool.
 
