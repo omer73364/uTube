@@ -1,6 +1,6 @@
 {
   "name": "utube-cli",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.1",
   "description": "simple user friendly command line tool to download YouTube videos and playlists",
   "main": "index.js",
   "type": "module",
@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "fs": "^0.0.1-security",
     "inquirer": "^8.2.4",
