@@ -8,6 +8,12 @@ import Innertube from 'youtubei.js';
 import {oraPromise} from 'ora';
 import fs from 'fs'
 import readline from 'readline';
+import { version } from './version.js';
+
+if(process.argv.includes('-v')){
+  console.log(version)
+  process.exit()
+}
 
 // initializing
 try{
