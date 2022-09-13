@@ -1,5 +1,3 @@
-import { read } from "fs";
-
 export const getVideoOrListID = (link) => {
   // check if url is a youtube valid url
   if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(link)){
