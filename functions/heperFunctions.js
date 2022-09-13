@@ -103,3 +103,5 @@ export const downloadList = (title,items,quality) => {
   }
   downloadNext()
 }
+
+export const availavleQualities = (list) => list.filter(quality=>['144p','360p','720p'].includes(quality))

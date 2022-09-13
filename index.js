@@ -3,7 +3,7 @@
 import inquirer from 'inquirer';
 import terminal from 'terminal-kit'
 import { getListData, getVideoData } from './functions/getData.js';
-import { downloadList, downloadVideo, getVideoOrListID } from './functions/heperFunctions.js';
+import { availavleQualities, downloadList, downloadVideo, getVideoOrListID } from './functions/heperFunctions.js';
 import Innertube from 'youtubei.js';
 import {oraPromise} from 'ora';
 import fs from 'fs'
@@ -50,7 +50,7 @@ if(urlResult?.type === 'video'){
     const { quality } = await inquirer.prompt([{
       name: 'quality',
       type: 'list',
-      choices: metadata.available_qualities,
+      choices: availavleQualities(metadata.available_qualities),
       message: '- Choose quality:'
     }])
 
@@ -79,7 +79,7 @@ if(urlResult?.type === 'list'){
     const { quality } = await inquirer.prompt([{
       name: 'quality',
       type: 'list',
-      choices: video.metadata.available_qualities,
+      choices: availavleQualities(video.metadata.available_qualities),
       message: '- Choose quality:'
     }])
     
