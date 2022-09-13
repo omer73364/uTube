@@ -7,11 +7,13 @@ import { availavleQualities, downloadList, downloadVideo, getVideoOrListID } fro
 import Innertube from 'youtubei.js';
 import {oraPromise} from 'ora';
 import fs from 'fs'
+import readline from 'readline';
 
 // initializing
 try{
   console.clear()
   global.fs = fs
+  global.readline = readline
   global.term = terminal.terminal ;
   global.youtube = await oraPromise(new Innertube(),'- Check internet connection..');
 }

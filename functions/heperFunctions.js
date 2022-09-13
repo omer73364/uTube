@@ -1,3 +1,5 @@
+import { read } from "fs";
+
 export const getVideoOrListID = (link) => {
   // check if url is a youtube valid url
   if(!/^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/.test(link)){
@@ -60,14 +62,14 @@ export const downloadVideo = (item,quality,listTitle,next) => {
   });
     
   stream.on('progress', (info) => {
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
+    readline.clearLine();
+    readline.cursorTo(process.stdout,0);
     process.stdout.write(`  - [uTube] Downloaded ${info.percentage}% (${info.downloaded_size}MB) of ${info.size}MB`);
   });
     
   stream.on('end', () => {
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
+    readline.clearLine();
+    readline.cursorTo(process.stdout,0);
     console.info('  - [uTube]', 'Done!');
 
     // show file after downloading
