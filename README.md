@@ -19,9 +19,9 @@ It's a node package so it's available for (Windows, Linux and Mac) operating sys
 
 ## TODO
 
- [✓]	Support `-v` parameter to display tool version.
- [---] Support 480p & 1080p.
- [---] Support downloading sounds (mp3 format).
+ - [✓]	Support `-v` parameter to display tool version.
+ - [---] Support 480p & 1080p.
+ - [---] Support downloading sounds (mp3 format).
  
 # Installation
 
