@@ -17,6 +17,12 @@ It's a node package so it's available for (Windows, Linux and Mac) operating sys
  - Supports all available video formats and qualities.
  - Playlists organized to folders by their names.
 
+## TODO
+
+ [✓]	Support `-v` parameter to display tool version.
+ [---] Support 480p & 1080p.
+ [---] Support downloading sounds (mp3 format).
+ 
 # Installation
 
 Ensure that you have [Node.js](https://nodejs.org/en/) installed on your system then you can install uTube using npm by this command:
