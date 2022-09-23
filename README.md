@@ -32,7 +32,7 @@ or using yarn:
 
     yarn global add utube-cli
 
-> **Warning** execute the command with `sudo` on Linux and Mac.
+> **Warning**: execute the command with `sudo` on Linux and Mac.
 
 # Usage
 
@@ -42,7 +42,7 @@ Here examples of uses:
 
 **- Download videos by 2 steps:**
 
- 1. Paste the video url.
+ 1. Paste the video URL.
  2. Choose the quality.
  
 | ![enter image description here](https://i.ibb.co/Fx7qCgZ/Screenshot-from-2022-07-27-17-24-44.png) | ![enter image description here](https://i.ibb.co/cvYhyC9/Screenshot-from-2022-07-27-17-24-56.png) |
