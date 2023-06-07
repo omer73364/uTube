@@ -32,7 +32,7 @@ or using yarn:
 
     yarn global add utube-cli
 
-> **Warning**: execute the command with `sudo` on Linux and Mac.
+> **Warning**: You may need to execute the command with `sudo` on Linux and Mac.
 
 # Usage
 
