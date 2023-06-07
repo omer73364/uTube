@@ -28,13 +28,13 @@ export const downloadVideo = async (item, quality, listTitle, next) => {
     let stream = await youtube.download(item.id, {
       format: "mp4", // defaults to mp4
       quality: quality, // falls back to 360p if a specific quality isn't available
-      // type: "video",
+      type: "video+audio",
     });
 
     // to avoid naming errors
     let specialRemover = (dir) =>
       dir.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "");
-    let title = specialRemover(item.title);
+    let title = specialRemover(item?.title?.text || item?.title);
     let listFolder;
 
     console.log(`  - [uTube]", "Start Downloading.. ${title}`);
@@ -68,9 +68,11 @@ export const downloadVideo = async (item, quality, listTitle, next) => {
         if (err) console.log("  - ERROR: " + err);
       });
     }
-    term.cyan("\n  - Video Downloaded Successfully ✅\n");
+    term.cyan("  - Video Downloaded Successfully ✅\n\n");
   } catch (err) {
-    console.log("  - [ERROR]", err);
+    if (err?.message?.includes("No matching formats found")) {
+      downloadVideo(item, "360p", listTitle, next);
+    } else console.log("  - [ERROR]", err);
   }
 };
 

@@ -93,13 +93,14 @@ if (urlResult?.type === "list") {
       getListData(urlResult.id),
       "- Get playlist data.."
     );
+
     term("  --------------------  \n");
-    term.bold(`  - title: ${data.title}\n`);
-    term.bold(`  - videos: ${data.total_items}\n`);
+    term.bold(`  - title: ${data?.info?.title}\n`);
+    term.bold(`  - videos: ${data?.info?.total_items}\n`);
     term("  --------------------  \n\n");
 
     // get available qualities for first video
-    const video = await oraPromise(
+    const { streaming_data } = await oraPromise(
       getVideoData(data.items[0].id),
       "- Get available qualities.."
     );
@@ -108,7 +109,9 @@ if (urlResult?.type === "list") {
       {
         name: "quality",
         type: "list",
-        choices: availavleQualities(video.metadata.available_qualities),
+        choices: availavleQualities(
+          streaming_data.formats.map((format) => format?.quality_label)
+        ),
         message: "- Choose quality:",
       },
     ]);
@@ -127,7 +130,7 @@ if (urlResult?.type === "list") {
       videos.includes(`#${i + 1} - ${vid.title}`)
     );
     term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`);
-    downloadList(data.title, items, quality);
+    downloadList(data?.info?.title, items, quality);
   } catch (err) {
     term.red("  - Internet Connection Error!", err);
     process.exit();

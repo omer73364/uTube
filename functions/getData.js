@@ -1,3 +1,2 @@
 export const getVideoData = async (id) => await youtube.getInfo(id);
-export const getListData = async (id) =>
-  await youtube.getPlaylist(id, { client: "YOUTUBE" });
+export const getListData = async (id) => await youtube.getPlaylist(id);
