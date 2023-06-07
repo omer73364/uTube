@@ -8,6 +8,8 @@
     "utube": "index.js"
   },
   "scripts": {
+    "build": "babel index.js -d dist",
+    "start": "npm run build && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "homepage": "https://github.com/omer73364/uTube",
@@ -20,15 +22,32 @@
     "url": "https://github.com/omer73364/uTube.git"
   },
   "keywords": [
-    "nodejs", "javascript", "cli", "downloader", "youtube", "terminal", "youtube-dl", "videos", "youtube-downloader"
+    "nodejs",
+    "javascript",
+    "cli",
+    "downloader",
+    "youtube",
+    "terminal",
+    "youtube-dl",
+    "videos",
+    "youtube-downloader"
   ],
   "author": "OMER ANWAR",
   "license": "MIT",
   "dependencies": {
+    "esm": "^3.2.25",
     "fs": "^0.0.1-security",
     "inquirer": "^8.2.4",
     "ora": "^6.1.0",
     "terminal-kit": "^2.4.0",
-    "youtubei.js": "^1.4.5"
+    "youtubei.js": "^2.3.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.19.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+    "@babel/preset-env": "^7.19.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
   }
 }
