@@ -1,5 +1,7 @@
 # uTube-cli
 
+### # Stand With Palestine 🇵🇸
+
 ### uTube-cli is a command line tool to download YouTube videos and playlists.
 
 ![Web Page ScreenShot](https://i.ibb.co/VYw6ZST/Screenshot-from-2022-07-27-17-23-23.png)

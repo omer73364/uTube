@@ -40,6 +40,15 @@ try {
 
 // hello uTube
 term.bold.cyan("\n----------------  uTube  ----------------\n\n");
+term.bold.green("# Stand With Palestine \n");
+
+term.bold.green(`
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣟⠛⠛⠛⠛⠛⠛⠛⠛⠛
+⣿⣿⣿⣿⡷⠀⠀⠀⠀⠀⠀⠀⠀
+⣿⣿⣿⣯⣤⣤⣤⣤⣤⣤⣤⣤⣤
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+\n\n`)
 
 // ask for URL
 const { url } = await inquirer.prompt([
