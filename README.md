@@ -21,6 +21,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 ## TODO
 
 - [x] Support `-v` parameter to display tool version.
+- [ ] Support shorts.
 - [ ] Support 480p & 1080p.
 - [ ] Support downloading sounds (mp3 format).
 
