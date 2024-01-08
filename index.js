@@ -10,7 +10,7 @@ import {
   getVideoOrListID,
 } from "./functions/heperFunctions.js";
 
-import Y from "youtubei.js";
+import { Innertube, Utils } from "youtubei.js";
 import { oraPromise } from "ora";
 import fs from "fs";
 import readline from "readline";
@@ -27,7 +27,6 @@ try {
   global.fs = fs;
   global.readline = readline;
   global.term = terminal.terminal;
-  const { Innertube, Utils } = Y;
   global.youtube = await oraPromise(
     Innertube.create(),
     "- Check internet connection.."
@@ -48,7 +47,7 @@ term.bold.green(`
 ⣿⣿⣿⣿⡷⠀⠀⠀⠀⠀⠀⠀⠀
 ⣿⣿⣿⣯⣤⣤⣤⣤⣤⣤⣤⣤⣤
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-\n\n`)
+\n\n`);
 
 // ask for URL
 const { url } = await inquirer.prompt([

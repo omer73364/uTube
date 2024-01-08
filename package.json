@@ -1,6 +1,6 @@
 {
   "name": "utube-cli",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "simple user friendly command line tool to download YouTube videos and playlists",
   "main": "index.js",
   "type": "module",
@@ -40,7 +40,7 @@
     "inquirer": "^8.2.4",
     "ora": "^6.1.0",
     "terminal-kit": "^2.4.0",
-    "youtubei.js": "^2.3.2"
+    "youtubei.js": "^8.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.10",
