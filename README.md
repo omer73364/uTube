@@ -15,7 +15,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 ### what's new?
 
 - support shorts
-- support `.be` an `/v` urls
+- support all youtube link formats
 - bug fixes
 - better error messages
 
