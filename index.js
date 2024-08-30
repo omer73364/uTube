@@ -5,6 +5,7 @@ import terminal from "terminal-kit";
 import { getListData, getVideoData } from "./functions/getData.js";
 import {
   availavleQualities,
+  convertToWatchUrl,
   downloadList,
   downloadVideo,
   getVideoOrListID,
@@ -33,7 +34,7 @@ try {
   );
   global.Utils = Utils;
 } catch (err) {
-  term.red("  - Internet Connection Error!", err);
+  term.red("  - Error: Internet Connection Error!", err.toString());
   process.exit();
 }
 
@@ -58,7 +59,7 @@ const { url } = await inquirer.prompt([
 ]);
 
 // check if the url for (video) or (playlist)
-const urlResult = getVideoOrListID(url);
+const urlResult = getVideoOrListID(convertToWatchUrl(url));
 
 // if video
 if (urlResult?.type === "video") {
@@ -89,7 +90,7 @@ if (urlResult?.type === "video") {
 
     downloadVideo(videoData, quality);
   } catch (err) {
-    term.red("  - Internet Connection Error!", err);
+    term.red("  - Error: Failed To Download Video!", err.toString());
     process.exit();
   }
 }
@@ -140,7 +141,7 @@ if (urlResult?.type === "list") {
     term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`);
     downloadList(data?.info?.title, items, quality);
   } catch (err) {
-    term.red("  - Internet Connection Error!", err);
+    term.red("  -  Error: Failed To Download Playlist!", err.toString());
     process.exit();
   }
 }

@@ -10,6 +10,15 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 
 > **Note**: uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool.
 
+## uTube 1.1 is here 🎉
+
+### what's new?
+
+- support shorts
+- support `.be` an `/v` urls
+- bug fixes
+- better error messages
+
 ## Features
 
 - User friendly command line interface.
@@ -21,7 +30,8 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 ## TODO
 
 - [x] Support `-v` parameter to display tool version.
-- [ ] Support shorts.
+- [x] Support shorts.
+- [x] support all youtube link formats
 - [ ] Support 480p & 1080p.
 - [ ] Support downloading sounds (mp3 format).
 
@@ -31,11 +41,11 @@ Ensure that you have [Node.js](https://nodejs.org/en/) installed on your system,
 
     npm install -g utube-cli
 
-or using yarn:
+# Updating
 
-    yarn global add utube-cli
+If you have uTube installed you can update it this command:
 
-> **Warning**: You may need to execute the command with `sudo` on Linux and Mac.
+    npm update -g utube-cli
 
 # Usage
 

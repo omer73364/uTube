@@ -55,7 +55,7 @@ export const downloadVideo = async (item, quality, listTitle, next) => {
         `${listFolder}/.${title}.mp4`,
         `${listFolder}/${title}.mp4`,
         function (err) {
-          if (err) console.log("  - ERROR: " + err);
+          if (err) console.log("  - ERROR: ", err.toString());
         }
       );
       next();
@@ -65,14 +65,14 @@ export const downloadVideo = async (item, quality, listTitle, next) => {
         file.write(chunk);
       }
       fs.rename(`./.${title}.mp4`, `./${title}.mp4`, function (err) {
-        if (err) console.log("  - ERROR: " + err);
+        if (err) console.log("  - ERROR: ", err.toString());
       });
     }
     term.cyan("  - Video Downloaded Successfully ✅\n\n");
   } catch (err) {
     if (err?.message?.includes("No matching formats found")) {
       downloadVideo(item, "360p", listTitle, next);
-    } else console.log("  - [ERROR]", err);
+    } else console.log("  - [ERROR]", err.toString());
   }
 };
 
@@ -92,3 +92,16 @@ export const downloadList = (title, items, quality) => {
 
 export const availavleQualities = (list) =>
   list.filter((quality) => ["144p", "360p", "720p"].includes(quality));
+
+export function convertToWatchUrl(url) {
+  const regex =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed|watch)\?v=|shorts\/)|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regex);
+
+  if (match) {
+    const videoId = match[1];
+    return `https://www.youtube.com/watch?v=${videoId}`;
+  }
+
+  return null; // Return null if the URL is not valid
+}
