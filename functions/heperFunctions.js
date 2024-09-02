@@ -94,6 +94,7 @@ export const availavleQualities = (list) =>
   list.filter((quality) => ["144p", "360p", "720p"].includes(quality));
 
 export function convertToWatchUrl(url) {
+  if (url.includes("playlist")) return url;
   const regex =
     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed|watch)\?v=|shorts\/)|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regex);
