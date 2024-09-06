@@ -8,32 +8,38 @@
 
 It's a node package, so it's available for (Windows, Linux and Mac) operating systems, all you need is Node.js installed on your system.
 
-> **Note**: uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool.
+> **Note**: uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool
 
-## uTube 1.1 is here 🎉
+## uTube 1.1.2 is here 🎉
 
 ### what's new?
 
-- support shorts
-- support all youtube link formats
-- bug fixes
-- better error messages
+- Pass url and quality within command
+- Show downloading progress bar
+- Set default download folder
+- Bug fixes
 
 ## Features
 
-- User friendly command line interface.
-- Download single YouTube video.
-- Download YouTube playlist.
-- Supports all available video formats and qualities.
-- Playlists organized to folders by their names.
+- User friendly command line interface
+- Download single YouTube video
+- Download YouTube playlist
+- Download some videos of YouTube playlist
+<!-- - Supports all available video formats and qualities -->
+- Playlists organized to folders by their names
 
 ## TODO
 
-- [x] Support `-v` parameter to display tool version.
-- [x] Support shorts.
+- [x] Support `-v` parameter to display tool version
+- [x] Support shorts
 - [x] support all youtube link formats
-- [ ] Support 480p & 1080p.
-- [ ] Support downloading sounds (mp3 format).
+- [x] support `-u` parameter to pass url directly
+- [x] support `-q` parameter to quality url directly
+- [x] Show downloading porgress bar:
+      ![enter image description here](https://i.ibb.co/PgbdQWb/Screenshot-from-2024-09-05-16-43-29.png)
+- [x] Support setting downloading folder
+- [ ] Support 480p & 720p & 1080p
+- [ ] Support downloading sounds (mp3 format)
 
 # Installation
 
@@ -47,13 +53,32 @@ If you have uTube installed you can update it this command:
 
     npm update -g utube-cli
 
+# Arguments
+
+| Argument              | Description                                         | example                                   |
+| --------------------- | --------------------------------------------------- | ----------------------------------------- |
+| -v                    | show uTube version                                  | `utube -v`                                |
+| -u                    | pass video or playlist url                          | `utube -u [url]`                          |
+| -q                    | pass quality (if not available will return to 360p) | `utube -q 360p`                           |
+| --set-download-folder | set the default downloading path                    | `utube --set-download-folder ~/Downloads` |
+
 # Usage
 
 uTube is very easy to use, just type `utube` on your terminal or cmd then you can use it.
 
 Here examples of uses:
 
+**- Download videos & playlists directly by passing url and quality:**
+
+    utube -u https://www.youtube.com/shorts/ZKgEye8waGE -q 360p
+
+**- Download videos & playlists by passing url then select quality manually:**
+
+    utube -u https://www.youtube.com/shorts/ZKgEye8waGE
+
 **- Download videos by 2 steps:**
+
+    utube
 
 1.  Paste the video URL.
 2.  Choose the quality.
@@ -62,6 +87,8 @@ Here examples of uses:
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 
 **- Download playlists by 3 steps:**
+
+    utube
 
 1.  Paste the playlist URL.
 2.  Choose the quality.

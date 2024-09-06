@@ -1,6 +1,6 @@
 {
   "name": "utube-cli",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "simple user friendly command line tool to download YouTube videos and playlists",
   "main": "index.js",
   "type": "module",
@@ -26,6 +26,7 @@
     "javascript",
     "cli",
     "downloader",
+    "playlists",
     "youtube",
     "terminal",
     "youtube-dl",
@@ -35,6 +36,8 @@
   "author": "OMER ANWAR",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.7.7",
+    "cli-progress": "^3.12.0",
     "esm": "^3.2.25",
     "fs": "^0.0.1-security",
     "inquirer": "^8.2.4",

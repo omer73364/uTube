@@ -1,147 +1,17 @@
 #! /usr/bin/env node
+import { initialize } from "./functions/intialize.js";
+import { welcome } from "./functions/welcome.js";
+import { readArgs } from "./functions/readInput.js";
+import { download } from "./functions/download.js";
 
-import inquirer from "inquirer";
-import terminal from "terminal-kit";
-import { getListData, getVideoData } from "./functions/getData.js";
-import {
-  availavleQualities,
-  convertToWatchUrl,
-  downloadList,
-  downloadVideo,
-  getVideoOrListID,
-} from "./functions/heperFunctions.js";
-
-import { Innertube, Utils } from "youtubei.js";
-import { oraPromise } from "ora";
-import fs from "fs";
-import readline from "readline";
-import { version } from "./version.js";
-
-if (process.argv.includes("-v")) {
-  console.log(version);
-  process.exit();
-}
-
-// initializing
-try {
-  console.clear();
-  global.fs = fs;
-  global.readline = readline;
-  global.term = terminal.terminal;
-  global.youtube = await oraPromise(
-    Innertube.create(),
-    "- Check internet connection.."
-  );
-  global.Utils = Utils;
-} catch (err) {
-  term.red("  - Error: Internet Connection Error!", err.toString());
-  process.exit();
-}
-
-// hello uTube
-term.bold.cyan("\n----------------  uTube  ----------------\n\n");
-term.bold.green("# Stand With Palestine \n");
-
-term.bold.green(`
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⣿⣟⠛⠛⠛⠛⠛⠛⠛⠛⠛
-⣿⣿⣿⣿⡷⠀⠀⠀⠀⠀⠀⠀⠀
-⣿⣿⣿⣯⣤⣤⣤⣤⣤⣤⣤⣤⣤
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-\n\n`);
-
-// ask for URL
-const { url } = await inquirer.prompt([
-  {
-    name: "url",
-    message: "Enter (video/playlist) url:",
-  },
-]);
-
-// check if the url for (video) or (playlist)
-const urlResult = getVideoOrListID(convertToWatchUrl(url));
-
-// if video
-if (urlResult?.type === "video") {
+(async () => {
   try {
-    const { basic_info, streaming_data } = await oraPromise(
-      getVideoData(urlResult.id),
-      "- Get video data.."
-    );
-    const videoData = {
-      id: urlResult.id,
-      title: basic_info?.title,
-    };
-
-    term("  --------------------  \n");
-    term.bold(`  - title: ${basic_info?.title}\n`);
-    term("  --------------------  \n\n");
-
-    const { quality } = await inquirer.prompt([
-      {
-        name: "quality",
-        type: "list",
-        choices: availavleQualities(
-          streaming_data.formats.map((format) => format?.quality_label)
-        ),
-        message: "- Choose quality:",
-      },
-    ]);
-
-    downloadVideo(videoData, quality);
+    initialize();
+    const { url, quality } = await readArgs();
+    await initialize(true);
+    welcome();
+    await download({ url, quality });
   } catch (err) {
-    term.red("  - Error: Failed To Download Video!", err.toString());
-    process.exit();
+    console.log(err.toString());
   }
-}
-
-// if playlist
-if (urlResult?.type === "list") {
-  try {
-    const data = await oraPromise(
-      getListData(urlResult.id),
-      "- Get playlist data.."
-    );
-
-    term("  --------------------  \n");
-    term.bold(`  - title: ${data?.info?.title}\n`);
-    term.bold(`  - videos: ${data?.info?.total_items}\n`);
-    term("  --------------------  \n\n");
-
-    // get available qualities for first video
-    const { streaming_data } = await oraPromise(
-      getVideoData(data.items[0].id),
-      "- Get available qualities.."
-    );
-
-    const { quality } = await inquirer.prompt([
-      {
-        name: "quality",
-        type: "list",
-        choices: availavleQualities(
-          streaming_data.formats.map((format) => format?.quality_label)
-        ),
-        message: "- Choose quality:",
-      },
-    ]);
-
-    // select videos to be downloaded
-    const { videos } = await inquirer.prompt([
-      {
-        name: "videos",
-        type: "checkbox",
-        choices: data.items.map((v, i) => `#${i + 1} - ${v.title}`),
-        message: "- Choose videos to be downloaded:\n\n",
-      },
-    ]);
-
-    const items = data.items.filter((vid, i) =>
-      videos.includes(`#${i + 1} - ${vid.title}`)
-    );
-    term.yellow(`\n  - Start Downloading ${items.length} selected videos..\n`);
-    downloadList(data?.info?.title, items, quality);
-  } catch (err) {
-    term.red("  -  Error: Failed To Download Playlist!", err.toString());
-    process.exit();
-  }
-}
+})();
