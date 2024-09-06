@@ -35,8 +35,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 - [x] support all youtube link formats
 - [x] support `-u` parameter to pass url directly
 - [x] support `-q` parameter to quality url directly
-- [x] Show downloading porgress bar:
-      ![enter image description here](https://i.ibb.co/PgbdQWb/Screenshot-from-2024-09-05-16-43-29.png)
+- [x] Show downloading porgress bar
 - [x] Support setting downloading folder
 - [x] Auto Update package if new version available
 - [ ] Support 480p & 720p & 1080p
