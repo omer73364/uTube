@@ -14,6 +14,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 
 ### what's new?
 
+- Auto update
 - Pass url and quality within command
 - Show downloading progress bar
 - Set default download folder
@@ -25,7 +26,6 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 - Download single YouTube video
 - Download YouTube playlist
 - Download some videos of YouTube playlist
-<!-- - Supports all available video formats and qualities -->
 - Playlists organized to folders by their names
 
 ## TODO
@@ -38,6 +38,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 - [x] Show downloading porgress bar:
       ![enter image description here](https://i.ibb.co/PgbdQWb/Screenshot-from-2024-09-05-16-43-29.png)
 - [x] Support setting downloading folder
+- [x] Auto Update package if new version available
 - [ ] Support 480p & 720p & 1080p
 - [ ] Support downloading sounds (mp3 format)
 
