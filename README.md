@@ -10,7 +10,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 
 > **Note**: uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool
 
-## uTube 1.1.3 is here 🎉
+## uTube 1.1.4 is here 🎉
 
 ### what's new?
 

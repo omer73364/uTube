@@ -3,8 +3,9 @@ import fs from "fs";
 export const getSetting = (key, defaultValue) => {
   try {
     const value =
-      JSON.parse(fs.readFileSync("./settings.json", "utf8"))[key] ||
-      defaultValue;
+      JSON.parse(
+        fs.readFileSync(`${global.packagePath}/settings.json`, "utf8")
+      )[key] || defaultValue;
     return value;
   } catch (err) {
     return defaultValue;
