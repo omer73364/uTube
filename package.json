@@ -1,6 +1,6 @@
 {
   "name": "utube-cli",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "simple user friendly command line tool to download YouTube videos and playlists",
   "main": "index.js",
   "type": "module",

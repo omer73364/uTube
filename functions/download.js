@@ -15,10 +15,16 @@ import { askForQuality } from "./readInput.js";
 
 const downloadList = (title, items) => {
   let index = -1;
-  const downloadNext = () => {
+  const downloadNext = async () => {
     index++;
     if (index < items.length) {
       logger("\n");
+      const { streaming_data } = await getVideoData(items[index].id);
+      const defaultQuality = streaming_data?.formats?.[0];
+      const selectedQuality = streaming_data?.formats?.find(
+        (q) => q.quality_label === items[index].quality
+      );
+      items[index].quality = selectedQuality || defaultQuality;
       downloadVideo(items[index], title, downloadNext);
     } else {
       logger.cyan("\n  - Playlist Downloaded Successfully ✅\n");
@@ -143,17 +149,15 @@ export const download = async (args) => {
         {
           name: "videos",
           type: "checkbox",
-          choices: data.items.map((v, i) => ` - #${i + 1} - ${v.title}`),
+          choices: data.items.map((v, i) => ` - #${i + 1}_${v.title}`),
           message: "- Choose videos to be downloaded:\n\n",
         },
       ]);
 
       const items = data.items.filter((vid, i) => {
-        vid.quality =
-          streaming_data.formats.find(
-            (format) => format?.quality_label === quality
-          ) || streaming_data.formats[0];
-        return videos.includes(` - #${i + 1} - ${vid.title}`);
+        vid.quality = quality;
+        vid.title = `#${i + 1}_${vid.title}`;
+        return videos.includes(` - ${vid.title}`);
       });
 
       logger.yellow(
