@@ -1,6 +1,7 @@
 import fs from "fs";
 import inquirer from "inquirer";
 import { version } from "../version.js";
+import { getSetting } from "./heperFunctions.js";
 
 const askForURL = async () => {
   const { url } = await inquirer.prompt([
@@ -31,16 +32,33 @@ export const readArgs = async () => {
     process.exit();
   }
 
-  // download folder
+  // get download folder
+  if (process.argv.includes("--get-download-folder")) {
+    const downloadFolder = getSetting("downloadFolder");
+    if (downloadFolder) {
+      console.log(`\n-  [uTube]: Download Folder Path: ${downloadFolder}\n`);
+    } else {
+      console.log(
+        `\n-  [uTube]: No Download Folder set, uTube will download in current folder\n`
+      );
+    }
+    process.exit();
+  }
+
+  // set download folder
   if (process.argv.includes("--set-download-folder")) {
     const value_index = process.argv.indexOf("--set-download-folder") + 1;
-    const path = process.argv[value_index];
+    const path = process.argv[value_index] || "";
     // set downloadFolder in settings.json
     fs.writeFileSync(
       `${global.packagePath}/settings.json`,
       JSON.stringify({ downloadFolder: path })
     );
-    console.log('\n  - [uTube]: "Download Folder Set To: ' + path + '" ✅\n');
+    console.log(
+      '\n  - [uTube]: "Download Folder Set To: ' +
+        (path || "current folder") +
+        '" ✅\n'
+    );
     process.exit();
   }
 

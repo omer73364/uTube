@@ -1,6 +1,6 @@
 import fs from "fs";
 
-export const getSetting = (key, defaultValue) => {
+export const getSetting = (key, defaultValue = "") => {
   try {
     const value =
       JSON.parse(

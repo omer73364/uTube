@@ -10,7 +10,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 
 > **Note**: uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool
 
-## uTube 1.1.5 is here 🎉
+## uTube 1.1.6 is here 🎉
 
 ### what's new?
 
@@ -61,6 +61,7 @@ If you have uTube installed you can update it this command:
 | -u                    | pass video or playlist url                          | `utube -u [url]`                          |
 | -q                    | pass quality (if not available will return to 360p) | `utube -q 360p`                           |
 | --set-download-folder | set the default downloading path                    | `utube --set-download-folder ~/Downloads` |
+| --get-download-folder | get the downloading path                            | `utube --get-download-folder`             |
 
 # Usage
 
