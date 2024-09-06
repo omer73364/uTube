@@ -13,8 +13,6 @@ import {
 } from "./heperFunctions.js";
 import { askForQuality } from "./readInput.js";
 
-const downloadFolder = getSetting("downloadFolder", cwd());
-
 const downloadList = (title, items) => {
   let index = -1;
   const downloadNext = () => {
@@ -31,6 +29,7 @@ const downloadList = (title, items) => {
 
 const downloadVideo = async (item, listTitle, next) => {
   try {
+    const downloadFolder = getSetting("downloadFolder", cwd());
     const title = specialRemover(item?.title?.text || item?.title);
     const listFolder = listTitle ? `/${specialRemover(listTitle)}` : "";
     const downloadPath = `${downloadFolder}${listFolder}`;
