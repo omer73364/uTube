@@ -136,3 +136,50 @@ test('playlist retrieval normalizes real lockup renderers across pages', async (
   } finally { global.youtube = original; }
 });
 
+test('adaptive downloads use bounded ranges and the correct stream type', async () => {
+  const { downloadFormat } = await import('../functions/download.js');
+  const total = 256 * 1024 + 3;
+  const calls = [];
+  const info = { download: async (options) => {
+    calls.push(options);
+    return new ReadableStream({ start(controller) {
+      controller.enqueue(new Uint8Array(options.range.end - options.range.start + 1).fill(7));
+      controller.close();
+    } });
+  } };
+  const stream = await downloadFormat(info, { itag: 137, has_video: true, has_audio: false, content_length: total });
+  let received = 0;
+  for await (const chunk of stream) received += chunk.length;
+  assert.equal(received, total);
+  assert.deepEqual(calls, [
+    { itag: 137, type: 'video', range: { start: 0, end: 262143 } },
+    { itag: 137, type: 'video', range: { start: 262144, end: 262146 } },
+  ]);
+});
+
+test('a reset during a range retries without publishing partial bytes', async () => {
+  const { downloadFormat } = await import('../functions/download.js');
+  let calls = 0;
+  const info = { download: async () => {
+    calls++;
+    if (calls === 1) return new ReadableStream({
+      start(controller) { controller.enqueue(Buffer.from('bad')); },
+      pull(controller) { const error = new Error('reset'); error.code = 'ECONNRESET'; controller.error(error); },
+    });
+    return new ReadableStream({ start(controller) { controller.enqueue(Buffer.from('hello')); controller.close(); } });
+  } };
+  const stream = await downloadFormat(info, { itag: 140, has_audio: true, content_length: 5 });
+  const parts = [];
+  for await (const chunk of stream) parts.push(chunk);
+  assert.equal(Buffer.concat(parts).toString(), 'hello');
+  assert.equal(calls, 2);
+});
+
+test('permanent HTTP errors are not retried', async () => {
+  const { downloadFormat } = await import('../functions/download.js');
+  let calls = 0;
+  const info = { download: async () => { calls++; const error = new Error('rejected'); error.info = { response: { status: 404 } }; throw error; } };
+  const stream = await downloadFormat(info, { itag: 140, has_audio: true, content_length: 5 });
+  await assert.rejects(async () => { for await (const _ of stream) {} }, /rejected/);
+  assert.equal(calls, 1);
+});

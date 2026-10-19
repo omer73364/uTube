@@ -39,6 +39,51 @@ export const saveStream = async (stream, filename, onProgress = () => {}) => {
   }
 };
 
+export const streamStatus = (error) => error?.info?.response?.status;
+export const retryableStreamError = (error) => {
+  const status = streamStatus(error);
+  return [403, 408, 410, 429].includes(status) || status >= 500 ||
+    ["ECONNRESET", "ETIMEDOUT", "UND_ERR_SOCKET", "UND_ERR_CONNECT_TIMEOUT"].includes(error?.cause?.code || error?.code) ||
+    error?.message === "terminated";
+};
+
+export const downloadFormat = async (info, format) => {
+  const type = format.has_video ? (format.has_audio ? "video+audio" : "video") : "audio";
+  const total = Number(format.content_length);
+  if (!Number.isSafeInteger(total) || total <= 0) return info.download({ itag: format.itag, type });
+  // Buffer each small range before publishing it so a failed range can be retried
+  // without duplicating bytes already written to disk.
+  async function* chunks() {
+    const chunkSize = 256 * 1024;
+    for (let start = 0; start < total; start += chunkSize) {
+      const end = Math.min(start + chunkSize, total) - 1;
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const stream = await info.download({ itag: format.itag, type, range: { start, end } });
+          const parts = [];
+          let received = 0;
+          for await (const part of stream) {
+            received += part.length;
+            if (received > end - start + 1) throw new Error("Server ignored the requested byte range.");
+            parts.push(part);
+          }
+          if (received !== end - start + 1) {
+            const error = new Error("Incomplete download range.");
+            error.code = "ECONNRESET";
+            throw error;
+          }
+          yield Buffer.concat(parts);
+          break;
+        } catch (error) {
+          if (attempt >= 1 || !retryableStreamError(error)) throw error;
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+      }
+    }
+  }
+  return Readable.toWeb(Readable.from(chunks()));
+};
+
 const ffmpeg = (args) => new Promise((resolve, reject) => {
   const child = spawn("ffmpeg", args, { stdio: ["ignore", "ignore", "pipe"] });
   let detail = "";
@@ -62,14 +107,14 @@ export const downloadVideo = async (item, listTitle, quality, suppliedInfo) => {
     heading(title);
     details([["Quality", format.quality_label], ["Save to", folder]]);
     await transfer("Downloading video", format.content_length, async (update) => {
-      const stream = await info.download({ itag: format.itag });
+      const stream = await downloadFormat(info, format);
       await saveStream(stream, path.join(temp, "video.mp4"), update);
     });
     let result = path.join(temp, "video.mp4");
     if (!format.has_audio) {
       const audio = info.chooseFormat({ type: "audio", format: "mp4", quality: "best" });
       await transfer("Downloading audio", audio.content_length, async (update) => {
-        await saveStream(await info.download({ itag: audio.itag }), path.join(temp, "audio.m4a"), update);
+        await saveStream(await downloadFormat(info, audio), path.join(temp, "audio.m4a"), update);
       });
       result = path.join(temp, "merged.mp4");
       await task("Merging video and audio", () => ffmpeg(["-nostdin", "-y", "-i", path.join(temp, "video.mp4"), "-i", path.join(temp, "audio.m4a"), "-map", "0:v:0", "-map", "1:a:0", "-c", "copy", "-movflags", "+faststart", result]));
