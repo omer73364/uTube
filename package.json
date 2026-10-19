@@ -9,7 +9,11 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "desktop": "npm run start --workspace=@utube/desktop",
+    "desktop:check": "npm run typecheck --workspace=@utube/desktop",
+    "desktop:package": "npm run package --workspace=@utube/desktop",
+    "desktop:make": "npm run make --workspace=@utube/desktop"
   },
   "homepage": "https://github.com/omer73364/uTube",
   "bugs": {

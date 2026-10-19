@@ -1,3 +1,7 @@
 node_modules
 /build
 /package
+**/.vite/
+**/out/
+**/test-results/
+**/playwright-report/
