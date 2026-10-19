@@ -21,11 +21,12 @@ clear progress, and a download folder that stays yours.
   ├──────────────────────────────────────────────────────┤
   │ Your next watch, ready to go.                        │
   │                                                      │
-  │ VIDEOS  /  PLAYLISTS  /  MP4                         │
+  │ VIDEOS  /  PLAYLISTS  /  MP3                         │
   ╰──────────────────────────────────────────────────────╯
 
   ◆ What would you like to do?
   ❯ ↓  Download a video or playlist
+    ♫  Download audio (MP3)
     ▣  Change download folder
     ↗  Exit
 ```
@@ -40,9 +41,11 @@ clear progress, and a download folder that stays yours.
 
 Built with [YouTube.js](https://github.com/LuanRT/YouTube.js). **Version 2.0.0** revives the project with a new interface and repaired video and playlist downloads.
 
+> MP3 support below is implemented in this development checkout and is not included in the published 2.0.0 package. Use the [development commands](#development-and-contributions) to try it before the next release.
+
 ## Get started
 
-You need **Node.js 20 or newer** and npm. Install [FFmpeg](https://ffmpeg.org/download.html) and make sure `ffmpeg` is on your PATH to download qualities with separate video and audio streams.
+You need **Node.js 20 or newer** and npm. Install [FFmpeg](https://ffmpeg.org/download.html) and make sure `ffmpeg` is on your PATH to download qualities with separate video and audio streams. FFmpeg is also required for every MP3 conversion.
 
 ```sh
 npm install -g utube-cli@latest
@@ -104,6 +107,19 @@ Replace `YOUR_PLAYLIST_ID` with your playlist ID. You can also paste the complet
 
 **Playlist selection needs an interactive terminal.** For noninteractive single-video downloads, provide both `-u` and `-q`.
 
+### Download audio as MP3
+
+Choose **Download audio (MP3)** in the main menu, then paste a video or playlist URL. Or use `--audio` (`-a`) directly:
+
+```sh
+utube --audio -u "https://youtu.be/jNQXAC9IVRw"
+utube --audio -u "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
+```
+
+Audio is converted to MP3 at **192 kbps**, with the title stored in the file metadata. uTube prefers original audio-only streams; when only a combined stream is available, it extracts the audio from that instead. Playlist selection, retries, skipping, and cleanup work in audio mode too.
+
+Do not combine `--audio` with `-q`: `-q` selects video resolution, not audio bitrate. MP3 and MP4 files are stored separately, so an existing video does not prevent downloading its audio.
+
 ### Choose where downloads go
 
 By default, uTube downloads into your current directory. Change the folder from the main menu or save one with:
@@ -122,7 +138,8 @@ Settings live in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube
 | Option | What it does |
 | --- | --- |
 | `-u <url>` | Use a video or playlist URL |
-| `-q <quality>` | Request a quality, such as `360p` or `720p` |
+| `-q <quality>` | Request a video quality, such as `480p`, `720p`, or `1080p` |
+| `-a`, `--audio` | Download a video or playlist as MP3; requires FFmpeg |
 | `-v`, `--version` | Print the installed version |
 | `--set-download-folder <path>` | Save a default download folder |
 | `--get-download-folder` | Print the current download folder |
@@ -132,7 +149,7 @@ Help, version, and folder settings work offline. Set the `NO_COLOR` environment 
 
 ## Quality and output
 
-uTube saves **MP4 video with audio**. When YouTube provides video and audio separately, FFmpeg combines them. Available resolutions depend on the video and the YouTube client.
+uTube saves **MP4 video with audio**, or **MP3 audio** when `--audio` is selected. When YouTube provides video and audio separately, FFmpeg combines them. 480p, 720p, and 1080p are supported when available from YouTube; the app also accepts other available resolutions. A `720p` request can use a `720p60` stream. Available resolutions depend on the video and the YouTube client.
 
 If your requested quality is unavailable, uTube tries 360p, then the lowest available quality. When a server rejects a stream, uTube can refresh its links and switch clients. That fallback may offer a different resolution; the app reports the actual quality used.
 
@@ -146,20 +163,25 @@ Downloads/
     └── #2_Second video [VIDEO_ID].mp4
 ```
 
-An existing target file is skipped. Restarting a failed download starts that file again; partial-download resume is not implemented. MP3 extraction and authenticated downloads are not currently available.
+An existing target file is skipped. Restarting a failed download starts that file again; partial-download resume is not implemented. Authenticated downloads are not currently available.
 
 ## Troubleshooting
 
 | What you see | What to try |
 | --- | --- |
 | `utube` is not found | Reopen your terminal and check that npm's global executable directory is on your PATH. |
-| A quality requires FFmpeg | Install FFmpeg and confirm `ffmpeg -version` works in the same terminal. |
+| A download requires FFmpeg | Install FFmpeg and confirm `ffmpeg -version` works in the same terminal. |
 | A lower quality is downloaded | Read the fallback message. YouTube or the alternate client may not offer your requested resolution. |
 | A download is rejected or interrupted | uTube retries supported transient failures automatically. If it still fails, try again later or choose another quality. |
 | A playlist needs an interactive terminal | Run the command directly in your terminal without piping its output. |
 | A private, restricted, or unavailable video fails | Confirm that the video is publicly accessible. The CLI has no login or cookie options. |
 
 YouTube changes can still break downloads. If an issue persists, [open an issue](https://github.com/omer73364/uTube/issues) with your uTube and Node.js versions, operating system, exact error, and a public example URL when possible.
+
+## Original roadmap
+
+- [x] Download 480p, 720p, and 1080p video with merged audio, when YouTube provides those formats.
+- [x] Download single videos and selected playlist items as MP3.
 
 ## Upgrading from 1.x
 
@@ -186,7 +208,7 @@ To pass CLI arguments through npm:
 npm start -- -u "https://youtu.be/jNQXAC9IVRw" -q 360p
 ```
 
-The regression suite covers argument handling, settings, playlist renderers and pagination, failed-download cleanup, ranged transfers, and retry behavior. Live checks against YouTube are separate from the automated tests.
+The regression suite covers argument handling, settings, playlist renderers and pagination, failed-download cleanup, ranged transfers, and retry behavior. With FFmpeg and FFprobe installed, additional media tests generate real MP3 files and verify 480p, 720p, and 1080p video/audio merging. Those media tests are skipped when the tools are missing. Live checks against YouTube are separate from the automated tests.
 
 Bug reports and pull requests are welcome. For major changes, open an issue first so we can agree on the scope.
 

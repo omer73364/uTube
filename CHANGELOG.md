@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Add MP3 downloads for single videos and selected playlist items through `--audio` / `-a` and the interactive menu.
+- Convert audio to 192 kbps MP3 with title metadata using FFmpeg.
+- Reuse stream retries, client fallback, safe filenames, and cleanup in audio mode.
+- Match resolution requests such as 720p to available high-frame-rate variants such as 720p60.
+- Add real FFmpeg/FFprobe coverage for MP3 output and 480p, 720p, and 1080p merging.
+
 ## 2.0.0 — 2026-10-19
 
 uTube returns with a new terminal interface and repaired YouTube downloads.
