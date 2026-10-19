@@ -1,8 +1,5 @@
 # uTube-cli
 
-### # Stand With Palestine 🇵🇸
-___
-
 ## Revival in progress
 
 This checkout is being repaired. Single-video downloads have been verified; broader playlist and platform testing is still in progress.
