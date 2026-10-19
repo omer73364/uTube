@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import { welcome } from "./welcome.js";
 import { muted, details, success, interactive, promptOptions } from "./ui.js";
-import { version } from "../version.js";
+import { version } from "../../../version.js";
 import { getSetting, setDownloadFolder, getVideoOrListID } from "./heperFunctions.js";
 
 export const askForQuality = async (qualities) => {

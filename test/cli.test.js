@@ -1,4 +1,4 @@
-import { getYouTubeClient, setYouTubeClient } from "../functions/service.js";
+import { getYouTubeClient, setYouTubeClient } from "../apps/cli/functions/service.js";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -6,8 +6,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { ReadableStream } from 'node:stream/web';
-import { getVideoOrListID, specialRemover } from '../functions/heperFunctions.js';
-import { selectFormat, saveStream, downloadVideo } from '../functions/download.js';
+import { getVideoOrListID, specialRemover } from '../apps/cli/functions/heperFunctions.js';
+import { selectFormat, saveStream, downloadVideo } from '../apps/cli/functions/download.js';
 
 const id = 'BaW_jenozKc';
 test('URL parsing handles supported forms and rejects unrelated hosts', () => {
@@ -72,7 +72,7 @@ test('local CLI commands run offline and invalid arguments fail', () => {
 });
 
 test('playlist retrieval includes continuation pages and filters inaccessible items', async () => {
-  const { getListData } = await import('../functions/getData.js');
+  const { getListData } = await import('../apps/cli/functions/getData.js');
   const original = getYouTubeClient();
   setYouTubeClient({ getPlaylist: async () => ({
     info: { title: 'Playlist' }, items: [{ id: 'first' }, { title: 'Deleted video' }], has_continuation: true,
@@ -86,7 +86,7 @@ test('playlist retrieval includes continuation pages and filters inaccessible it
 });
 
 test('settings persist outside the installed package', async () => {
-  const { getSetting, setDownloadFolder } = await import('../functions/heperFunctions.js');
+  const { getSetting, setDownloadFolder } = await import('../apps/cli/functions/heperFunctions.js');
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-config-'));
   const previous = process.env.XDG_CONFIG_HOME;
   process.env.XDG_CONFIG_HOME = dir;
@@ -101,7 +101,7 @@ test('settings persist outside the installed package', async () => {
 });
 
 test('terminal output removes injected controls and piped transfers preserve errors', async () => {
-  const { text, transfer } = await import('../functions/ui.js');
+  const { text, transfer } = await import('../apps/cli/functions/ui.js');
   assert.equal(text('\u001b[31mTitle\u001b[0m\nnext\u0007'), 'Title next ');
   await assert.rejects(transfer('Test transfer', undefined, async (update) => {
     update(1024);
@@ -111,7 +111,7 @@ test('terminal output removes injected controls and piped transfers preserve err
 
 test('playlist retrieval normalizes real lockup renderers across pages', async () => {
   const { YTNodes } = await import('youtubei.js');
-  const { getListData } = await import('../functions/getData.js');
+  const { getListData } = await import('../apps/cli/functions/getData.js');
   const lockup = new YTNodes.LockupView({
     contentId: 'jNQXAC9IVRw', contentType: 'LOCKUP_CONTENT_TYPE_VIDEO',
     metadata: { lockupMetadataViewModel: { title: { content: 'Me at the zoo' } } },
@@ -141,7 +141,7 @@ test('playlist retrieval normalizes real lockup renderers across pages', async (
 });
 
 test('adaptive downloads use bounded ranges and the correct stream type', async () => {
-  const { downloadFormat } = await import('../functions/download.js');
+  const { downloadFormat } = await import('../apps/cli/functions/download.js');
   const total = 256 * 1024 + 3;
   const calls = [];
   const info = { download: async (options) => {
@@ -162,7 +162,7 @@ test('adaptive downloads use bounded ranges and the correct stream type', async 
 });
 
 test('a reset during a range retries without publishing partial bytes', async () => {
-  const { downloadFormat } = await import('../functions/download.js');
+  const { downloadFormat } = await import('../apps/cli/functions/download.js');
   let calls = 0;
   const info = { download: async () => {
     calls++;
@@ -180,7 +180,7 @@ test('a reset during a range retries without publishing partial bytes', async ()
 });
 
 test('permanent HTTP errors are not retried', async () => {
-  const { downloadFormat } = await import('../functions/download.js');
+  const { downloadFormat } = await import('../apps/cli/functions/download.js');
   let calls = 0;
   const info = { download: async () => { calls++; const error = new Error('rejected'); error.info = { response: { status: 404 } }; throw error; } };
   const stream = await downloadFormat(info, { itag: 140, has_audio: true, content_length: 5 });

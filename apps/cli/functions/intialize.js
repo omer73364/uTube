@@ -1,4 +1,4 @@
-import { createYouTubeClient } from "../packages/core/youtube.js";
+import { createYouTubeClient } from "../../../packages/core/youtube.js";
 import { setYouTubeClient } from "./service.js";
 import { task } from "./ui.js";
 export const initializeInternetVariables = async () => {

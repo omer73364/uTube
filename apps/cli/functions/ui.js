@@ -1,7 +1,7 @@
 import cliProgress from "cli-progress";
 import ora from "ora";
 import { stripVTControlCharacters } from "node:util";
-import { version } from "../version.js";
+import { version } from "../../../version.js";
 
 export const interactive = () => Boolean(process.stdin.isTTY && process.stdout.isTTY);
 const color = (code, value) => process.stdout.isTTY && !Object.hasOwn(process.env, "NO_COLOR")

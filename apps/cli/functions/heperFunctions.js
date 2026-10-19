@@ -1,4 +1,4 @@
-export { specialRemover, getVideoOrListID, availavleQualities, convertToWatchUrl } from "../packages/core/urls.js";
+export { specialRemover, getVideoOrListID, availavleQualities, convertToWatchUrl } from "../../../packages/core/urls.js";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
@@ -10,7 +10,7 @@ export const settingsPath = () => path.join(
 );
 
 export const getSetting = (key, defaultValue = "") => {
-  for (const filename of [settingsPath(), fileURLToPath(new URL("../settings.json", import.meta.url))]) {
+  for (const filename of [settingsPath(), fileURLToPath(new URL("../../../settings.json", import.meta.url))]) {
     try {
       const settings = JSON.parse(fs.readFileSync(filename, "utf8"));
       if (Object.hasOwn(settings, key)) return settings[key] || defaultValue;

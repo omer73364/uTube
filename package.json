@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "node --test"
+    "test": "node --test test/*.test.js"
   },
   "homepage": "https://github.com/omer73364/uTube",
   "bugs": {
@@ -47,11 +47,15 @@
   "files": [
     "index.js",
     "version.js",
-    "functions/",
+    "apps/cli/",
     "packages/core/",
     "settings.json",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
+  ],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ]
 }

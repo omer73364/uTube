@@ -1,11 +1,11 @@
-import { getYouTubeClient, setYouTubeClient } from "../functions/service.js";
+import { getYouTubeClient, setYouTubeClient } from "../apps/cli/functions/service.js";
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
-import { downloadVideo, selectFormat, selectAudioFormat } from '../functions/download.js';
+import { downloadVideo, selectFormat, selectAudioFormat } from '../apps/cli/functions/download.js';
 
 const available = ['ffmpeg', 'ffprobe'].every((command) => spawnSync(command, ['-version'], { encoding: 'utf8' }).status === 0);
 let root;

@@ -5,9 +5,9 @@ import { getListData, getVideoData } from "./getData.js";
 import { getEngine } from "./service.js";
 import { availavleQualities, getSetting, getVideoOrListID } from "./heperFunctions.js";
 import { askForQuality } from "./readInput.js";
-import { videoFormats } from "../packages/core/formats.js";
-export { videoFormats, selectFormat, selectAudioFormat } from "../packages/core/formats.js";
-export { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../packages/core/streams.js";
+import { videoFormats } from "../../../packages/core/formats.js";
+export { videoFormats, selectFormat, selectAudioFormat } from "../../../packages/core/formats.js";
+export { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../../../packages/core/streams.js";
 
 export const downloadVideo = async (item, playlistTitle, quality, info, audio = false) => {
   let display;

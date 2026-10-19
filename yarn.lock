@@ -27,6 +27,16 @@
     chardet "^2.1.1"
     iconv-lite "^0.7.0"
 
+"@utube/cli@file:/home/omar/D/Development/tools/uTube/apps/cli":
+  version "2.1.0"
+  resolved "file:apps/cli"
+
+"@utube/core@file:/home/omar/D/Development/tools/uTube/packages/core":
+  version "0.1.0"
+  resolved "file:packages/core"
+  dependencies:
+    youtubei.js "^18.2.0"
+
 ansi-escapes@^4.2.1:
   version "4.3.2"
   resolved "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-4.3.2.tgz"
