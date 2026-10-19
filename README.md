@@ -126,4 +126,12 @@ Settings are saved in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/
 
 Downloads use sanitized filenames with video IDs. Existing files are skipped. Failed downloads clean up temporary files, and playlist failures are reported while remaining selected items continue. Available qualities depend on YouTube; audio extraction to MP3 is not implemented.
 
+## Interactive terminal
+
+Run `npm start` (or `utube` once installed) to open the main menu. Use the arrow keys and Enter to download a video or playlist, change the download folder, or exit. Invalid URLs can be corrected directly in the prompt. Quality choices list the highest resolution first.
+
+For playlists, download all items or choose individual videos with Space; press `a` to toggle all and Enter to continue. Each transfer shows video/audio stages, size, speed, and ETA when the size is available. A playlist summary shows saved, skipped, and failed items. After downloading, return to the menu to start another download.
+
+Direct `-u` and `-q` commands still work. Piped output uses plain status lines without animations; set `NO_COLOR=1` to disable the app’s colors.
+
 Stream downloads use small byte ranges and retry interrupted ranges once. If links are rejected or a connection keeps failing, uTube refreshes the video data and tries an alternate YouTube client. The alternate client may only offer a different resolution; uTube reports the actual quality used. Persistent server rejections show the HTTP status.
