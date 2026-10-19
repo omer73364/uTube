@@ -1,3 +1,4 @@
+import { getYouTubeClient, setYouTubeClient } from "../functions/service.js";
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -100,20 +101,20 @@ test('a failed MP3 conversion removes temporary files and leaves no target', { s
 
 
 test('audio mode survives client fallback and extracts MP3 from a combined stream', { skip: !available }, async () => {
-  const original = global.youtube;
+  const original = getYouTubeClient();
   const clients = [];
   const combined = { ...audio, itag: 18, has_video: true, mime_type: 'video/mp4', content_length: combinedBytes.length };
   const good = mockInfo([combined], { 18: combinedBytes });
   const rejected = mockInfo([audio], {});
   rejected.download = async () => { const error = new Error('rejected'); error.info = { response: { status: 403 } }; throw error; };
-  global.youtube = { getInfo: async (id, { client }) => { clients.push(client); return client === 'ANDROID' ? good : rejected; } };
+  setYouTubeClient({ getInfo: async (id, { client }) => { clients.push(client); return client === 'ANDROID' ? good : rejected; } });
   try {
     await downloadVideo({ id: 'fallback', title: 'Fallback audio' }, undefined, undefined, rejected, true);
     assert.deepEqual(clients, ['IOS', 'ANDROID']);
     const result = probe(path.join(root, 'Fallback audio [fallback].mp3'));
     assert.equal(result.streams.length, 1);
     assert.equal(result.streams[0].codec_name, 'mp3');
-  } finally { global.youtube = original; }
+  } finally { setYouTubeClient(original); }
 });
 
 test('missing FFmpeg fails audio mode before any media is downloaded', { skip: !available }, async () => {

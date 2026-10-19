@@ -1,16 +1,7 @@
-import { runInNewContext } from "node:vm";
+import { createYouTubeClient } from "../packages/core/youtube.js";
+import { setYouTubeClient } from "./service.js";
 import { task } from "./ui.js";
-
 export const initializeInternetVariables = async () => {
-  try {
-    global.youtube = await task("Connecting to YouTube", async () => {
-      // Load the download engine only when needed, keeping local menus lightweight.
-      const { Innertube, Platform } = await import("youtubei.js");
-      // YouTube.js requires an evaluator for its generated player decipher script.
-      Platform.shim.eval = async (data) => runInNewContext(data.output, {}, { timeout: 5000 });
-      return Innertube.create();
-    });
-  } catch (err) {
-    throw new Error(`Could not initialize YouTube: ${err.message}`, { cause: err });
-  }
+  try { setYouTubeClient(await task("Connecting to YouTube", createYouTubeClient)); }
+  catch (error) { throw new Error(`Could not initialize YouTube: ${error.message}`, { cause: error }); }
 };

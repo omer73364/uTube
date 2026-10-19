@@ -1,81 +1,38 @@
-import { videoFormats, selectFormat, selectAudioFormat } from "../packages/core/formats.js";
-import { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../packages/core/streams.js";
+import path from "node:path";
+import inquirer from "inquirer";
+import { heading, details, info as note, success, warning, failure, task, text, interactive, promptOptions, createTransferDisplay } from "./ui.js";
+import { getListData, getVideoData } from "./getData.js";
+import { getEngine } from "./service.js";
+import { availavleQualities, getSetting, getVideoOrListID } from "./heperFunctions.js";
+import { askForQuality } from "./readInput.js";
+import { videoFormats } from "../packages/core/formats.js";
 export { videoFormats, selectFormat, selectAudioFormat } from "../packages/core/formats.js";
 export { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../packages/core/streams.js";
-import fs from "node:fs";
-import path from "node:path";
-import { spawn } from "node:child_process";
-import inquirer from "inquirer";
-import { heading, details, info as note, success, warning, failure, task, transfer, text, interactive, promptOptions } from "./ui.js";
-import { getListData, getVideoData } from "./getData.js";
-import { availavleQualities, getSetting, getVideoOrListID, specialRemover } from "./heperFunctions.js";
-import { askForQuality } from "./readInput.js";
 
-const ffmpeg = (args) => new Promise((resolve, reject) => {
-  const child = spawn("ffmpeg", args, { stdio: ["ignore", "ignore", "pipe"] });
-  let detail = "";
-  child.stderr.on("data", (data) => { detail = (detail + data).slice(-2000); });
-  child.on("error", (err) => reject(new Error(err.code === "ENOENT" ? "This download requires FFmpeg. Install ffmpeg and try again." : err.message)));
-  child.on("close", (code) => code === 0 ? resolve() : reject(new Error(`FFmpeg failed: ${detail}`)));
-});
-
-const downloadVideoAttempt = async (item, listTitle, quality, suppliedInfo, audioOnly = false) => {
-  const info = suppliedInfo || await getVideoData(item.id);
-  const format = audioOnly ? selectAudioFormat(info) : selectFormat(info, quality);
-  if (!audioOnly && parseInt(format.quality_label) !== parseInt(quality)) warning(`Requested ${quality} unavailable; using ${format.quality_label}.`);
-  const folder = path.resolve(getSetting("downloadFolder", process.cwd()), ...(listTitle ? [specialRemover(listTitle)] : []));
-  await fs.promises.mkdir(folder, { recursive: true });
-  const title = specialRemover(String(item.title || info.basic_info?.title || item.id));
-  const target = path.join(folder, `${title} [${item.id}].${audioOnly ? "mp3" : "mp4"}`);
-  if (fs.existsSync(target)) { note(`Already downloaded: ${target}`); return "skipped"; }
-  const temp = await fs.promises.mkdtemp(path.join(folder, ".utube-"));
+export const downloadVideo = async (item, playlistTitle, quality, info, audio = false) => {
+  let display;
+  const stages = { video: "Downloading video", audio: "Downloading audio", merging: "Merging video and audio", converting: "Converting to MP3" };
   try {
-    if (audioOnly || !format.has_audio) await ffmpeg(["-version"]);
-    heading(title);
-    details([["Format", audioOnly ? "MP3 · 192 kbps" : "MP4"], ...(!audioOnly ? [["Quality", format.quality_label]] : []), ["Save to", folder]]);
-    const source = path.join(temp, audioOnly ? "source.media" : "video.mp4");
-    await transfer(audioOnly ? "Downloading audio" : "Downloading video", format.content_length, async (update) => {
-      const stream = await downloadFormat(info, format);
-      await saveStream(stream, source, update);
+    const result = await getEngine().download({
+      item, playlistTitle, quality, info, audio, folder: path.resolve(getSetting("downloadFolder", process.cwd())),
+      onEvent(event) {
+        if (event.type === "start") {
+          heading(event.title);
+          details([["Format", event.format === "mp3" ? "MP3 · 192 kbps" : "MP4"], ...(event.quality ? [["Quality", event.quality]] : []), ["Save to", event.folder]]);
+        } else if (event.type === "stage") {
+          display?.stop();
+          if (["video", "audio"].includes(event.stage)) display = createTransferDisplay(stages[event.stage], event.total);
+          else { display = undefined; note(stages[event.stage]); }
+        } else if (event.type === "progress") display?.update(event.loaded);
+        else if (event.type === "retry" || event.type === "warning") { display?.stop(); display = undefined; warning(event.message); }
+        else if (event.type === "saved" || event.type === "skipped") {
+          display?.stop(); display = undefined;
+          if (event.type === "saved") success(`Saved: ${event.path}`); else note(`Already downloaded: ${event.path}`);
+        }
+      },
     });
-    let result = source;
-    if (audioOnly) {
-      result = path.join(temp, "audio.mp3");
-      await task("Converting to MP3", () => ffmpeg([
-        "-nostdin", "-y", "-i", source, "-map", "0:a:0", "-vn",
-        "-c:a", "libmp3lame", "-b:a", "192k", "-metadata", `title=${String(item.title || info.basic_info?.title || item.id)}`, result,
-      ]));
-    } else if (!format.has_audio) {
-      const audio = info.chooseFormat({ type: "audio", format: "mp4", quality: "best" });
-      await transfer("Downloading audio", audio.content_length, async (update) => {
-        await saveStream(await downloadFormat(info, audio), path.join(temp, "audio.m4a"), update);
-      });
-      result = path.join(temp, "merged.mp4");
-      await task("Merging video and audio", () => ffmpeg(["-nostdin", "-y", "-i", path.join(temp, "video.mp4"), "-i", path.join(temp, "audio.m4a"), "-map", "0:v:0", "-map", "1:a:0", "-c", "copy", "-movflags", "+faststart", result]));
-    }
-    // Exclusive creation avoids overwriting a download created by another process.
-    await fs.promises.copyFile(result, target, fs.constants.COPYFILE_EXCL);
-    success(`Saved: ${target}`);
-    return "saved";
-  } finally {
-    await fs.promises.rm(temp, { recursive: true, force: true });
-  }
-};
-
-export const downloadVideo = async (item, listTitle, quality, suppliedInfo, audioOnly = false) => {
-  for (const [attempt, client] of ["IOS", "IOS", "ANDROID"].entries()) {
-    try {
-      const info = attempt === 0 && suppliedInfo ? suppliedInfo : await getVideoData(item.id, client);
-      return await downloadVideoAttempt(item, listTitle, quality, info, audioOnly);
-    } catch (error) {
-      const status = streamStatus(error);
-      if (!retryableStreamError(error) || attempt === 2) {
-        if (status) throw new Error(`Download rejected (HTTP ${status}). Try again later${audioOnly ? "" : " or choose another quality"}.`, { cause: error });
-        throw error;
-      }
-      warning(`Stream ${status ? `returned HTTP ${status}` : "was interrupted"}; refreshing download links (${attempt + 1}/2).`);
-    }
-  }
+    return result.status;
+  } finally { display?.stop(); }
 };
 
 export const download = async ({ url, quality, audio = false }) => {

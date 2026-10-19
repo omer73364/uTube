@@ -90,8 +90,8 @@ export const task = async (label, work) => {
   catch (error) { spinner.stop(); throw error; }
 };
 
-export const transfer = async (label, total, work) => {
-  if (!interactive()) { info(label); return work(() => {}); }
+export const createTransferDisplay = (label, total) => {
+  if (!interactive()) { info(label); return { update() {}, stop() {} }; }
   let loaded = 0;
   const started = Date.now();
   const known = Number.isFinite(total) && total > 0;
@@ -105,12 +105,19 @@ export const transfer = async (label, total, work) => {
   }) : null;
   const spinner = !known ? ora({ text: label, color: "cyan" }).start() : null;
   if (bar) { info(label); bar.start(total, 0, { amount: `0 B / ${bytes(total)}`, speed: "—" }); }
-  try {
-    return await work((value) => {
+  return {
+    update(value) {
       loaded = value;
       const speed = `${bytes(loaded / Math.max((Date.now() - started) / 1000, 0.1))}/s`;
       if (bar) bar.update(Math.min(total, loaded), { amount: `${bytes(loaded)} / ${bytes(total)}`, speed });
       else spinner.text = `${label} · ${bytes(loaded)} · ${speed}`;
-    });
-  } finally { bar?.stop(); spinner?.stop(); }
+    },
+    stop() { bar?.stop(); spinner?.stop(); },
+  };
+};
+
+export const transfer = async (label, total, work) => {
+  const display = createTransferDisplay(label, total);
+  try { return await work((loaded) => display.update(loaded)); }
+  finally { display.stop(); }
 };

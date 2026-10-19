@@ -1,3 +1,4 @@
+import { getYouTubeClient, setYouTubeClient } from "../functions/service.js";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -72,16 +73,16 @@ test('local CLI commands run offline and invalid arguments fail', () => {
 
 test('playlist retrieval includes continuation pages and filters inaccessible items', async () => {
   const { getListData } = await import('../functions/getData.js');
-  const original = global.youtube;
-  global.youtube = { getPlaylist: async () => ({
+  const original = getYouTubeClient();
+  setYouTubeClient({ getPlaylist: async () => ({
     info: { title: 'Playlist' }, items: [{ id: 'first' }, { title: 'Deleted video' }], has_continuation: true,
     getContinuation: async () => ({ items: [{ id: 'second' }], has_continuation: false }),
-  }) };
+  }) });
   try {
     const data = await getListData('PL123');
     assert.deepEqual(data.items.map((item) => item.id), ['first', 'second']);
     assert.equal(data.info.title, 'Playlist');
-  } finally { global.youtube = original; }
+  } finally { setYouTubeClient(original); }
 });
 
 test('settings persist outside the installed package', async () => {
@@ -119,8 +120,8 @@ test('playlist retrieval normalizes real lockup renderers across pages', async (
     entityId: 'shorts-entity', onTap: { reelWatchEndpoint: { videoId: 'BaW_jenozKc' } },
     overlayMetadata: { primaryText: { content: 'A short video' } },
   });
-  const original = global.youtube;
-  global.youtube = { getPlaylist: async () => ({
+  const original = getYouTubeClient();
+  setYouTubeClient({ getPlaylist: async () => ({
     info: { title: 'Mixed playlist' }, items: [lockup], has_continuation: true,
     getContinuation: async () => ({
       items: [shorts, { id: 'legacy', title: { toString: () => 'Legacy video' } },
@@ -128,7 +129,7 @@ test('playlist retrieval normalizes real lockup renderers across pages', async (
         { content_id: 'PL123', content_type: 'PLAYLIST' }, { title: 'Deleted video' }],
       has_continuation: false,
     }),
-  }) };
+  }) });
   try {
     const data = await getListData('PL123');
     assert.deepEqual(data.items, [
@@ -136,7 +137,7 @@ test('playlist retrieval normalizes real lockup renderers across pages', async (
       { id: 'BaW_jenozKc', title: 'A short video' },
       { id: 'legacy', title: 'Legacy video' },
     ]);
-  } finally { global.youtube = original; }
+  } finally { setYouTubeClient(original); }
 });
 
 test('adaptive downloads use bounded ranges and the correct stream type', async () => {

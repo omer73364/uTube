@@ -27,4 +27,3 @@ export const setDownloadFolder = (folder) => {
   const expanded = folder === "~" ? os.homedir() : folder.replace(/^~[\\/]/, `${os.homedir()}/`);
   fs.writeFileSync(filename, JSON.stringify({ downloadFolder: expanded ? path.resolve(expanded) : "" }, null, 2));
 };
-

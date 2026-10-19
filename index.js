@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+import { getYouTubeClient } from "./functions/service.js";
 import inquirer from "inquirer";
 import { initializeInternetVariables } from "./functions/intialize.js";
 import { readArgs, home, askForURL } from "./functions/readInput.js";
@@ -11,7 +12,7 @@ import { failure, info, promptOptions } from "./functions/ui.js";
     if (!args) return;
     do {
       try {
-        if (!global.youtube) await initializeInternetVariables();
+        if (!getYouTubeClient()) await initializeInternetVariables();
         await download(args);
       } catch (error) {
         failure(error.message || error);
