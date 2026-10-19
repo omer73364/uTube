@@ -1,23 +1,32 @@
 #! /usr/bin/env node
-import {
-  initializeInternetVariables,
-  initializeLocalVariables,
-} from "./functions/intialize.js";
-import { welcome } from "./functions/welcome.js";
-import { readArgs } from "./functions/readInput.js";
+import inquirer from "inquirer";
+import { initializeInternetVariables } from "./functions/intialize.js";
+import { readArgs, home, askForURL } from "./functions/readInput.js";
 import { download } from "./functions/download.js";
+import { failure, info, promptOptions } from "./functions/ui.js";
 
 (async () => {
   try {
-    await initializeLocalVariables();
-    const args = await readArgs();
+    let args = await readArgs();
     if (!args) return;
-    const { url, quality } = args;
-    await initializeInternetVariables();
-    welcome();
-    await download({ url, quality });
+    do {
+      try {
+        if (!global.youtube) await initializeInternetVariables();
+        await download(args);
+      } catch (error) {
+        failure(error.message || error);
+        if (!args.session) { process.exitCode = 1; return; }
+      }
+      if (!args.session) return;
+      const { again } = await inquirer.prompt([{
+        ...promptOptions, name: "again", type: "confirm", message: "Back to the main menu?", default: true,
+      }]);
+      if (!again || await home() === "exit") break;
+      args = { url: await askForURL(), session: true };
+    } while (true);
+    info("See you next time.");
   } catch (err) {
-    console.error(`  - [ERROR] ${err.message || err}`);
+    failure(err.message || err);
     process.exitCode = 1;
   }
 })();

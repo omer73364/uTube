@@ -1,10 +1,2 @@
-export const welcome = () => {
-  logger.bold.cyan("\n  ----------------  uTube  ----------------\n\n");
-  logger.bold.cyan(`
-  ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-  ⣿⣿⣿⣟⠛⠛⠛⠛⠛⠛⠛⠛⠛
-  ⣿⣿⣿⣿⡷⠀⠀⠀⠀⠀⠀⠀⠀
-  ⣿⣿⣿⣯⣤⣤⣤⣤⣤⣤⣤⣤⣤
-  ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-\n\n`);
-};
+import { banner } from "./ui.js";
+export const welcome = banner;
