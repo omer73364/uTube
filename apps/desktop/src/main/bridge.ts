@@ -11,6 +11,7 @@ export class WorkerBridge {
       ...process.env,
       UTUBE_TEST_MEDIA: app.isPackaged ? '' : process.env.UTUBE_TEST_MEDIA || '',
       UTUBE_TEST_DELAY: app.isPackaged ? '' : process.env.UTUBE_TEST_DELAY || '',
+      UTUBE_TEST_FAIL_ONCE: app.isPackaged ? '' : process.env.UTUBE_TEST_FAIL_ONCE || '',
     } });
     this.worker = worker;
     worker.on('message', (message) => {
@@ -33,7 +34,14 @@ export class WorkerBridge {
       if (options.signal?.aborted) { reject(new DOMException('Cancelled', 'AbortError')); return; }
       const worker = this.ensureWorker();
       const id = randomUUID();
-      const cancel = () => worker.postMessage({ type: 'cancel', id });
+      const cancel = () => {
+        worker.postMessage({ type: 'cancel', id });
+        if (type === 'inspect') {
+          this.pending.delete(id);
+          options.signal?.removeEventListener('abort', cancel);
+          reject(new Error('Loading details took too long. Please try again.'));
+        }
+      };
       this.pending.set(id, { resolve, reject, onEvent: options.onEvent, cleanup: () => options.signal?.removeEventListener('abort', cancel) });
       options.signal?.addEventListener('abort', cancel, { once: true });
       try { worker.postMessage({ type, id, ...data }); }

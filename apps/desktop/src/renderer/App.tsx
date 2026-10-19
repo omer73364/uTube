@@ -11,14 +11,12 @@ import {
   LoaderCircle,
   Link2,
   X,
-  RotateCcw,
   Check,
   CheckCircle2,
   AlertCircle,
   Layers,
   ChevronRight,
   Plus,
-  Clock3,
 } from "lucide-react";
 import type { Preview, Job, Settings } from "../shared";
 
@@ -414,6 +412,12 @@ export default function App() {
                           <h3>{preview.title}</h3>
                           {preview.author && <p>{preview.author}</p>}
                         </div>
+                      </div>
+                    )}
+                    {preview?.type === "playlist" && !preview.items?.length && (
+                      <div className="inline-note">
+                        <AlertCircle size={15} />
+                        This playlist has no accessible videos.
                       </div>
                     )}
                     {preview?.type === "playlist" && (

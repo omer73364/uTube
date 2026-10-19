@@ -6,7 +6,7 @@ export type Preview = {
 export type Job = {
   id: string; videoId: string; title: string; audio: boolean; quality?: string;
   status: 'queued' | 'running' | 'cancelling' | 'saved' | 'skipped' | 'failed' | 'cancelled';
-  stage?: string; loaded: number; total?: number; note?: string; actualQuality?: string;
+  stage?: string; loaded: number; total?: number; speed?: number; eta?: number; note?: string; actualQuality?: string;
   path?: string; error?: string;
 };
 export type DownloadRequest = {

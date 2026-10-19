@@ -10,17 +10,23 @@ async function getEngine() {
     let client;
     if (process.env.UTUBE_TEST_MEDIA) {
       const media = await fs.readFile(process.env.UTUBE_TEST_MEDIA);
+      const attempts = new Map<string, number>();
       client = {
         getPlaylist: async () => ({ info: { title: 'Weekend collection' }, items: [
           { id: 'jNQXAC9IVRw', title: 'A small moment, worth keeping' },
           { id: 'BaW_jenozKc', title: 'The second chapter' },
         ], has_continuation: false }),
-        getInfo: async () => ({ basic_info: { title: 'A small moment, worth keeping', author: 'uTube Studio' }, streaming_data: {
+        getInfo: async (id: string) => {
+          const count = attempts.get(id) || 0;
+          attempts.set(id, count + 1);
+          if (process.env.UTUBE_TEST_FAIL_ONCE === '1' && id === 'BaW_jenozKc' && count === 0) throw new Error('This video is temporarily unavailable.');
+          return ({ basic_info: { title: 'A small moment, worth keeping', author: 'uTube Studio' }, streaming_data: {
           formats: [{ itag: 18, url: 'https://example.test/media', has_video: true, has_audio: true, quality_label: '360p', mime_type: 'video/mp4', content_length: media.length }],
         }, download: async ({ range }: { range?: { start: number; end: number } }) => {
           await new Promise((resolve) => setTimeout(resolve, Number(process.env.UTUBE_TEST_DELAY || 0)));
           return new ReadableStream({ start(controller) { controller.enqueue(range ? media.subarray(range.start, range.end + 1) : media); controller.close(); } });
-        } }),
+        } });
+        },
       };
     } else client = await createYouTubeClient();
     return createDownloadEngine({ client, ffmpegPath: process.env.UTUBE_FFMPEG || 'ffmpeg' });

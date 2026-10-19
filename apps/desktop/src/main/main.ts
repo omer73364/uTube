@@ -56,7 +56,7 @@ async function createWindow() {
     if (result.canceled || !result.filePaths[0]) return null;
     await saveFolder(result.filePaths[0]); return folder;
   });
-  handle('utube:inspect', (url: string) => bridge.call('inspect', { url: validateURL(url) }));
+  handle('utube:inspect', (url: string) => bridge.call('inspect', { url: validateURL(url) }, { signal: AbortSignal.timeout(30000) }));
   handle('utube:enqueue', (request: DownloadRequest) => {
     const valid = validateRequest(request);
     return queue.add(valid.items.map((item: any) => ({

@@ -93,6 +93,8 @@ export default function JobCard({
               {job.loaded > 0
                 ? `${sizes(job.loaded)}${job.total ? ` of ${sizes(job.total)}` : ""}`
                 : "Getting things ready…"}
+              {job.speed ? ` · ${sizes(job.speed)}/s` : ""}
+              {job.eta !== undefined ? ` · ${job.eta}s left` : ""}
             </div>
           </>
         )}
