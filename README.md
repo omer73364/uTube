@@ -17,7 +17,7 @@ clear progress, and a download folder that stays yours.
 
 ```text
   ╭──────────────────────────────────────────────────────╮
-  │ ▶  uTube   /   v2.0.0                                │
+  │ ▶  uTube   /   v2.1.0                                │
   ├──────────────────────────────────────────────────────┤
   │ Your next watch, ready to go.                        │
   │                                                      │
@@ -39,9 +39,7 @@ clear progress, and a download folder that stays yours.
 - **Recovery built in.** Small ranged transfers, bounded retries, refreshed links, and an alternate YouTube client when streams are rejected.
 - **Predictable files.** MP4 output, sanitized filenames with video IDs, existing-file checks, and cleanup after failed downloads.
 
-Built with [YouTube.js](https://github.com/LuanRT/YouTube.js). **Version 2.0.0** revives the project with a new interface and repaired video and playlist downloads.
-
-> MP3 support below is implemented in this development checkout and is not included in the published 2.0.0 package. Use the [development commands](#development-and-contributions) to try it before the next release.
+Built with [YouTube.js](https://github.com/LuanRT/YouTube.js). **Version 2.1.0** adds MP3 downloads for single videos and playlists, plus improved resolution matching.
 
 ## Get started
 

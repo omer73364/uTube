@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 — 2026-10-20
 
 - Add MP3 downloads for single videos and selected playlist items through `--audio` / `-a` and the interactive menu.
 - Convert audio to 192 kbps MP3 with title metadata using FFmpeg.
