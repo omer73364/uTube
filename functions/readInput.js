@@ -21,6 +21,7 @@ export const home = async () => {
       ...promptOptions, name: "action", type: "list", message: "What would you like to do?",
       choices: [
         { name: "↓  Download a video or playlist", value: "download" },
+        { name: "♫  Download audio (MP3)", value: "audio" },
         { name: "▣  Change download folder", value: "folder" },
         { name: "↗  Exit", value: "exit" },
       ],
@@ -47,7 +48,7 @@ export const askForURL = async () => {
 export const readArgs = async () => {
   const args = process.argv.slice(2);
   const values = {};
-  const flags = new Set(["-v", "--version", "-h", "--help", "--get-download-folder"]);
+  const flags = new Set(["-v", "--version", "-h", "--help", "--get-download-folder", "-a", "--audio"]);
   const valued = new Set(["-u", "-q", "--set-download-folder"]);
   for (let i = 0; i < args.length; i++) {
     const key = args[i];
@@ -59,12 +60,13 @@ export const readArgs = async () => {
   }
   if (values["-v"] || values["--version"]) { console.log(`uTube v${version}`); return null; }
   if (values["-h"] || values["--help"]) {
-    console.log(`Usage: utube [-u <YouTube URL>] [-q <quality>]
+    console.log(`Usage: utube [-u <YouTube URL>] [-q <quality>] [--audio]
 
 Run utube without arguments to open the interactive menu.
 
   -u <url>                     Video or playlist URL
   -q <quality>                 Quality, for example 720p
+  -a, --audio                  Download audio as MP3 (requires FFmpeg)
   -v, --version                Show version
   --set-download-folder <path> Remember a download folder
   --get-download-folder        Show download folder
@@ -80,14 +82,20 @@ Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
   }
   if (values["--get-download-folder"]) { console.log(getSetting("downloadFolder", process.cwd())); return null; }
   if (values["-q"] && !/^\d+p(?:\d+)?$/.test(values["-q"])) throw new Error("Quality must look like 360p or 720p.");
+  let audio = Boolean(values["-a"] || values["--audio"]);
+  if (audio && values["-q"]) throw new Error("-q selects video resolution. Omit it when using --audio.");
   const session = args.length === 0 && interactive();
   if (interactive()) welcome();
-  if (session && await home() === "exit") return null;
+  if (session) {
+    const action = await home();
+    if (action === "exit") return null;
+    audio = action === "audio";
+  }
   let url = values["-u"];
   if (!url) {
     if (!interactive()) throw new Error("Provide a YouTube URL with -u <url>.");
     url = await askForURL();
   }
   getVideoOrListID(url);
-  return { url, quality: values["-q"], session };
+  return { url, quality: values["-q"], audio, session };
 };

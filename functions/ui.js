@@ -77,7 +77,7 @@ export const banner = () => {
   if (!process.stdout.isTTY) { console.log(`  uTube v${version}\n`); return; }
   panel(`▶  uTube   /   v${version}`, [
     "Your next watch, ready to go.",
-    "", "VIDEOS  /  PLAYLISTS  /  MP4",
+    "", "VIDEOS  /  PLAYLISTS  /  MP3",
   ]);
   console.log(`  ${muted("↑ ↓ navigate   ↵ select   Ctrl+C exit")}\n`);
 };

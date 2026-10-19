@@ -21,8 +21,10 @@ import { failure, info, promptOptions } from "./functions/ui.js";
       const { again } = await inquirer.prompt([{
         ...promptOptions, name: "again", type: "confirm", message: "Back to the main menu?", default: true,
       }]);
-      if (!again || await home() === "exit") break;
-      args = { url: await askForURL(), session: true };
+      if (!again) break;
+      const action = await home();
+      if (action === "exit") break;
+      args = { url: await askForURL(), audio: action === "audio", session: true };
     } while (true);
     info("See you next time.");
   } catch (err) {
