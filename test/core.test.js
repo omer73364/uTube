@@ -50,3 +50,27 @@ test('cancelling metadata stops waiting even if the upstream request is stalled'
   controller.abort();
   await assert.rejects(pending, { name: 'AbortError' });
 });
+
+test('cancellation terminates an encoder that ignores SIGTERM and cleans its files', { skip: process.platform === 'win32', timeout: 10000 }, async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-encoder-cancel-'));
+  const executable = path.join(folder, 'fake-ffmpeg');
+  const marker = path.join(folder, 'started');
+  await fs.writeFile(executable, `#!/usr/bin/env node\nif(process.argv.includes('-version'))process.exit(0);\nprocess.on('SIGTERM',()=>{});\nrequire('node:fs').writeFileSync(${JSON.stringify(marker)},'ready');\nsetInterval(()=>{},1000);\n`, { mode: 0o755 });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 6000);
+  const interval = setInterval(() => { void fs.access(marker).then(() => { clearInterval(interval); controller.abort(); }).catch(() => {}); }, 20);
+  const engine = createDownloadEngine({ client: { getInfo: async () => info }, ffmpegPath: executable });
+  try {
+    await assert.rejects(engine.download({ folder, item: { id: 'encoding' }, audio: true, signal: controller.signal }), { name: 'AbortError' });
+    await fs.access(marker);
+    assert.equal((await fs.readdir(folder)).some((entry) => entry.startsWith('.utube-') || entry.endsWith('.mp3')), false);
+  } finally { clearInterval(interval); clearTimeout(timer); await fs.rm(folder, { recursive: true, force: true }); }
+});
+
+
+test('long Unicode titles stay within filesystem filename limits', async () => {
+  const { specialRemover } = await import('../packages/core/urls.js');
+  const name = specialRemover('تعز日本語🎧'.repeat(40));
+  assert.ok(Buffer.byteLength(name, 'utf8') <= 180);
+  assert.ok(!name.includes('�'));
+});

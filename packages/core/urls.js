@@ -1,5 +1,8 @@
 export const specialRemover = (title) => {
   let name = String(title || "video").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_").replace(/[. ]+$/g, "").slice(0, 150);
+  const characters = Array.from(name);
+  while (Buffer.byteLength(characters.join(""), "utf8") > 180) characters.pop();
+  name = characters.join("").replace(/[. ]+$/g, "");
   if (!name || /^\.+$/.test(name)) name = "video";
   if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(name)) name = `_${name}`;
   return name;
