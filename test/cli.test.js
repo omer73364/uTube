@@ -105,3 +105,34 @@ test('terminal output removes injected controls and piped transfers preserve err
   }), /transfer interrupted/);
 });
 
+test('playlist retrieval normalizes real lockup renderers across pages', async () => {
+  const { YTNodes } = await import('youtubei.js');
+  const { getListData } = await import('../functions/getData.js');
+  const lockup = new YTNodes.LockupView({
+    contentId: 'jNQXAC9IVRw', contentType: 'LOCKUP_CONTENT_TYPE_VIDEO',
+    metadata: { lockupMetadataViewModel: { title: { content: 'Me at the zoo' } } },
+  });
+  const shorts = new YTNodes.ShortsLockupView({
+    entityId: 'shorts-entity', onTap: { reelWatchEndpoint: { videoId: 'BaW_jenozKc' } },
+    overlayMetadata: { primaryText: { content: 'A short video' } },
+  });
+  const original = global.youtube;
+  global.youtube = { getPlaylist: async () => ({
+    info: { title: 'Mixed playlist' }, items: [lockup], has_continuation: true,
+    getContinuation: async () => ({
+      items: [shorts, { id: 'legacy', title: { toString: () => 'Legacy video' } },
+        { id: 'private', is_playable: false },
+        { content_id: 'PL123', content_type: 'PLAYLIST' }, { title: 'Deleted video' }],
+      has_continuation: false,
+    }),
+  }) };
+  try {
+    const data = await getListData('PL123');
+    assert.deepEqual(data.items, [
+      { id: 'jNQXAC9IVRw', title: 'Me at the zoo' },
+      { id: 'BaW_jenozKc', title: 'A short video' },
+      { id: 'legacy', title: 'Legacy video' },
+    ]);
+  } finally { global.youtube = original; }
+});
+
