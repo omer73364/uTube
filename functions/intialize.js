@@ -1,41 +1,15 @@
-import fs from "fs";
-import readline from "readline";
-import terminal from "terminal-kit";
-import cliProgress from "cli-progress";
-import { oraPromise } from "ora";
-import { Innertube, Utils } from "youtubei.js";
-import { Platform } from "youtubei.js";
-import { fileURLToPath } from "node:url";
 import { runInNewContext } from "node:vm";
-
-// YouTube.js requires an evaluator for its generated player decipher script.
-Platform.shim.eval = async (data) => runInNewContext(data.output, {}, { timeout: 5000 });
-
-export const initializeLocalVariables = async () => {
-  try {
-    global.fs = fs;
-    global.readline = readline;
-    global.logger = terminal.terminal;
-    global.packagePath = fileURLToPath(new URL("../", import.meta.url));
-  } catch (err) {
-    throw err;
-  }
-};
+import { task } from "./ui.js";
 
 export const initializeInternetVariables = async () => {
   try {
-    global.youtube = await oraPromise(
-      Innertube.create(),
-      "- Check internet connection.."
-    );
-    global.Utils = Utils;
-    global.progressBar = new cliProgress.SingleBar(
-      {
-        format:
-          "  - [uTube]: [{bar}] {percentage}% | ETA: {eta_formatted} | {value}/{total} ",
-      },
-      cliProgress.Presets.legacy
-    );
+    global.youtube = await task("Connecting to YouTube", async () => {
+      // Load the download engine only when needed, keeping local menus lightweight.
+      const { Innertube, Platform } = await import("youtubei.js");
+      // YouTube.js requires an evaluator for its generated player decipher script.
+      Platform.shim.eval = async (data) => runInNewContext(data.output, {}, { timeout: 5000 });
+      return Innertube.create();
+    });
   } catch (err) {
     throw new Error(`Could not initialize YouTube: ${err.message}`, { cause: err });
   }

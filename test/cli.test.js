@@ -44,7 +44,6 @@ test('download waits for completion, writes a safe filename, and cleans temporar
   process.env.XDG_CONFIG_HOME = dir;
   await fs.mkdir(path.join(dir, 'utube-cli'));
   await fs.writeFile(path.join(dir, 'utube-cli/settings.json'), JSON.stringify({ downloadFolder: dir }));
-  global.progressBar = { start() {}, update() {}, stop() {} };
   const info = {
     streaming_data: { formats: [{ url: 'https://example.com/video', itag: 18, has_video: true, has_audio: true, quality_label: '360p', mime_type: 'video/mp4' }] },
     download: async () => new ReadableStream({ start(controller) { controller.enqueue(Buffer.from('video data')); controller.close(); } }),
@@ -96,3 +95,13 @@ test('settings persist outside the installed package', async () => {
     await fs.rm(dir, { recursive: true, force: true });
   }
 });
+
+test('terminal output removes injected controls and piped transfers preserve errors', async () => {
+  const { text, transfer } = await import('../functions/ui.js');
+  assert.equal(text('\u001b[31mTitle\u001b[0m\nnext\u0007'), 'Title next ');
+  await assert.rejects(transfer('Test transfer', undefined, async (update) => {
+    update(1024);
+    throw new Error('transfer interrupted');
+  }), /transfer interrupted/);
+});
+
