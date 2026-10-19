@@ -1,89 +1,15 @@
+import { videoFormats, selectFormat, selectAudioFormat } from "../packages/core/formats.js";
+import { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../packages/core/streams.js";
+export { videoFormats, selectFormat, selectAudioFormat } from "../packages/core/formats.js";
+export { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../packages/core/streams.js";
 import fs from "node:fs";
 import path from "node:path";
-import { Readable, Transform } from "node:stream";
-import { pipeline } from "node:stream/promises";
 import { spawn } from "node:child_process";
 import inquirer from "inquirer";
 import { heading, details, info as note, success, warning, failure, task, transfer, text, interactive, promptOptions } from "./ui.js";
 import { getListData, getVideoData } from "./getData.js";
 import { availavleQualities, getSetting, getVideoOrListID, specialRemover } from "./heperFunctions.js";
 import { askForQuality } from "./readInput.js";
-
-export const videoFormats = (info) => [
-  ...(info.streaming_data?.formats || []),
-  ...(info.streaming_data?.adaptive_formats || []),
-].filter((format) => format.has_video && format.mime_type?.includes("video/mp4") && (format.url || format.signature_cipher || format.cipher));
-
-export const selectFormat = (info, quality) => {
-  const formats = videoFormats(info);
-  if (!formats.length) throw new Error(info.playability_status?.reason || "No downloadable MP4 formats available.");
-  const exact = formats.filter((format) => format.quality_label === quality);
-  const matching = exact.length ? exact : formats.filter((format) => parseInt(format.quality_label) === parseInt(quality));
-  // Preserve the documented 360p fallback, then use the lowest available quality.
-  const fallback = formats.filter((format) => format.quality_label === "360p");
-  const candidates = matching.length ? matching : fallback.length ? fallback : [...formats].sort((a, b) => a.height - b.height);
-  return candidates.find((format) => format.has_audio) || candidates[0];
-};
-
-export const saveStream = async (stream, filename, onProgress = () => {}) => {
-  let loaded = 0;
-  const progress = new Transform({ transform(chunk, encoding, callback) {
-    loaded += chunk.length;
-    onProgress(loaded);
-    callback(null, chunk);
-  } });
-  try {
-    await pipeline(Readable.fromWeb(stream), progress, fs.createWriteStream(filename));
-  } catch (error) {
-    await fs.promises.rm(filename, { force: true });
-    throw error;
-  }
-};
-
-export const streamStatus = (error) => error?.info?.response?.status;
-export const retryableStreamError = (error) => {
-  const status = streamStatus(error);
-  return [403, 408, 410, 429].includes(status) || status >= 500 ||
-    ["ECONNRESET", "ETIMEDOUT", "UND_ERR_SOCKET", "UND_ERR_CONNECT_TIMEOUT"].includes(error?.cause?.code || error?.code) ||
-    error?.message === "terminated";
-};
-
-export const downloadFormat = async (info, format) => {
-  const type = format.has_video ? (format.has_audio ? "video+audio" : "video") : "audio";
-  const total = Number(format.content_length);
-  if (!Number.isSafeInteger(total) || total <= 0) return info.download({ itag: format.itag, type });
-  // Buffer each small range before publishing it so a failed range can be retried
-  // without duplicating bytes already written to disk.
-  async function* chunks() {
-    const chunkSize = 256 * 1024;
-    for (let start = 0; start < total; start += chunkSize) {
-      const end = Math.min(start + chunkSize, total) - 1;
-      for (let attempt = 0; ; attempt++) {
-        try {
-          const stream = await info.download({ itag: format.itag, type, range: { start, end } });
-          const parts = [];
-          let received = 0;
-          for await (const part of stream) {
-            received += part.length;
-            if (received > end - start + 1) throw new Error("Server ignored the requested byte range.");
-            parts.push(part);
-          }
-          if (received !== end - start + 1) {
-            const error = new Error("Incomplete download range.");
-            error.code = "ECONNRESET";
-            throw error;
-          }
-          yield Buffer.concat(parts);
-          break;
-        } catch (error) {
-          if (attempt >= 1 || !retryableStreamError(error)) throw error;
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }
-      }
-    }
-  }
-  return Readable.toWeb(Readable.from(chunks()));
-};
 
 const ffmpeg = (args) => new Promise((resolve, reject) => {
   const child = spawn("ffmpeg", args, { stdio: ["ignore", "ignore", "pipe"] });
@@ -92,20 +18,6 @@ const ffmpeg = (args) => new Promise((resolve, reject) => {
   child.on("error", (err) => reject(new Error(err.code === "ENOENT" ? "This download requires FFmpeg. Install ffmpeg and try again." : err.message)));
   child.on("close", (code) => code === 0 ? resolve() : reject(new Error(`FFmpeg failed: ${detail}`)));
 });
-
-export const audioFormats = (info) => [
-  ...(info.streaming_data?.adaptive_formats || []),
-  ...(info.streaming_data?.formats || []),
-].filter((format) => format.has_audio && (format.url || format.signature_cipher || format.cipher));
-
-export const selectAudioFormat = (info) => {
-  const formats = audioFormats(info);
-  const audioOnly = formats.filter((format) => !format.has_video);
-  const original = audioOnly.filter((format) => format.is_original);
-  const candidates = original.length ? original : audioOnly.length ? audioOnly : formats;
-  if (!candidates.length) throw new Error(info.playability_status?.reason || "No downloadable audio formats available.");
-  return [...candidates].sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0];
-};
 
 const downloadVideoAttempt = async (item, listTitle, quality, suppliedInfo, audioOnly = false) => {
   const info = suppliedInfo || await getVideoData(item.id);

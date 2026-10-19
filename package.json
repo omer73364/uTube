@@ -48,6 +48,7 @@
     "index.js",
     "version.js",
     "functions/",
+    "packages/core/",
     "settings.json",
     "README.md",
     "CHANGELOG.md",

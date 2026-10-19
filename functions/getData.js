@@ -1,21 +1,4 @@
+import { getPlaylist } from "../packages/core/playlist.js";
+export { normalizePlaylistItem } from "../packages/core/playlist.js";
 export const getVideoData = async (id, client = "IOS") => youtube.getInfo(id, { client });
-
-// YouTube mixes legacy playlist renderers, lockups, and Shorts in the same feed.
-export const normalizePlaylistItem = (item) => {
-  if (item.is_playable === false) return null;
-  if (item.content_type && item.content_type !== "VIDEO") return null;
-  const id = item.id || item.content_id || item.on_tap_endpoint?.payload?.videoId;
-  if (!id) return null;
-  const title = item.title || item.metadata?.title || item.overlay_metadata?.primary_text;
-  return { id, title: String(title || id) };
-};
-export const getListData = async (id) => {
-  let page = await youtube.getPlaylist(id);
-  const info = page.info;
-  const items = [...page.items];
-  while (page.has_continuation) {
-    page = await page.getContinuation();
-    items.push(...page.items);
-  }
-  return { info, items: items.map(normalizePlaylistItem).filter(Boolean) };
-};
+export const getListData = async (id) => getPlaylist(youtube, id);
