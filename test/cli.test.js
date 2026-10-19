@@ -64,6 +64,9 @@ test('local CLI commands run offline and invalid arguments fail', () => {
   assert.match(run('--help').stdout, /Usage: utube/);
   assert.equal(run('-u').status, 1);
   assert.equal(run('--unknown').status, 1);
+  assert.match(run('--help').stdout, /--audio/);
+  assert.match(run('--audio', '-q', '720p').stderr, /Omit it when using --audio/);
+  assert.match(run('-a', '-q', '360p').stderr, /Omit it when using --audio/);
   assert.equal(run('-u', 'not-youtube').status, 1);
 });
 
