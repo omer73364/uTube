@@ -1,137 +1,88 @@
-# uTube-cli
+# uTube CLI
 
-## Revival in progress
+Download YouTube videos and playlists from an interactive terminal.
 
-This checkout is being repaired. Single-video downloads have been verified; broader playlist and platform testing is still in progress.
+**Version 2.0.0 brings uTube back** with a redesigned interface, repaired playlist support, and more resilient downloads. Built with [YouTube.js](https://github.com/LuanRT/YouTube.js).
 
-### uTube-cli is a command line tool to download YouTube videos and playlists.
+## Requirements
 
-![Web Page ScreenShot](https://i.ibb.co/VYw6ZST/Screenshot-from-2022-07-27-17-23-23.png)
+- Node.js 20 or newer.
+- [FFmpeg](https://ffmpeg.org/download.html) on your PATH for qualities that have separate video and audio streams.
+- An internet connection for downloads. Version, help, and folder settings work offline.
 
-It's a node package, so it's available for (Windows, Linux and Mac) operating systems, all you need is Node.js installed on your system.
+Live downloads have been checked on Linux. Windows and macOS still need broader testing. YouTube changes can affect availability and download reliability.
 
-> **Note**: uTube is built on [ YouTube.js ](https://github.com/LuanRT/YouTube.js) tool
+## Install or update
 
-## uTube 1.1.6 is here 🎉
+```sh
+npm install -g utube-cli@latest
+utube --version
+```
 
-### what's new?
+## Interactive mode
 
-- Manual updates through npm
-- Pass url and quality within command
-- Show downloading progress bar
-- Set default download folder
-- Bug fixes
+```sh
+utube
+```
 
-## Features
+Use the arrow keys and Enter to download a video or playlist, change the download folder, or exit. Paste a YouTube URL and choose a quality. Invalid URLs can be corrected in the prompt.
 
-- User friendly command line interface
-- Download single YouTube video
-- Download YouTube playlist
-- Download some videos of YouTube playlist
-- Playlists organized to folders by their names
+For playlists, download all videos or select individual entries with Space. Press `a` to toggle all and Enter to continue. After a download, return to the main menu to start another.
 
-## TODO
+The interface includes bordered panels, colored status messages, video/audio stages, transfer size, speed, and ETA when the size is available. Playlist summaries show saved, skipped, and failed items. Set `NO_COLOR=1` to disable app colors; piped output uses plain status lines.
 
-- [x] Support `-v` parameter to display tool version
-- [x] Support shorts
-- [x] support all youtube link formats
-- [x] support `-u` parameter to pass url directly
-- [x] support `-q` parameter to quality url directly
-- [x] Show downloading porgress bar
-- [x] Support setting downloading folder
-- [ ] Optional update notifications
-- [x] Support available MP4 qualities, including separate audio/video streams (requires FFmpeg)
-- [ ] Support downloading sounds (mp3 format)
+## Direct commands
 
-# Installation
+```sh
+utube -u "https://www.youtube.com/watch?v=jNQXAC9IVRw" -q 360p
+utube -u "https://www.youtube.com/playlist?list=PLAYLIST_ID"
+utube --set-download-folder "~/Downloads"
+utube --get-download-folder
+```
 
-Requires [Node.js](https://nodejs.org/en/) 20 or newer. Install [FFmpeg](https://ffmpeg.org/download.html) and ensure `ffmpeg` is on your PATH to download formats with separate video and audio streams.
+| Option | Description |
+| --- | --- |
+| `-u <url>` | Video or playlist URL |
+| `-q <quality>` | Requested quality, such as `360p` or `720p` |
+| `-v`, `--version` | Show version |
+| `--set-download-folder <path>` | Remember a download folder |
+| `--get-download-folder` | Show the current download folder |
+| `-h`, `--help` | Show help |
 
-For local development:
+Playlist selection requires an interactive terminal. For noninteractive single-video commands, provide both `-u` and `-q`.
+
+## Download behavior
+
+- Supports watch, short, embed, live, mobile, and shortened YouTube URLs.
+- Saves MP4 files with sanitized names and video IDs; existing files are skipped.
+- Groups playlist downloads into a folder named after the playlist.
+- Merges separate video and audio streams with FFmpeg.
+- Fetches streams in small byte ranges and retries interrupted ranges once.
+- Refreshes rejected links and tries an alternate YouTube client when needed. The fallback may offer a different resolution, such as 360p; the app reports the quality used.
+- Falls back to 360p when a requested quality is unavailable, then to the lowest available quality.
+- Cleans temporary files after download failures and continues with other selected playlist items.
+
+Restricted, private, or unavailable videos may still fail. MP3 extraction is not implemented.
+
+## Settings and upgrading from 1.x
+
+Version 2 requires Node.js 20 or newer and no longer updates itself at startup. Update manually with npm.
+
+Settings are stored in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json` by default. An existing package-local settings file is read as a fallback, but npm upgrades can replace it. Before upgrading, note your old download folder and set it again with `--set-download-folder` after installation.
+
+Downloaded filenames now include the video ID. Older filenames may not be recognized as existing downloads.
+
+## Development
 
 ```sh
 npm ci
 npm test
-npm start -- -u "https://www.youtube.com/watch?v=VIDEO_ID" -q 360p
+npm start
+npm start -- -u "https://www.youtube.com/watch?v=jNQXAC9IVRw" -q 360p
 ```
 
-The published npm package still contains the old release until a repaired version is published. Its installation command is:
-
-    npm install -g utube-cli
-
-# Updating
-
-If you have uTube installed you can update it this command:
-
-    npm update -g utube-cli
-
-# Arguments
-
-| Argument              | Description                                         | example                                   |
-| --------------------- | --------------------------------------------------- | ----------------------------------------- |
-| -v                    | show uTube version                                  | `utube -v`                                |
-| -u                    | pass video or playlist url                          | `utube -u [url]`                          |
-| -q                    | pass quality (falls back to 360p, then lowest available) | `utube -q 360p`                           |
-| --set-download-folder | set the default downloading path                    | `utube --set-download-folder ~/Downloads` |
-| --get-download-folder | get the downloading path                            | `utube --get-download-folder`             |
-
-# Usage
-
-uTube is very easy to use, just type `utube` on your terminal or cmd then you can use it.
-
-Here examples of uses:
-
-**- Download videos & playlists directly by passing url and quality:**
-
-    utube -u https://www.youtube.com/shorts/ZKgEye8waGE -q 360p
-
-**- Download videos & playlists by passing url then select quality manually:**
-
-    utube -u https://www.youtube.com/shorts/ZKgEye8waGE
-
-**- Download videos by 2 steps:**
-
-    utube
-
-1.  Paste the video URL.
-2.  Choose the quality.
-
-| ![enter image description here](https://i.ibb.co/Fx7qCgZ/Screenshot-from-2022-07-27-17-24-44.png) | ![enter image description here](https://i.ibb.co/cvYhyC9/Screenshot-from-2022-07-27-17-24-56.png) |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-
-**- Download playlists by 3 steps:**
-
-    utube
-
-1.  Paste the playlist URL.
-2.  Choose the quality.
-3.  Choose which videos will be downloaded.
-
-| ![enter image description here](https://i.ibb.co/Njcqm0z/Screenshot-from-2022-07-27-17-27-02.png) | ![enter image description here](https://i.ibb.co/P6tL6Mr/Screenshot-from-2022-07-27-17-27-22.png) |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-
-> **Note**: playlists will be downloaded to a folder with the playlist name.
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+See [CHANGELOG.md](CHANGELOG.md) for release notes. Pull requests are welcome; please open an issue before proposing a major change.
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
-
-## Settings and downloads
-
-Settings are saved in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json` by default. Existing package settings are read as a fallback. Local commands such as `-v` and `--get-download-folder` do not need internet access. Updates are manual.
-
-Downloads use sanitized filenames with video IDs. Existing files are skipped. Failed downloads clean up temporary files, and playlist failures are reported while remaining selected items continue. Available qualities depend on YouTube; audio extraction to MP3 is not implemented.
-
-## Interactive terminal
-
-Run `npm start` (or `utube` once installed) to open the main menu. Use the arrow keys and Enter to download a video or playlist, change the download folder, or exit. Invalid URLs can be corrected directly in the prompt. Quality choices list the highest resolution first.
-
-For playlists, download all items or choose individual videos with Space; press `a` to toggle all and Enter to continue. Each transfer shows video/audio stages, size, speed, and ETA when the size is available. A playlist summary shows saved, skipped, and failed items. After downloading, return to the menu to start another download.
-
-Direct `-u` and `-q` commands still work. Piped output uses plain status lines without animations; set `NO_COLOR=1` to disable the app’s colors.
-
-Stream downloads use small byte ranges and retry interrupted ranges once. If links are rejected or a connection keeps failing, uTube refreshes the video data and tries an alternate YouTube client. The alternate client may only offer a different resolution; uTube reports the actual quality used. Persistent server rejections show the HTTP status.
+[MIT](LICENSE)
