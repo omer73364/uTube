@@ -3,7 +3,9 @@
 ### # Stand With Palestine 🇵🇸
 ___
 
-## ⚠️ This project is not maintained anymore!
+## Revival in progress
+
+This checkout is being repaired. Single-video downloads have been verified; broader playlist and platform testing is still in progress.
 
 ### uTube-cli is a command line tool to download YouTube videos and playlists.
 
@@ -17,7 +19,7 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 
 ### what's new?
 
-- Auto update
+- Manual updates through npm
 - Pass url and quality within command
 - Show downloading progress bar
 - Set default download folder
@@ -40,13 +42,23 @@ It's a node package, so it's available for (Windows, Linux and Mac) operating sy
 - [x] support `-q` parameter to quality url directly
 - [x] Show downloading porgress bar
 - [x] Support setting downloading folder
-- [x] Auto Update package if new version available
-- [ ] Support 480p & 720p & 1080p
+- [ ] Optional update notifications
+- [x] Support available MP4 qualities, including separate audio/video streams (requires FFmpeg)
 - [ ] Support downloading sounds (mp3 format)
 
 # Installation
 
-Ensure that you have [Node.js](https://nodejs.org/en/) installed on your system, then you can install uTube using npm by this command:
+Requires [Node.js](https://nodejs.org/en/) 20 or newer. Install [FFmpeg](https://ffmpeg.org/download.html) and ensure `ffmpeg` is on your PATH to download formats with separate video and audio streams.
+
+For local development:
+
+```sh
+npm ci
+npm test
+npm start -- -u "https://www.youtube.com/watch?v=VIDEO_ID" -q 360p
+```
+
+The published npm package still contains the old release until a repaired version is published. Its installation command is:
 
     npm install -g utube-cli
 
@@ -62,7 +74,7 @@ If you have uTube installed you can update it this command:
 | --------------------- | --------------------------------------------------- | ----------------------------------------- |
 | -v                    | show uTube version                                  | `utube -v`                                |
 | -u                    | pass video or playlist url                          | `utube -u [url]`                          |
-| -q                    | pass quality (if not available will return to 360p) | `utube -q 360p`                           |
+| -q                    | pass quality (falls back to 360p, then lowest available) | `utube -q 360p`                           |
 | --set-download-folder | set the default downloading path                    | `utube --set-download-folder ~/Downloads` |
 | --get-download-folder | get the downloading path                            | `utube --get-download-folder`             |
 
@@ -110,3 +122,9 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## Settings and downloads
+
+Settings are saved in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json` by default. Existing package settings are read as a fallback. Local commands such as `-v` and `--get-download-folder` do not need internet access. Updates are manual.
+
+Downloads use sanitized filenames with video IDs. Existing files are skipped. Failed downloads clean up temporary files, and playlist failures are reported while remaining selected items continue. Available qualities depend on YouTube; audio extraction to MP3 is not implemented.
