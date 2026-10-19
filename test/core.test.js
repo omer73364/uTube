@@ -22,3 +22,31 @@ test('the core accepts explicit dependencies and emits serializable progress wit
     assert.equal(events[2].loaded, 5);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
+
+test('cancelling a transfer closes its stream, removes temporary files, and never retries', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-cancel-'));
+  const controller = new AbortController();
+  let cancelled = false;
+  let requests = 0;
+  const blocked = { ...info, download: async () => {
+    requests++;
+    return new ReadableStream({ start(c) { c.enqueue(Buffer.from('partial')); }, cancel() { cancelled = true; } });
+  } };
+  const engine = createDownloadEngine({ client: { getInfo: async () => blocked } });
+  try {
+    await assert.rejects(engine.download({ folder, item: { id: 'cancelled' }, quality: '360p', signal: controller.signal,
+      onEvent(event) { if (event.type === 'progress') controller.abort(); },
+    }), { name: 'AbortError' });
+    assert.equal(cancelled, true);
+    assert.equal(requests, 1);
+    assert.deepEqual(await fs.readdir(folder), []);
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
+
+test('cancelling metadata stops waiting even if the upstream request is stalled', async () => {
+  const controller = new AbortController();
+  const engine = createDownloadEngine({ client: { getInfo: () => new Promise(() => {}) } });
+  const pending = engine.inspect('https://youtu.be/jNQXAC9IVRw', { signal: controller.signal });
+  controller.abort();
+  await assert.rejects(pending, { name: 'AbortError' });
+});
