@@ -17,7 +17,8 @@ export const videoFormats = (info) => [
 export const selectFormat = (info, quality) => {
   const formats = videoFormats(info);
   if (!formats.length) throw new Error(info.playability_status?.reason || "No downloadable MP4 formats available.");
-  const matching = formats.filter((format) => format.quality_label === quality);
+  const exact = formats.filter((format) => format.quality_label === quality);
+  const matching = exact.length ? exact : formats.filter((format) => parseInt(format.quality_label) === parseInt(quality));
   // Preserve the documented 360p fallback, then use the lowest available quality.
   const fallback = formats.filter((format) => format.quality_label === "360p");
   const candidates = matching.length ? matching : fallback.length ? fallback : [...formats].sort((a, b) => a.height - b.height);
