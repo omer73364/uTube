@@ -92,7 +92,7 @@ const ffmpeg = (args) => new Promise((resolve, reject) => {
   child.on("close", (code) => code === 0 ? resolve() : reject(new Error(`FFmpeg failed: ${detail}`)));
 });
 
-export const downloadVideo = async (item, listTitle, quality, suppliedInfo) => {
+const downloadVideoAttempt = async (item, listTitle, quality, suppliedInfo) => {
   const info = suppliedInfo || await getVideoData(item.id);
   const format = selectFormat(info, quality);
   if (format.quality_label !== quality) warning(`Requested ${quality} unavailable; using ${format.quality_label}.`);
@@ -125,6 +125,22 @@ export const downloadVideo = async (item, listTitle, quality, suppliedInfo) => {
     return "saved";
   } finally {
     await fs.promises.rm(temp, { recursive: true, force: true });
+  }
+};
+
+export const downloadVideo = async (item, listTitle, quality, suppliedInfo) => {
+  for (const [attempt, client] of ["IOS", "IOS", "ANDROID"].entries()) {
+    try {
+      const info = attempt === 0 && suppliedInfo ? suppliedInfo : await getVideoData(item.id, client);
+      return await downloadVideoAttempt(item, listTitle, quality, info);
+    } catch (error) {
+      const status = streamStatus(error);
+      if (!retryableStreamError(error) || attempt === 2) {
+        if (status) throw new Error(`Download rejected (HTTP ${status}). Try again later or choose another quality.`, { cause: error });
+        throw error;
+      }
+      warning(`Stream ${status ? `returned HTTP ${status}` : "was interrupted"}; refreshing download links (${attempt + 1}/2).`);
+    }
   }
 };
 

@@ -1,4 +1,4 @@
-export const getVideoData = async (id) => youtube.getInfo(id, { client: "IOS" });
+export const getVideoData = async (id, client = "IOS") => youtube.getInfo(id, { client });
 
 // YouTube mixes legacy playlist renderers, lockups, and Shorts in the same feed.
 export const normalizePlaylistItem = (item) => {

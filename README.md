@@ -125,3 +125,5 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Settings are saved in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json` by default. Existing package settings are read as a fallback. Local commands such as `-v` and `--get-download-folder` do not need internet access. Updates are manual.
 
 Downloads use sanitized filenames with video IDs. Existing files are skipped. Failed downloads clean up temporary files, and playlist failures are reported while remaining selected items continue. Available qualities depend on YouTube; audio extraction to MP3 is not implemented.
+
+Stream downloads use small byte ranges and retry interrupted ranges once. If links are rejected or a connection keeps failing, uTube refreshes the video data and tries an alternate YouTube client. The alternate client may only offer a different resolution; uTube reports the actual quality used. Persistent server rejections show the HTTP status.
