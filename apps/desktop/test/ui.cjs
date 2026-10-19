@@ -1,0 +1,58 @@
+const { _electron: electron } = require('playwright');
+const { expect } = require('@playwright/test');
+const { execFileSync } = require('node:child_process');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const os = require('node:os');
+(async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-ui-test-'));
+  const prefs = path.join(root, 'prefs'); const folder = path.join(root, 'Downloads');
+  const media = path.join(root, 'fixture.mp4');
+  await fs.mkdir(prefs); await fs.mkdir(folder);
+  await fs.writeFile(path.join(prefs, 'settings.json'), JSON.stringify({ folder }));
+  execFileSync('ffmpeg', ['-v', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=640x360:r=10', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=1', '-t', '1', '-c:v', 'libx264', '-preset', 'ultrafast', '-c:a', 'aac', media]);
+  const env = { ...process.env, UTUBE_TEST_USER_DATA: prefs, UTUBE_TEST_MEDIA: media, UTUBE_TEST_DELAY: '800' }; delete env.ELECTRON_RUN_AS_NODE;
+  const args = [path.resolve(__dirname, '..')]; if (process.env.UTUBE_TEST_NO_SANDBOX === '1') args.unshift('--no-sandbox');
+  const app = await electron.launch({ executablePath: require('electron'), args, env });
+  try {
+    const page = await app.firstWindow(); const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await expect(page.getByRole('heading', { name: /Your next watch/ })).toBeVisible();
+    await expect(page.getByText('Ready to download')).toBeVisible();
+    await page.screenshot({ path: '/tmp/utube-desktop-home.png' });
+    await page.getByRole('textbox', { name: 'YouTube URL' }).fill('https://example.com/video');
+    await page.getByRole('button', { name: 'Find', exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText('YouTube');
+    await page.getByRole('textbox', { name: 'YouTube URL' }).fill('https://youtu.be/jNQXAC9IVRw');
+    await page.getByRole('button', { name: 'Find', exact: true }).click();
+    await expect(page.getByTestId('source-preview')).toContainText('A small moment');
+    await page.getByRole('button', { name: 'Download video', exact: true }).click();
+    await expect.poll(() => page.evaluate(async () => (await window.utube.jobs())[0]?.status), { timeout: 20000 }).toBe('saved');
+    await page.getByRole('button', { name: /Audio only/ }).click();
+    await page.getByRole('textbox', { name: 'YouTube URL' }).fill('https://www.youtube.com/playlist?list=PL123');
+    await page.getByRole('button', { name: 'Find', exact: true }).click();
+    await expect(page.getByText('2 selected')).toBeVisible();
+    await page.screenshot({ path: '/tmp/utube-desktop-playlist.png' });
+    await page.getByRole('button', { name: 'Deselect all' }).click();
+    await expect(page.getByRole('button', { name: 'Download 0 tracks' })).toBeDisabled();
+    await page.getByRole('button', { name: 'Select all', exact: true }).click();
+    await page.getByRole('button', { name: 'Download 2 tracks', exact: true }).click();
+    await expect.poll(() => page.evaluate(async () => (await window.utube.jobs()).filter(job => job.status === 'saved').length), { timeout: 20000 }).toBe(3);
+    await page.getByRole('button', { name: /^Queue/ }).click();
+    await expect(page.getByRole('heading', { name: 'One queue. More favorites.' })).toBeVisible();
+    await expect(page.getByTestId('job')).toHaveCount(3);
+    await page.screenshot({ path: '/tmp/utube-desktop-queue.png' });
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
+    await expect(page.getByText('FFmpeg is available')).toBeVisible();
+    await page.getByRole('button', { name: 'New download', exact: true }).click();
+    await page.setViewportSize({ width: 880, height: 740 });
+    await page.screenshot({ path: '/tmp/utube-desktop-narrow.png' });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    expect(errors).toEqual([]);
+    console.log('PASS: invalid URL, preview, MP4, playlist MP3s, selection controls, queue, settings, narrow layout.');
+  } finally {
+    const page = app.windows()[0];
+    if (page && !page.isClosed()) await page.evaluate(async () => { for (const job of await window.utube.jobs()) if (['queued', 'running'].includes(job.status)) await window.utube.cancel(job.id); }).catch(() => {});
+    await app.close(); await fs.rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+  }
+})().catch(error => { console.error(error); process.exitCode = 1; });
