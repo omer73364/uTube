@@ -2,9 +2,9 @@
 
 # uTube
 
-**YouTube downloads for your terminal and desktop.**
+**Build your offline collection.**
 
-Videos, playlists, and MP3s — with quality selection, automatic recovery, and files saved on your device.
+Save a tutorial for later, keep a playlist together, or take your favorite tracks offline. Choose what matters to you; uTube takes care of the download.
 
 [![npm](https://img.shields.io/npm/v/utube-cli?style=flat-square&color=3769d6)](https://www.npmjs.com/package/utube-cli)
 [![License: MIT](https://img.shields.io/badge/license-MIT-64748b?style=flat-square)](LICENSE)
@@ -14,21 +14,28 @@ Videos, playlists, and MP3s — with quality selection, automatic recovery, and 
 
 </div>
 
-## Choose your interface
+## Make room for your favorites
 
-|                  | CLI                                            | Desktop                                                    |
-| :--------------- | :--------------------------------------------- | :--------------------------------------------------------- |
-| **Workflow**     | Guided terminal menu or command-line arguments | Video previews, playlist selection, and a searchable queue |
-| **Get started**  | `npm install -g utube-cli@latest`              | Run from this repository                                   |
-| **Requirements** | Node.js 20+                                    | Node.js 22.13+ and npm 10.9+ for development               |
-| **Preferences**  | Remember your download folder                  | Remember your folder, theme, and language                  |
-| **History**      | Progress and summaries for the current command | Videos and playlist downloads saved across restarts        |
-| **Language**     | English                                        | English and العربية, with right-to-left support            |
+**Keep the video. Or just the audio.** Save MP4 videos in your preferred quality, or turn a video or playlist into 192 kbps MP3s.
 
-Both interfaces download MP4 videos and 192 kbps MP3 audio using the same engine, built on [YouTube.js](https://github.com/LuanRT/YouTube.js).
+**Bring the whole playlist.** Download every item or choose a few. Playlist downloads stay together in their own folder.
+
+**Find it again.** The desktop remembers your downloads after you close it. Search your history and open a saved file straight from the app.
+
+### Desktop, at your pace
+
+Preview a video, choose your quality, and follow your downloads in one place. Make it yours with light and dark themes, English or Arabic, and a layout that feels natural in either language.
+
+[Explore the desktop preview ↓](#desktop)
+
+### Terminal, on your terms
+
+Follow the guided menu, or use a command when you already know what you want. Download videos, select playlist items, and save MP3s without leaving your terminal.
+
+[Install the CLI ↓](#cli)
 
 > [!NOTE]
-> Desktop is a **local preview**, run from source. This README describes the current repository; the [changelog](CHANGELOG.md) lists unreleased improvements that may not be in the published npm CLI yet.
+> The CLI is available on npm. Desktop is currently a source preview; public installers are not available yet. See the [installer plan](docs/distribution.md) for the proposed downloads. This README describes the current repository; the [changelog](CHANGELOG.md) lists improvements that may not be in the published CLI yet.
 
 ## CLI
 
@@ -120,15 +127,11 @@ npm run desktop
 
 ### Made for everyday downloads
 
-| Feature                | What it does                                                                             |
-| :--------------------- | :--------------------------------------------------------------------------------------- |
-| **Saved history**      | Keeps videos, playlist names, dates, status, quality, and file locations after closing   |
-| **Search and filters** | Finds videos or playlists by name; filters active, completed, and attention-needed items |
-| **File actions**       | Opens a completed file in your default media app, or reveals it in its containing folder |
-| **Appearance**         | Light, dark, or system mode, with a quick theme toggle                                   |
-| **Languages**          | English and Arabic, including a mirrored RTL layout and readable URLs and paths          |
-| **Saved preferences**  | Remembers your download folder, theme, and language                                      |
-| **Keyboard shortcut**  | `Ctrl+L` / `⌘+L` returns to the link input, including with an Arabic keyboard layout     |
+- **Your collection stays with you.** Videos, playlist names, dates, quality, and file locations survive app restarts.
+- **Less searching, more watching.** Search by video or playlist name, filter by status, then open the file or its folder.
+- **A familiar workspace.** Your folder, language, and theme are remembered. Choose light, dark, or system appearance.
+- **Comfortable in Arabic and English.** Arabic has a mirrored right-to-left layout, while links and file paths stay readable.
+- **One shortcut to the next download.** `Ctrl+L` / `⌘+L` focuses the link input, including with an Arabic keyboard layout.
 
 <details>
 <summary><strong>Arabic · Dark mode</strong></summary>
@@ -143,7 +146,7 @@ The queue is stored locally in `downloads.json` inside the application's user-da
 
 Unfinished downloads return as **Interrupted** and wait for you to select **Retry**. Retries start from the beginning; opening the app does not automatically start transfers. The queue allows up to 500 unfinished downloads, while completed history is retained separately from that limit.
 
-See the [desktop guide](apps/desktop/README.md) for storage details, adding languages, testing, and local Linux packages.
+See the [desktop guide](apps/desktop/README.md) for storage details, adding languages, testing, and local Linux packages. The [distribution plan](docs/distribution.md) covers proposed ready-to-install downloads.
 
 ## Download behavior
 
