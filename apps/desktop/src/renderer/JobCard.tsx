@@ -51,7 +51,10 @@ export default function JobCard({
                 ? "Download failed"
                 : stages[job.stage || ""] || "Preparing download";
   return (
-    <article className={`job ${complete ? "job-done" : ""}`} data-testid="job">
+    <article
+      className={`job job-${job.status} ${complete ? "job-done" : ""}`}
+      data-testid="job"
+    >
       <div className={`job-icon ${job.audio ? "audio" : ""}`}>
         {job.audio ? <AudioLines size={20} /> : <Film size={20} />}
       </div>
@@ -106,6 +109,7 @@ export default function JobCard({
           <button
             className="icon-button"
             aria-label={`Cancel ${job.title}`}
+            title="Cancel download"
             disabled={job.status === "cancelling"}
             onClick={() => action(window.utube.cancel(job.id))}
           >
@@ -116,6 +120,7 @@ export default function JobCard({
           <button
             className="icon-button"
             aria-label={`Retry ${job.title}`}
+            title="Retry download"
             onClick={() => action(window.utube.retry(job.id))}
           >
             <RotateCcw size={17} />
@@ -125,6 +130,7 @@ export default function JobCard({
           <button
             className="icon-button"
             aria-label={`Show ${job.title} in folder`}
+            title="Show in folder"
             onClick={() => action(window.utube.openFolder(job.id))}
           >
             <FolderOpen size={17} />
