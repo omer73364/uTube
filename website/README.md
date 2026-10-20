@@ -1,5 +1,7 @@
 # uTube website
 
+Live: **[omer73364.github.io/uTube](https://omer73364.github.io/uTube/)**
+
 A static English/Arabic product and download page, with real desktop screenshots, system-aware platform selection, saved appearance/language, keyboard-accessible download tabs, and a copyable CLI installation command.
 
 ## Preview locally
@@ -26,7 +28,9 @@ npm run site:build
 
 Serve the contents of `website/dist/` through any static host. Assets use relative paths, so the same build works at a domain root or a GitHub Pages project path such as `/uTube/`. No API keys, server, external fonts, or analytics are included. JavaScript enables language switching, platform selection, appearance, and copy; the no-script message links directly to GitHub Releases.
 
-GitHub Pages is the intended public host. Publishing is separate from local development; no deployment workflow is enabled in this change.
+The [Website on GitHub Pages workflow](../.github/workflows/website-pages.yml) builds and deploys `website/dist/` when website source, screenshots, the app icon, or the build script changes on `main`. It can also be started manually from GitHub Actions. Local preview commands do not publish.
+
+Repository Pages settings use **GitHub Actions** as the publishing source. The `github-pages` environment records deployments. Build jobs only need Node.js; dependency installation is unnecessary.
 
 ## Update a release
 

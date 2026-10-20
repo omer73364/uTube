@@ -10,7 +10,7 @@ Save a tutorial for later, keep a playlist together, or take your favorite track
 [![License: MIT](https://img.shields.io/badge/license-MIT-64748b?style=flat-square)](LICENSE)
 [![Desktop: preview](https://img.shields.io/badge/desktop-preview-3769d6?style=flat-square)](#desktop)
 
-[CLI](#cli) · [Desktop](#desktop) · [Download behavior](#download-behavior) · [Development](#development) · [Troubleshooting](#troubleshooting)
+[Website](https://omer73364.github.io/uTube/) · [CLI](#cli) · [Desktop](#desktop) · [Download behavior](#download-behavior) · [Development](#development) · [Troubleshooting](#troubleshooting)
 
 </div>
 
@@ -188,9 +188,9 @@ Names are sanitized, and video IDs distinguish videos with identical titles. MP3
 
 ## Website
 
-The [project website](website/README.md) introduces the desktop and CLI with English/Arabic content, light/dark appearance, real app previews, and platform-specific installer links.
+Visit **[omer73364.github.io/uTube](https://omer73364.github.io/uTube/)** for desktop downloads, the CLI install command, and English/Arabic app information.
 
-Preview it locally with `npm run site:preview`, or generate a static build with `npm run site:build`. Public hosting is a separate step.
+The site is hosted on GitHub Pages and updates automatically when website changes reach `main`. Preview it locally with `npm run site:preview`, or build it with `npm run site:build`. See the [website guide](website/README.md) for browser checks and publishing details.
 
 ## Development
 

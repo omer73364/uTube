@@ -49,4 +49,4 @@ Release steps: keep root, desktop, lockfile, and `version.js` versions aligned; 
 
 ## Project website
 
-A small English/Arabic download page is the next proposed step. It should show real screenshots, explain platform requirements, link to tested GitHub Release assets, and include the CLI installation command. Keep it in this repository and host it as a static site; account systems and server-side video processing are unnecessary.
+The [uTube website](https://omer73364.github.io/uTube/) provides English/Arabic app information, platform-specific desktop downloads, installation requirements, and the CLI install command. Its source lives in `website/` and deploys to GitHub Pages when website changes reach `main`. See the [website guide](../website/README.md) for local previews and browser checks.
