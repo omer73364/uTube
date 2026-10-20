@@ -228,7 +228,15 @@ YouTube changes can still break downloads. If a problem persists, [open an issue
 
 See the [changelog](CHANGELOG.md) for the full release history.
 
+## 🖥️ Desktop preview
+
+The repository now includes a local desktop app with video previews, playlist selection, MP4 and MP3 downloads, and a queue with cancellation and retry controls.
+
+With Node.js 22.13+ and npm 10.9+, run `npm ci` followed by `npm run desktop`. Install FFmpeg for MP3 conversion and video/audio merging. See the [desktop guide](apps/desktop/README.md) for testing, local Linux packages, and preview limitations.
+
 ## 🛠️ Development
+
+Repository development uses Node.js 22.13+ and npm 10.9+ for desktop tooling. The published CLI continues to support Node.js 20+.
 
 ```sh
 git clone https://github.com/omer73364/uTube.git

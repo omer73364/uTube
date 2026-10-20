@@ -1,0 +1,37 @@
+# uTube Desktop
+
+A local desktop preview built with Electron, React, and the shared uTube download engine. Paste a video or playlist URL, choose MP4 or MP3, select playlist items, and follow downloads in the queue. Failed and cancelled jobs can be retried.
+
+## Development
+
+Use Node.js 22.13 or newer and npm 10.9 or newer for desktop tooling. Install FFmpeg and FFprobe on your PATH for audio conversion, merging, and media tests. The published CLI still supports Node.js 20.
+
+Run these commands from the repository root:
+
+```sh
+npm ci
+npm run desktop
+```
+
+The renderer has no Node.js access. A narrow preload API connects it to the main process; YouTube requests and conversions run in a separate utility process.
+
+## Checks
+
+```sh
+npm test
+npm run desktop:check
+npm run desktop:package
+npm run desktop:test
+```
+
+The desktop tests require a graphical session and FFmpeg/FFprobe. They use generated media and temporary settings to verify previews, playlist selection, MP4/MP3 downloads, failures, retries, cancellation, and shutdown. Package first so the tests can load the built application. On restricted development hosts that cannot start Chromium's sandbox, tests accept `UTUBE_TEST_NO_SANDBOX=1`; normal application startup keeps its sandbox enabled.
+
+## Local packages
+
+```sh
+npm run desktop:make
+```
+
+Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian packaging needs `dpkg` and `fakeroot`. Nothing is uploaded by this command. FFmpeg remains a system dependency.
+
+This preview has no persistent download history, pause/resume, or automatic updates. Windows and macOS packages have not been verified. The desktop package is private and does not change the public CLI version.
