@@ -3,6 +3,26 @@ import assert from 'node:assert/strict';
 import { DownloadQueue } from '../apps/desktop/src/main/queue.mjs';
 
 const tick = () => new Promise((resolve) => setImmediate(resolve));
+test('restored unfinished work waits for manual retry and keeps its playlist metadata', async () => {
+  const calls = [];
+  const queue = new DownloadQueue(async (job) => { calls.push(job); return { status: 'saved', path: '/tmp/saved.mp4' }; });
+  queue.restore(['queued', 'running', 'cancelling', 'saved', 'failed'].map((status, index) => ({ id: String(index), status, title: 'Saved video', playlistTitle: 'Playlist', createdAt: 123 })));
+  assert.deepEqual(calls, []);
+  assert.deepEqual(queue.snapshot().map((job) => job.status), ['cancelled', 'cancelled', 'cancelled', 'saved', 'failed']);
+  assert.ok(queue.snapshot().slice(0, 3).every((job) => job.interrupted));
+  queue.retry('1'); await tick();
+  assert.equal(calls[0].playlistTitle, 'Playlist');
+  assert.equal(queue.snapshot()[1].status, 'saved');
+  assert.equal(queue.snapshot()[1].interrupted, false);
+});
+
+test('saved history does not use up the unfinished-download limit', async () => {
+  const queue = new DownloadQueue(async () => ({ status: 'saved', path: '/tmp/file.mp4' }));
+  queue.restore(Array.from({ length: 501 }, (_, i) => ({ id: String(i), status: 'saved' })));
+  assert.doesNotThrow(() => queue.add([{ videoId: 'new' }]));
+  await tick();
+  assert.equal(queue.snapshot().length, 502);
+});
 test('automatic fallbacks stay silent while the same queue job succeeds', async () => {
   const snapshots = [];
   const queue = new DownloadQueue(async (job, { onEvent }) => {

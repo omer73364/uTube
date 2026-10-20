@@ -12,10 +12,17 @@ export class DownloadQueue {
   constructor(run, notify = () => {}) { this.run = run; this.notify = notify; }
   snapshot() { return this.#jobs.map(({ controller, ...job }) => ({ ...job })); }
   #emit() { this.notify(this.snapshot()); }
+  restore(jobs) {
+    if (this.#jobs.length || this.#active || this.#closed) throw new Error('History can only be restored to a new queue.');
+    this.#jobs = jobs.map((job) => ['queued', 'running', 'cancelling'].includes(job.status)
+      ? { ...job, status: 'cancelled', interrupted: true, loaded: 0, total: undefined, stage: undefined, speed: undefined, eta: undefined }
+      : { ...job, loaded: 0 });
+    this.#emit();
+  }
   add(items) {
     if (this.#closed) throw new Error('The download queue is shutting down.');
-    if (this.#jobs.length + items.length > 500) throw new Error('This session is limited to 500 queued items.');
-    const jobs = items.map((item) => ({ ...item, id: randomUUID(), status: 'queued', loaded: 0 }));
+    if (this.#jobs.filter((job) => ['queued', 'running', 'cancelling'].includes(job.status)).length + items.length > 500) throw new Error('The queue is limited to 500 unfinished downloads.');
+    const jobs = items.map((item) => ({ ...item, id: randomUUID(), status: 'queued', loaded: 0, createdAt: Date.now() }));
     this.#jobs.push(...jobs);
     this.#emit();
     this.#pump();
@@ -32,13 +39,13 @@ export class DownloadQueue {
     if (this.#closed) throw new Error('The download queue is shutting down.');
     const job = this.#jobs.find((item) => item.id === id);
     if (!job || !['failed', 'cancelled'].includes(job.status)) throw new Error('Only failed or cancelled downloads can be retried.');
-    Object.assign(job, { status: 'queued', error: undefined, note: undefined, stage: undefined, loaded: 0, total: undefined });
+    Object.assign(job, { status: 'queued', interrupted: false, error: undefined, note: undefined, stage: undefined, loaded: 0, total: undefined, actualQuality: undefined, completedAt: undefined, speed: undefined, eta: undefined });
     this.#emit(); this.#pump();
   }
   hasPending() { return this.#jobs.some((job) => ['queued', 'running', 'cancelling'].includes(job.status)); }
   async shutdown() {
     this.#closed = true;
-    for (const job of this.#jobs) if (['queued', 'running'].includes(job.status)) this.cancel(job.id);
+    for (const job of this.#jobs) if (['queued', 'running'].includes(job.status)) { job.interrupted = true; this.cancel(job.id); }
     await this.#idle;
   }
   whenIdle() { return this.#idle; }
@@ -69,7 +76,7 @@ export class DownloadQueue {
             this.#emit();
           },
         });
-        Object.assign(job, { status: result.status, path: result.path });
+        Object.assign(job, { status: result.status, path: result.path, completedAt: Date.now() });
       } catch (error) {
         job.status = job.controller.signal.aborted || error.name === 'AbortError' ? 'cancelled' : 'failed';
         job.error = job.status === 'failed' ? error.message : undefined;
