@@ -108,13 +108,21 @@ test('audio mode survives client fallback and extracts MP3 from a combined strea
   const rejected = mockInfo([audio], {});
   rejected.download = async () => { const error = new Error('rejected'); error.info = { response: { status: 403 } }; throw error; };
   setYouTubeClient({ getInfo: async (id, { client }) => { clients.push(client); return client === 'ANDROID' ? good : rejected; } });
+  const output = [];
+  const originalLog = console.log;
+  console.log = (...args) => output.push(args.join(' '));
   try {
     await downloadVideo({ id: 'fallback', title: 'Fallback audio' }, undefined, undefined, rejected, true);
     assert.deepEqual(clients, ['IOS', 'ANDROID']);
     const result = probe(path.join(root, 'Fallback audio [fallback].mp3'));
     assert.equal(result.streams.length, 1);
     assert.equal(result.streams[0].codec_name, 'mp3');
-  } finally { setYouTubeClient(original); }
+    const text = output.join('\n');
+    assert.equal((text.match(/Downloading audio/g) || []).length, 1);
+    assert.equal((text.match(/Save to/g) || []).length, 1);
+    assert.doesNotMatch(text, /refreshing download links|HTTP 403/);
+    assert.match(text, /Saved:/);
+  } finally { console.log = originalLog; setYouTubeClient(original); }
 });
 
 test('missing FFmpeg fails audio mode before any media is downloaded', { skip: !available }, async () => {

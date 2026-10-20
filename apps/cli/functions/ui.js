@@ -90,8 +90,8 @@ export const task = async (label, work) => {
   catch (error) { spinner.stop(); throw error; }
 };
 
-export const createTransferDisplay = (label, total) => {
-  if (!interactive()) { info(label); return { update() {}, stop() {} }; }
+export const createTransferDisplay = (label, total, { quiet = false } = {}) => {
+  if (!interactive()) { if (!quiet) info(label); return { update() {}, stop() {} }; }
   let loaded = 0;
   const started = Date.now();
   const known = Number.isFinite(total) && total > 0;
@@ -104,7 +104,7 @@ export const createTransferDisplay = (label, total) => {
     barCompleteChar: "█", barIncompleteChar: "░",
   }) : null;
   const spinner = !known ? ora({ text: label, color: "cyan" }).start() : null;
-  if (bar) { info(label); bar.start(total, 0, { amount: `0 B / ${bytes(total)}`, speed: "—" }); }
+  if (bar) { if (!quiet) info(label); bar.start(total, 0, { amount: `0 B / ${bytes(total)}`, speed: "—" }); }
   return {
     update(value) {
       loaded = value;

@@ -11,22 +11,32 @@ export { saveStream, downloadFormat, streamStatus, retryableStreamError } from "
 
 export const downloadVideo = async (item, playlistTitle, quality, info, audio = false) => {
   let display;
+  let started = false;
+  let formatWarning;
+  const shownStages = new Set();
   const stages = { video: "Downloading video", audio: "Downloading audio", merging: "Merging video and audio", converting: "Converting to MP3" };
   try {
     const result = await getEngine().download({
       item, playlistTitle, quality, info, audio, folder: path.resolve(getSetting("downloadFolder", process.cwd())),
       onEvent(event) {
         if (event.type === "start") {
+          if (started) return;
+          started = true;
           heading(event.title);
           details([["Format", event.format === "mp3" ? "MP3 · 192 kbps" : "MP4"], ...(event.quality ? [["Quality", event.quality]] : []), ["Save to", event.folder]]);
         } else if (event.type === "stage") {
           display?.stop();
-          if (["video", "audio"].includes(event.stage)) display = createTransferDisplay(stages[event.stage], event.total);
+          if (["video", "audio"].includes(event.stage)) {
+            display = createTransferDisplay(stages[event.stage], event.total, { quiet: shownStages.has(event.stage) });
+            shownStages.add(event.stage);
+          }
           else { display = undefined; note(stages[event.stage]); }
         } else if (event.type === "progress") display?.update(event.loaded);
-        else if (event.type === "retry" || event.type === "warning") { display?.stop(); display = undefined; warning(event.message); }
+        else if (event.type === "retry") { display?.stop(); display = undefined; formatWarning = undefined; }
+        else if (event.type === "warning") formatWarning = event.message;
         else if (event.type === "saved" || event.type === "skipped") {
           display?.stop(); display = undefined;
+          if (event.type === "saved" && formatWarning) warning(formatWarning);
           if (event.type === "saved") success(`Saved: ${event.path}`); else note(`Already downloaded: ${event.path}`);
         }
       },
