@@ -36,10 +36,10 @@ export const downloadFormat = async (info, format, signal) => {
   // Buffer each small range before publishing it so a failed range can be retried
   // without duplicating bytes already written to disk.
   async function* chunks() {
-    const chunkSize = 256 * 1024;
+    let chunkSize = 256 * 1024;
     for (let start = 0; start < total; start += chunkSize) {
       checkAbort(signal);
-      const end = Math.min(start + chunkSize, total) - 1;
+      let end = Math.min(start + chunkSize, total) - 1;
       for (let attempt = 0; ; attempt++) {
         try {
           const stream = await withAbort(info.download({ itag: format.itag, type, range: { start, end } }), signal);
@@ -63,6 +63,15 @@ export const downloadFormat = async (info, format, signal) => {
           break;
         } catch (error) {
           checkAbort(signal);
+          // Some adaptive streams reject larger ranges even though smaller
+          // requests at the same offset work. Keep the chosen HD format and
+          // retry that unpublished range before changing clients.
+          if (streamStatus(error) === 403 && end - start + 1 > 64 * 1024) {
+            chunkSize /= 2;
+            end = Math.min(start + chunkSize, total) - 1;
+            attempt = -1;
+            continue;
+          }
           if (attempt >= 1 || !retryableStreamError(error)) throw error;
           await delay(500, undefined, { signal });
         }

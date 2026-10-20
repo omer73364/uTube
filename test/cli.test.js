@@ -22,12 +22,13 @@ test('filenames cannot escape the destination and support Windows reserved names
   assert.equal(specialRemover('..'), 'video');
   assert.equal(specialRemover('CON'), '_CON');
 });
-test('selects requested quality and falls back without recursion', () => {
+test('selects requested quality without silently downgrading', () => {
   const low = { url: 'https://example.com/video', itag: 18, has_video: true, has_audio: true, quality_label: '360p', mime_type: 'video/mp4', height: 360 };
   const high = { ...low, itag: 137, has_audio: false, quality_label: '1080p', height: 1080 };
   const info = { streaming_data: { formats: [low], adaptive_formats: [high] } };
   assert.equal(selectFormat(info, '1080p'), high);
-  assert.equal(selectFormat(info, '720p'), low);
+  assert.throws(() => selectFormat(info, '720p'), /Requested 720p is unavailable/);
+  assert.equal(selectFormat(info), low);
   assert.throws(() => selectFormat({}, '360p'), /No downloadable/);
 });
 test('failed streams remove partial files', async () => {
@@ -186,4 +187,24 @@ test('permanent HTTP errors are not retried', async () => {
   const stream = await downloadFormat(info, { itag: 140, has_audio: true, content_length: 5 });
   await assert.rejects(async () => { for await (const _ of stream) {} }, /rejected/);
   assert.equal(calls, 1);
+});
+
+test('HD streams shrink rejected ranges without changing format or duplicating bytes', async () => {
+  const { downloadFormat } = await import('../packages/core/streams.js');
+  const bytes = Buffer.alloc(800000, 7);
+  const calls = [];
+  const info = { download: async ({ itag, range }) => {
+    calls.push({ itag, ...range });
+    if (range.start >= 262144 && range.end - range.start + 1 > 65536) {
+      const error = new Error('range rejected');
+      error.info = { response: { status: 403 } };
+      throw error;
+    }
+    return new ReadableStream({ start(c) { c.enqueue(bytes.subarray(range.start, range.end + 1)); c.close(); } });
+  } };
+  const chunks = [];
+  for await (const chunk of await downloadFormat(info, { itag: 137, has_video: true, content_length: bytes.length })) chunks.push(chunk);
+  assert.deepEqual(Buffer.concat(chunks), bytes);
+  assert.ok(calls.every((call) => call.itag === 137));
+  assert.ok(calls.some((call) => call.start === 262144 && call.end === 327679));
 });
