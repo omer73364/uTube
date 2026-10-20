@@ -7,6 +7,7 @@ async function invoke(channel: string, ...args: unknown[]) {
 }
 const api: DesktopAPI = {
   settings: () => invoke('utube:settings'),
+  preferences: (patch) => invoke('utube:preferences', patch),
   chooseFolder: () => invoke('utube:choose-folder'),
   inspect: (url) => invoke('utube:inspect', url),
   enqueue: (request) => invoke('utube:enqueue', request),
@@ -14,6 +15,7 @@ const api: DesktopAPI = {
   cancel: (id) => invoke('utube:cancel', id),
   retry: (id) => invoke('utube:retry', id),
   openFolder: (id) => invoke('utube:open-folder', id),
+  openFile: (id) => invoke('utube:open-file', id),
   onJobs: (listener) => {
     const handler = (_event: unknown, jobs: Job[]) => listener(jobs);
     ipcRenderer.on('utube:jobs-changed', handler);

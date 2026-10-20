@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell, nativeTheme } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { execFile } from 'node:child_process';
@@ -6,7 +6,8 @@ import { promisify } from 'node:util';
 import { WorkerBridge } from './bridge';
 import { DownloadQueue } from './queue.mjs';
 import { validateURL, validateRequest, validateJobID } from './validation.mjs';
-import type { DownloadRequest, Job } from '../shared';
+import type { DownloadRequest, Job, Preferences } from '../shared';
+import { translator, languages } from '../locales';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
@@ -14,6 +15,8 @@ app.setName('uTube Desktop');
 if (!app.isPackaged && process.env.UTUBE_TEST_USER_DATA) app.setPath('userData', process.env.UTUBE_TEST_USER_DATA);
 let window: BrowserWindow;
 let folder: string;
+let preferences: Preferences = { theme: 'system', language: 'en' };
+let writes = Promise.resolve();
 let closing = false;
 const bridge = new WorkerBridge();
 const queue = new DownloadQueue(
@@ -21,12 +24,19 @@ const queue = new DownloadQueue(
   (jobs: unknown) => { if (window && !window.isDestroyed()) window.webContents.send('utube:jobs-changed', jobs); },
 );
 const prefsFile = () => path.join(app.getPath('userData'), 'settings.json');
-async function saveFolder(value: string) {
-  await fs.mkdir(app.getPath('userData'), { recursive: true });
-  const temporary = `${prefsFile()}.tmp`;
-  await fs.writeFile(temporary, JSON.stringify({ folder: value }));
-  await fs.rename(temporary, prefsFile());
-  folder = value;
+function saveSettings(patch: Partial<Preferences> & { folder?: string }) {
+  const pending = writes.then(async () => {
+    const next = { folder, ...preferences, ...patch };
+    await fs.mkdir(app.getPath('userData'), { recursive: true });
+    const temporary = `${prefsFile()}.tmp`;
+    await fs.writeFile(temporary, JSON.stringify(next));
+    await fs.rename(temporary, prefsFile());
+    folder = next.folder;
+    preferences = { theme: next.theme, language: next.language };
+    nativeTheme.themeSource = preferences.theme;
+  });
+  writes = pending.catch(() => {});
+  return pending;
 }
 async function hasFFmpeg() {
   try { await promisify(execFile)(process.env.UTUBE_FFMPEG || 'ffmpeg', ['-version'], { timeout: 5000 }); return true; }
@@ -41,9 +51,15 @@ function handle(name: string, fn: (...args: any[]) => any) {
 }
 async function createWindow() {
   folder = app.getPath('downloads');
-  try { const stored = JSON.parse(await fs.readFile(prefsFile(), 'utf8')); if (typeof stored.folder === 'string' && path.isAbsolute(stored.folder)) folder = stored.folder; } catch { /* First launch uses Downloads. */ }
+  try {
+    const stored = JSON.parse(await fs.readFile(prefsFile(), 'utf8'));
+    if (typeof stored.folder === 'string' && path.isAbsolute(stored.folder)) folder = stored.folder;
+    if (['light', 'dark', 'system'].includes(stored.theme)) preferences.theme = stored.theme;
+    if (languages.some((item) => item.code === stored.language)) preferences.language = stored.language;
+  } catch { /* First launch uses defaults. */ }
+  nativeTheme.themeSource = preferences.theme;
   window = new BrowserWindow({
-    width: 1240, height: 860, minWidth: 850, minHeight: 640, backgroundColor: '#141715',
+    width: 1240, height: 860, minWidth: 850, minHeight: 640, backgroundColor: nativeTheme.shouldUseDarkColors ? '#17191d' : '#f7f8fa',
     title: 'uTube Desktop', autoHideMenuBar: true,
     icon: app.isPackaged ? path.join(process.resourcesPath, 'icon.png') : path.join(app.getAppPath(), 'assets/icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true },
@@ -51,11 +67,19 @@ async function createWindow() {
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   window.webContents.on('will-navigate', (event) => event.preventDefault());
   window.webContents.session.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
-  handle('utube:settings', async () => ({ folder, version: app.getVersion(), ffmpeg: await hasFFmpeg() }));
+  handle('utube:settings', async () => ({ folder, ...preferences, version: app.getVersion(), ffmpeg: await hasFFmpeg() }));
+  handle('utube:preferences', async (patch: Partial<Preferences>) => {
+    if (!patch || typeof patch !== 'object' || Array.isArray(patch) || Object.keys(patch).some((key) => !['theme', 'language'].includes(key)) ||
+      ('theme' in patch && !['light', 'dark', 'system'].includes(patch.theme!)) ||
+      ('language' in patch && !languages.some((item) => item.code === patch.language))) throw new Error('Invalid preferences.');
+    await saveSettings(patch);
+    window.setBackgroundColor(nativeTheme.shouldUseDarkColors ? '#17191d' : '#f7f8fa');
+    return preferences;
+  });
   handle('utube:choose-folder', async () => {
-    const result = await dialog.showOpenDialog(window, { title: 'Save downloads to', defaultPath: folder, properties: ['openDirectory', 'createDirectory'] });
+    const result = await dialog.showOpenDialog(window, { title: translator(preferences.language)('saveTo'), defaultPath: folder, properties: ['openDirectory', 'createDirectory'] });
     if (result.canceled || !result.filePaths[0]) return null;
-    await saveFolder(result.filePaths[0]); return folder;
+    await saveSettings({ folder: result.filePaths[0] }); return folder;
   });
   handle('utube:inspect', (url: string) => bridge.call('inspect', { url: validateURL(url) }, { signal: AbortSignal.timeout(30000) }));
   handle('utube:enqueue', (request: DownloadRequest) => {
@@ -68,6 +92,13 @@ async function createWindow() {
   handle('utube:jobs', () => queue.snapshot());
   handle('utube:cancel', (id: string) => queue.cancel(validateJobID(id)));
   handle('utube:retry', (id: string) => queue.retry(validateJobID(id)));
+  handle('utube:open-file', async (id: string) => {
+    const job = queue.snapshot().find((entry: any) => entry.id === validateJobID(id)) as unknown as Job | undefined;
+    if (!job?.path || !['saved', 'skipped'].includes(job.status)) throw new Error('This download is not ready to open.');
+    try { await fs.access(job.path); } catch { throw new Error('This file was moved or deleted. Download it again.'); }
+    const error = await shell.openPath(job.path);
+    if (error) throw new Error(error);
+  });
   handle('utube:open-folder', async (id?: string) => {
     const job = id ? queue.snapshot().find((entry: any) => entry.id === validateJobID(id)) as unknown as Job : undefined;
     if (id && !job) throw new Error('Download not found.');
@@ -80,10 +111,11 @@ async function createWindow() {
     if (!queue.hasPending()) { bridge.dispose(); return; }
     event.preventDefault();
     void (async () => {
+      const t = translator(preferences.language);
       const { response } = await dialog.showMessageBox(window, {
-        type: 'question', title: 'Downloads are still in progress',
-        message: 'Cancel downloads and quit?', detail: 'Queued items will be cancelled and temporary files will be cleaned up.',
-        buttons: ['Keep downloading', 'Cancel and quit'], defaultId: 0, cancelId: 0,
+        type: 'question', title: t('quitTitle'),
+        message: t('quitQuestion'), detail: t('quitDetail'),
+        buttons: [t('keepDownloading'), t('cancelQuit')], defaultId: 0, cancelId: 0,
       });
       if (response !== 1) return;
       closing = true;
