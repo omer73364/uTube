@@ -21,8 +21,14 @@ const os = require('node:os');
     await expect(page.getByText('2 selected')).toBeVisible();
     await page.getByRole('button', {name:'Download 2 videos',exact:true}).click();
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs()).map(job=>job.status)), {timeout:20000}).toEqual(['saved','failed']);
+    await page.getByRole('button', { name: /^Queue/ }).click();
+    await page.getByRole('group', { name: 'Filter downloads' }).getByRole('button', { name: /^Needs attention/ }).click();
+    await expect(page.getByTestId('job')).toHaveCount(1);
+    await page.screenshot({ path: '/tmp/utube-desktop-attention.png' });
     await page.getByRole('button', {name:'Retry #2_The second chapter',exact:true}).click();
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs())[1]?.status), {timeout:20000}).toBe('saved');
+    await expect(page.getByText('No matching downloads')).toBeVisible();
+    await page.getByRole('button', { name: 'New download', exact: true }).click();
     // Use the actual UI to start another transfer, then cancel it.
     await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/BaW_jenozKc');
     await page.getByRole('button',{name:'Find',exact:true}).click();
@@ -32,6 +38,7 @@ const os = require('node:os');
     // Closing with work in progress must wait for cancellation and cleanup.
     await page.getByRole('button',{name:'Retry A small moment, worth keeping',exact:true}).click();
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs())[2]?.stage)).toBe('video');
+    await page.screenshot({ path: '/tmp/utube-desktop-active.png', fullPage: true });
     await app.evaluate(({ dialog }) => { dialog.showMessageBox = async () => ({response:1,checkboxChecked:false}); });
     await app.close(); closed = true;
     const names=await fs.readdir(folder);

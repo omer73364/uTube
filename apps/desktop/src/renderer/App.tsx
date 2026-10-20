@@ -1,5 +1,5 @@
 import JobCard from "./JobCard";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   Play,
   Download,
@@ -17,6 +17,9 @@ import {
   Layers,
   ChevronRight,
   Plus,
+  Search,
+  ArrowUpRight,
+  HardDrive,
 } from "lucide-react";
 import type { Preview, Job, Settings } from "../shared";
 
@@ -52,6 +55,28 @@ export default function App() {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [queueFilter, setQueueFilter] = useState("all");
+  const [query, setQuery] = useState("");
+  const urlInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (!notice) return;
+    const timeout = window.setTimeout(() => setNotice(""), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [notice]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [screen]);
+  useEffect(() => {
+    const focusLink = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
+        event.preventDefault();
+        setScreen("download");
+        requestAnimationFrame(() => urlInput.current?.focus());
+      }
+    };
+    window.addEventListener("keydown", focusLink);
+    return () => window.removeEventListener("keydown", focusLink);
+  }, []);
   useEffect(() => {
     if (!window.utube) {
       setError("Open this interface in uTube Desktop to use downloads.");
@@ -137,7 +162,57 @@ export default function App() {
     }
   };
   const pending = jobs.filter(isPending).length;
-  const saved = jobs.filter((job) => job.status === "saved").length;
+  const saved = jobs.filter((job) =>
+    ["saved", "skipped"].includes(job.status),
+  ).length;
+  const attention = jobs.filter((job) =>
+    ["failed", "cancelled"].includes(job.status),
+  ).length;
+  const filteredJobs = jobs.filter((job) => {
+    const matches =
+      queueFilter === "all" ||
+      (queueFilter === "active" && isPending(job)) ||
+      (queueFilter === "completed" &&
+        ["saved", "skipped"].includes(job.status)) ||
+      (queueFilter === "attention" &&
+        ["failed", "cancelled"].includes(job.status));
+    return (
+      matches &&
+      job.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
+    );
+  });
+  const overview = (
+    <section className="overview" aria-label="Session overview">
+      <div className="overview-item">
+        <span className="overview-icon">
+          <Download size={18} />
+        </span>
+        <div>
+          <strong>{pending.toString().padStart(2, "0")}</strong>
+          <span>In the queue</span>
+        </div>
+        <span className="overview-live">{pending ? "Active" : "Ready"}</span>
+      </div>
+      <div className="overview-item">
+        <span className="overview-icon completed">
+          <CheckCircle2 size={18} />
+        </span>
+        <div>
+          <strong>{saved.toString().padStart(2, "0")}</strong>
+          <span>Completed this session</span>
+        </div>
+      </div>
+      <div className="overview-item">
+        <span className={`overview-icon ${attention ? "attention" : ""}`}>
+          <AlertCircle size={18} />
+        </span>
+        <div>
+          <strong>{attention.toString().padStart(2, "0")}</strong>
+          <span>Need attention</span>
+        </div>
+      </div>
+    </section>
+  );
   const requiresFFmpeg = audio || !["360p"].includes(quality);
   const hasEncoder = settings?.ffmpeg !== false;
   const qualities =
@@ -145,53 +220,106 @@ export default function App() {
       ? preview.qualities || []
       : ["144p", "240p", "360p", "480p", "720p", "1080p"];
   const image = safeThumbnail(preview?.thumbnail);
-  const queuePanel = (full: boolean) => (
-    <section className={`card queue-card ${full ? "full-queue" : ""}`}>
-      <div className="card-header">
-        <div>
-          <h2>
-            {full ? "Download queue" : "Your queue"}{" "}
-            <span className="count">{jobs.length}</span>
-          </h2>
-          <p>
-            {pending
-              ? `${pending} ${pending === 1 ? "download" : "downloads"} in progress or waiting`
-              : "Everything in one place."}
-          </p>
-        </div>
-        {!full && jobs.length > 0 && (
-          <button className="text-button" onClick={() => setScreen("queue")}>
-            View all <ChevronRight size={15} />
-          </button>
-        )}
-      </div>
-      <div className="queue-list">
-        {jobs.length ? (
-          [...jobs]
-            .reverse()
-            .slice(0, full ? undefined : 5)
-            .map((job) => <JobCard key={job.id} job={job} action={action} />)
-        ) : (
-          <div className="empty-queue">
-            <div className="empty-icon">
-              <Download size={28} />
-            </div>
-            <h3>A little room for your favorites.</h3>
+  const queuePanel = (full: boolean) => {
+    const visibleJobs = full ? filteredJobs : jobs;
+    return (
+      <section className={`card queue-card ${full ? "full-queue" : ""}`}>
+        <div className="card-header">
+          <div>
+            <h2>
+              {full ? "Download queue" : "Recent activity"}{" "}
+              <span className="count">{jobs.length}</span>
+            </h2>
             <p>
-              Your downloads will appear here.
-              <br />
-              Start with a YouTube link.
+              {pending
+                ? `${pending} ${pending === 1 ? "download" : "downloads"} in progress or waiting`
+                : "Everything in one place."}
             </p>
-            <span className="empty-dots">● &nbsp; ● &nbsp; ●</span>
+          </div>
+          {!full && jobs.length > 0 && (
+            <button className="text-button" onClick={() => setScreen("queue")}>
+              View all <ChevronRight size={15} />
+            </button>
+          )}
+        </div>
+        {full && (
+          <div className="queue-toolbar">
+            <div
+              className="queue-filters"
+              role="group"
+              aria-label="Filter downloads"
+            >
+              {[
+                ["all", "All", jobs.length],
+                ["active", "Active", pending],
+                ["completed", "Completed", saved],
+                ["attention", "Needs attention", attention],
+              ].map(([value, label, count]) => (
+                <button
+                  key={value}
+                  aria-pressed={queueFilter === value}
+                  onClick={() => setQueueFilter(String(value))}
+                >
+                  {label}
+                  <span>{count}</span>
+                </button>
+              ))}
+            </div>
+            <label className="queue-search">
+              <Search size={16} />
+              <input
+                aria-label="Search downloads"
+                placeholder="Search downloads…"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </label>
           </div>
         )}
-      </div>
-      <div className="queue-footer">
-        <span className="status-dot" /> Downloads run one at a time{" "}
-        <span className="ml-auto">{saved} saved</span>
-      </div>
-    </section>
-  );
+        <div className="queue-list">
+          {visibleJobs.length ? (
+            [...visibleJobs]
+              .reverse()
+              .slice(0, full ? undefined : 5)
+              .map((job) => <JobCard key={job.id} job={job} action={action} />)
+          ) : (
+            <div className="empty-queue">
+              <div className="empty-icon">
+                <Download size={28} />
+              </div>
+              <h3>
+                {jobs.length
+                  ? "No matching downloads"
+                  : "Your next favorite belongs here."}
+              </h3>
+              <p>
+                {jobs.length
+                  ? "Try another search or filter."
+                  : "Videos, playlists, and sounds."}
+                <br />
+                {!jobs.length && "Add a link to start your collection."}
+              </p>
+              {jobs.length > 0 && (
+                <button
+                  className="text-button"
+                  onClick={() => {
+                    setQuery("");
+                    setQueueFilter("all");
+                  }}
+                >
+                  Clear filters <ArrowRight size={14} />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="queue-footer">
+          <span className="status-dot" /> Downloads run one at a time{" "}
+          <span className="ml-auto">{saved} completed</span>
+        </div>
+      </section>
+    );
+  };
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -207,12 +335,14 @@ export default function App() {
         <nav aria-label="Main navigation">
           <button
             className={screen === "download" ? "active" : ""}
+            aria-current={screen === "download" ? "page" : undefined}
             onClick={() => setScreen("download")}
           >
             <Download size={18} /> New download
           </button>
           <button
             className={screen === "queue" ? "active" : ""}
+            aria-current={screen === "queue" ? "page" : undefined}
             onClick={() => setScreen("queue")}
           >
             <Layers size={18} /> Queue{" "}
@@ -220,15 +350,23 @@ export default function App() {
           </button>
           <button
             className={screen === "settings" ? "active" : ""}
+            aria-current={screen === "settings" ? "page" : undefined}
             onClick={() => setScreen("settings")}
           >
             <Settings2 size={18} /> Settings
           </button>
         </nav>
         <div className="sidebar-note">
-          <span className="note-star">✦</span>
-          <h3>Keep the good stuff.</h3>
-          <p>Your favorite videos and sounds, ready when you are.</p>
+          <HardDrive size={20} />
+          <h3>Your files. Your device.</h3>
+          <p>Find your saved videos and audio right where you want them.</p>
+          <button
+            className="text-button"
+            disabled={!settings}
+            onClick={() => action(window.utube.openFolder())}
+          >
+            Open download folder <ArrowUpRight size={14} />
+          </button>
         </div>
         <div className="sidebar-bottom">
           <span
@@ -256,7 +394,13 @@ export default function App() {
                   : "Settings"}
             </strong>
           </div>
-          <span className="preview-badge">DESKTOP PREVIEW</span>
+          <button
+            className="button topbar-folder"
+            disabled={!settings}
+            onClick={() => action(window.utube.openFolder())}
+          >
+            <FolderOpen size={16} /> Open folder <ArrowUpRight size={14} />
+          </button>
         </header>
         <div className="page-content">
           {error && (
@@ -284,21 +428,23 @@ export default function App() {
             <>
               <div className="page-heading">
                 <div>
-                  <div className="eyebrow">LESS SEARCHING. MORE KEEPING.</div>
+                  <div className="eyebrow">
+                    <span className="status-dot" /> YOUR PERSONAL DOWNLOAD SPACE
+                  </div>
                   <h1>
-                    Your next watch,
-                    <br />
-                    <span>ready to go.</span>
+                    Good things. <span>Worth keeping.</span>
                   </h1>
-                  <p>
-                    A video you love. A playlist for later. Start with a link.
-                  </p>
+                  <p>Bring your favorite videos and sounds a little closer.</p>
                 </div>
-                <div className="hero-symbol">
-                  <Play size={32} fill="currentColor" />
-                  <span className="hero-spark">✦</span>
+                <div className="hero-symbol" aria-hidden="true">
+                  <div className="hero-orbit" />
+                  <Download size={36} strokeWidth={1.5} />
+                  <span className="hero-spark">
+                    <Check size={15} />
+                  </span>
                 </div>
               </div>
+              {overview}
               <div className="download-layout">
                 <div className="download-column">
                   <section className="card source-card">
@@ -314,6 +460,7 @@ export default function App() {
                     <form className="url-form" onSubmit={inspect}>
                       <Link2 size={18} />
                       <input
+                        ref={urlInput}
                         aria-label="YouTube URL"
                         type="url"
                         placeholder="https://www.youtube.com/watch?v=…"
@@ -342,8 +489,8 @@ export default function App() {
                       <span className="tiny-check">
                         <Check size={10} />
                       </span>{" "}
-                      YouTube links only <span>·</span> Choose quality after
-                      preview
+                      Video, Shorts & playlists <span>·</span>
+                      <kbd>Ctrl / ⌘ L</kbd>
                     </div>
                   </section>
                   <section className="card options-card">
@@ -566,21 +713,26 @@ export default function App() {
           {screen === "queue" && (
             <>
               <div className="section-heading">
-                <div className="eyebrow">YOUR COLLECTION IN PROGRESS</div>
-                <h1>One queue. More favorites.</h1>
+                <div className="eyebrow">EVERY DOWNLOAD, IN VIEW</div>
+                <h1>
+                  Your download queue<span>.</span>
+                </h1>
                 <p>
                   Retry a failed download, cancel a transfer, or jump to your
                   files.
                 </p>
               </div>
+              {overview}
               {queuePanel(true)}
             </>
           )}
           {screen === "settings" && (
             <>
               <div className="section-heading">
-                <div className="eyebrow">A LITTLE MORE YOURS</div>
-                <h1>Make yourself at home.</h1>
+                <div className="eyebrow">SET UP YOUR SPACE</div>
+                <h1>
+                  The little details<span>.</span>
+                </h1>
                 <p>A few essentials for your downloads.</p>
               </div>
               <section className="card settings-card">
@@ -626,8 +778,10 @@ export default function App() {
           )}
           <footer className="page-footer">
             <Play size={12} fill="currentColor" />
-            <span>Made for the things you want to keep.</span>
-            <span className="ml-auto">MP4 + MP3</span>
+            <span>Keep a little of what you love.</span>
+            <span className="ml-auto">
+              MP4 video <span className="footer-separator">/</span> MP3 audio
+            </span>
           </footer>
         </div>
       </main>
