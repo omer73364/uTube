@@ -10,7 +10,7 @@ const os = require('node:os');
   await fs.mkdir(prefs); await fs.mkdir(folder);
   await fs.writeFile(path.join(prefs, 'settings.json'), JSON.stringify({ folder }));
   execFileSync('ffmpeg', ['-v', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=640x360:r=10', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=1', '-t', '1', '-c:v', 'libx264', '-preset', 'ultrafast', '-c:a', 'aac', media]);
-  const env = { ...process.env, UTUBE_TEST_USER_DATA: prefs, UTUBE_TEST_MEDIA: media, UTUBE_TEST_DELAY: '800', UTUBE_TEST_FAIL_ONCE: '1' }; delete env.ELECTRON_RUN_AS_NODE;
+  const env = { ...process.env, UTUBE_TEST_USER_DATA: prefs, UTUBE_TEST_MEDIA: media, UTUBE_TEST_DELAY: '3000', UTUBE_TEST_FAIL_ONCE: '1' }; delete env.ELECTRON_RUN_AS_NODE;
   const args = [path.resolve(__dirname, '..')]; if (process.env.UTUBE_TEST_NO_SANDBOX === '1') args.unshift('--no-sandbox');
   const app = await electron.launch({ executablePath: require('electron'), args, env });
   let closed = false;
@@ -38,7 +38,8 @@ const os = require('node:os');
     // Closing with work in progress must wait for cancellation and cleanup.
     await page.getByRole('button',{name:'Retry A small moment, worth keeping',exact:true}).click();
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs())[2]?.stage)).toBe('video');
-    await page.screenshot({ path: '/tmp/utube-desktop-active.png', fullPage: true });
+    // Close immediately: taking a screenshot here can let the short fixture
+    // finish on a busy packaging runner, turning this into a completed transfer.
     await app.evaluate(({ dialog }) => { dialog.showMessageBox = async () => ({response:1,checkboxChecked:false}); });
     await app.close(); closed = true;
     const names=await fs.readdir(folder);
