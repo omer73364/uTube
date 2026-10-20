@@ -2,6 +2,8 @@
 
 A local desktop preview built with Electron, React, and the shared uTube download engine. Paste a video or playlist URL, choose MP4 or MP3, select playlist items, and follow downloads in the queue. Failed and cancelled jobs can be retried.
 
+The desktop uses a charcoal and lime theme with a session overview and clear transfer states. Search the queue by title or filter it to active, completed, or attention-needed downloads. Press Ctrl+L (Command+L on macOS) to return to the link input from any page. Use **Open folder** to reach your download destination.
+
 ## Development
 
 Use Node.js 22.13 or newer and npm 10.9 or newer for desktop tooling. Install FFmpeg and FFprobe on your PATH for audio conversion, merging, and media tests. The published CLI still supports Node.js 20.

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Refresh the desktop with a charcoal and lime theme, larger controls, session counts, and clearer download states.
+- Add queue search and status filters, a link-input keyboard shortcut, and quick access to the download folder.
+
 - Keep requested video quality across retries, try alternate encodings and HD-capable clients, and reduce rejected byte ranges before abandoning a stream.
 - After exhausting the requested resolution across clients, try lower qualities from highest to lowest and report the quality successfully saved.
 
