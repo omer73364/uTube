@@ -176,7 +176,7 @@ Help, version, and folder settings work offline. Set `NO_COLOR` to disable color
 uTube saves **MP4 with audio**, or **MP3** when `--audio` is used. When YouTube serves video and audio separately, FFmpeg merges them.
 
 - **Resolutions:** 480p, 720p, and 1080p are supported when YouTube offers them, and other available resolutions are accepted too. A `720p` request can use a `720p60` stream.
-- **Retries:** if a server rejects a stream, uTube tries other formats and refreshes links using alternate clients at the requested resolution. It reports an error if that resolution cannot be downloaded; it never silently substitutes 360p.
+- **Retries:** uTube first tries other formats and alternate clients at your requested resolution. If it is unavailable or every attempt fails, uTube tries lower resolutions from highest to lowest and reports the quality successfully saved. Retries stay silent and keep the progress display steady.
 - **Filenames** include the video ID:
 
 ```text
@@ -205,7 +205,7 @@ To replace an earlier 360p fallback with HD, move or rename the existing MP4 bef
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `utube` is not found                              | Reopen your terminal and make sure npm's global bin directory is on your `PATH`.                      |
 | A download requires FFmpeg                        | Install FFmpeg and confirm `ffmpeg -version` works in the same terminal.                              |
-| Requested quality cannot be downloaded            | Retry later or select an available resolution. Automatic retries preserve your chosen quality.       |
+| A lower quality was downloaded                    | The requested resolution was unavailable or failed across clients. uTube saved the best working lower quality. |
 | A download is rejected or interrupted             | Transient failures are retried automatically. If it still fails, try later or choose another quality. |
 | A playlist needs an interactive terminal          | Run the command directly, without piping its output.                                                  |
 | A private, restricted, or unavailable video fails | Confirm the video is public. The CLI has no login or cookie options.                                  |

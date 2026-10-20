@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Keep requested video quality across retries, try alternate encodings and HD-capable clients, and reduce rejected byte ranges before abandoning a stream.
-- Report unavailable resolutions instead of silently downloading 360p.
+- After exhausting the requested resolution across clients, try lower qualities from highest to lowest and report the quality successfully saved.
 
 - Add a private Electron desktop preview with video and playlist previews, item selection, MP4/MP3 downloads, folder settings, and a visible download queue.
 - Support cancelling and retrying desktop jobs, safe shutdown, and missing-FFmpeg guidance.
