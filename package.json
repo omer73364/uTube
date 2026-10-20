@@ -54,6 +54,7 @@
     "version.js",
     "apps/cli/",
     "packages/core/",
+    "docs/images/",
     "settings.json",
     "README.md",
     "CHANGELOG.md",
