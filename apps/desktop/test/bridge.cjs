@@ -34,6 +34,7 @@ const assert = require('node:assert/strict');
     const [id] = await page.evaluate(() => window.utube.enqueue({ audio: false, quality: '360p', items: [{ id: 'BaW_jenozKc', title: 'Cancel this' }] }));
     await page.evaluate((id) => window.utube.cancel(id), id);
     await expect.poll(() => page.evaluate(async () => (await window.utube.jobs())[1]?.status)).toBe('cancelled');
+    await assert.rejects(page.evaluate((id) => window.utube.openFile(id), id), /not ready to open/);
     console.log('PASS: renderer isolation, worker preview, real MP3 conversion, cancellation.');
   } finally {
     const page = app.windows()[0];

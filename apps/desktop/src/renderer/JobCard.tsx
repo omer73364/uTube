@@ -8,13 +8,15 @@ import {
   X,
   RotateCcw,
   FolderOpen,
+  Play,
 } from "lucide-react";
-import type { Job } from "../shared";
-const stages: Record<string, string> = {
-  video: "Downloading video",
-  audio: "Downloading audio",
-  converting: "Converting to MP3",
-  merging: "Merging audio & video",
+import type { Job, Preferences } from "../shared";
+import { translator, localizeError, type TextKey } from "../locales";
+const stages: Record<string, TextKey> = {
+  video: "downloadingVideo",
+  audio: "downloadingAudio",
+  converting: "converting",
+  merging: "merging",
 };
 const sizes = (value = 0) =>
   value >= 1048576
@@ -25,10 +27,13 @@ const isPending = (job: Job) =>
 export default function JobCard({
   job,
   action,
+  language = "en",
 }: {
   job: Job;
   action: (task: Promise<unknown>) => void;
+  language?: Preferences["language"];
 }) {
+  const t = translator(language);
   const complete = ["saved", "skipped"].includes(job.status);
   const running = job.status === "running";
   const percent = complete
@@ -36,20 +41,21 @@ export default function JobCard({
     : job.total
       ? Math.min(100, Math.round((job.loaded / job.total) * 100))
       : 0;
-  const label =
+  const label = t(
     job.status === "saved"
-      ? "Downloaded"
+      ? "downloaded"
       : job.status === "skipped"
-        ? "Already downloaded"
+        ? "skipped"
         : job.status === "queued"
-          ? "Waiting in queue"
+          ? "waiting"
           : job.status === "cancelled"
-            ? "Cancelled"
+            ? "cancelled"
             : job.status === "cancelling"
-              ? "Cancelling…"
+              ? "cancelling"
               : job.status === "failed"
-                ? "Download failed"
-                : stages[job.stage || ""] || "Preparing download";
+                ? "failed"
+                : stages[job.stage || ""] || "preparingDownload",
+  );
   return (
     <article
       className={`job job-${job.status} ${complete ? "job-done" : ""}`}
@@ -60,7 +66,9 @@ export default function JobCard({
       </div>
       <div className="job-body">
         <div className="job-top">
-          <h3 title={job.title}>{job.title}</h3>
+          <h3 dir="auto" title={job.title}>
+            {job.title}
+          </h3>
           <span className="format-tag">
             {job.audio ? "MP3" : job.actualQuality || job.quality || "MP4"}
           </span>
@@ -85,7 +93,7 @@ export default function JobCard({
             <div
               className={`progress ${!job.total ? "indeterminate" : ""}`}
               role="progressbar"
-              aria-label={`Progress for ${job.title}`}
+              aria-label={t("progress", { title: job.title })}
               aria-valuenow={job.total ? percent : undefined}
               aria-valuemin={0}
               aria-valuemax={100}
@@ -94,22 +102,39 @@ export default function JobCard({
             </div>
             <div className="transfer-info">
               {job.loaded > 0
-                ? `${sizes(job.loaded)}${job.total ? ` of ${sizes(job.total)}` : ""}`
-                : "Getting things ready…"}
-              {job.speed ? ` · ${sizes(job.speed)}/s` : ""}
-              {job.eta !== undefined ? ` · ${job.eta}s left` : ""}
+                ? job.total
+                  ? t("of", {
+                      loaded: sizes(job.loaded),
+                      total: sizes(job.total),
+                    })
+                  : sizes(job.loaded)
+                : t("preparing")}
+              {job.speed
+                ? ` · ${t("perSecond", { size: sizes(job.speed) })}`
+                : ""}
+              {job.eta !== undefined
+                ? ` · ${t("secondsLeft", { count: job.eta })}`
+                : ""}
             </div>
           </>
         )}
-        {job.note && <p className="job-note">{job.note}</p>}
-        {job.error && <p className="job-error">{job.error}</p>}
+        {job.note && (
+          <p className="job-note" dir="auto">
+            {localizeError(job.note, language)}
+          </p>
+        )}
+        {job.error && (
+          <p className="job-error" dir="auto">
+            {localizeError(job.error, language)}
+          </p>
+        )}
       </div>
       <div className="job-action">
         {isPending(job) && (
           <button
             className="icon-button"
-            aria-label={`Cancel ${job.title}`}
-            title="Cancel download"
+            aria-label={t("cancelJob", { title: job.title })}
+            title={t("cancel")}
             disabled={job.status === "cancelling"}
             onClick={() => action(window.utube.cancel(job.id))}
           >
@@ -119,22 +144,33 @@ export default function JobCard({
         {["failed", "cancelled"].includes(job.status) && (
           <button
             className="icon-button"
-            aria-label={`Retry ${job.title}`}
-            title="Retry download"
+            aria-label={t("retryJob", { title: job.title })}
+            title={t("retry")}
             onClick={() => action(window.utube.retry(job.id))}
           >
             <RotateCcw size={17} />
           </button>
         )}
         {complete && (
-          <button
-            className="icon-button"
-            aria-label={`Show ${job.title} in folder`}
-            title="Show in folder"
-            onClick={() => action(window.utube.openFolder(job.id))}
-          >
-            <FolderOpen size={17} />
-          </button>
+          <>
+            <button
+              className="button secondary open-file"
+              aria-label={t("openJob", { title: job.title })}
+              title={t("openFile")}
+              onClick={() => action(window.utube.openFile(job.id))}
+            >
+              <Play size={14} />
+              {t("openFile")}
+            </button>
+            <button
+              className="icon-button"
+              aria-label={t("showJob", { title: job.title })}
+              title={t("showFile")}
+              onClick={() => action(window.utube.openFolder(job.id))}
+            >
+              <FolderOpen size={17} />
+            </button>
+          </>
         )}
       </div>
     </article>
