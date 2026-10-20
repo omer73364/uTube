@@ -106,8 +106,12 @@ export const createTransferDisplay = (label, total, { quiet = false } = {}) => {
   const spinner = !known ? ora({ text: label, color: "cyan" }).start() : null;
   if (bar) { if (!quiet) info(label); bar.start(total, 0, { amount: `0 B / ${bytes(total)}`, speed: "—" }); }
   return {
-    update(value) {
+    update(value, nextTotal = total) {
       loaded = value;
+      if (bar && Number.isFinite(nextTotal) && nextTotal > 0 && nextTotal !== total) {
+        total = nextTotal;
+        bar.setTotal(total);
+      }
       const speed = `${bytes(loaded / Math.max((Date.now() - started) / 1000, 0.1))}/s`;
       if (bar) bar.update(Math.min(total, loaded), { amount: `${bytes(loaded)} / ${bytes(total)}`, speed });
       else spinner.text = `${label} · ${bytes(loaded)} · ${speed}`;

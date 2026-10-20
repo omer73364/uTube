@@ -6,6 +6,7 @@ import { getEngine } from "./service.js";
 import { availavleQualities, getSetting, getVideoOrListID } from "./heperFunctions.js";
 import { askForQuality } from "./readInput.js";
 import { videoFormats } from "../../../packages/core/formats.js";
+import { createProgressFilter } from "../../../packages/core/progress.js";
 export { videoFormats, selectFormat, selectAudioFormat } from "../../../packages/core/formats.js";
 export { saveStream, downloadFormat, streamStatus, retryableStreamError } from "../../../packages/core/streams.js";
 
@@ -14,11 +15,13 @@ export const downloadVideo = async (item, playlistTitle, quality, info, audio = 
   let started = false;
   let formatWarning;
   const shownStages = new Set();
+  const showProgress = createProgressFilter();
   const stages = { video: "Downloading video", audio: "Downloading audio", merging: "Merging video and audio", converting: "Converting to MP3" };
   try {
     const result = await getEngine().download({
       item, playlistTitle, quality, info, audio, folder: path.resolve(getSetting("downloadFolder", process.cwd())),
       onEvent(event) {
+        if (!showProgress(event)) return;
         if (event.type === "start") {
           if (started) return;
           started = true;
@@ -31,8 +34,8 @@ export const downloadVideo = async (item, playlistTitle, quality, info, audio = 
             shownStages.add(event.stage);
           }
           else { display = undefined; note(stages[event.stage]); }
-        } else if (event.type === "progress") display?.update(event.loaded);
-        else if (event.type === "retry") { display?.stop(); display = undefined; formatWarning = undefined; }
+        } else if (event.type === "progress") display?.update(event.loaded, event.total);
+        else if (event.type === "retry") { formatWarning = undefined; }
         else if (event.type === "warning") formatWarning = event.message;
         else if (event.type === "saved" || event.type === "skipped") {
           display?.stop(); display = undefined;
