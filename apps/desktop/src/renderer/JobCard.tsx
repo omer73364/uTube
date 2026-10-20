@@ -49,7 +49,9 @@ export default function JobCard({
         : job.status === "queued"
           ? "waiting"
           : job.status === "cancelled"
-            ? "cancelled"
+            ? job.interrupted
+              ? "interrupted"
+              : "cancelled"
             : job.status === "cancelling"
               ? "cancelling"
               : job.status === "failed"
@@ -73,6 +75,20 @@ export default function JobCard({
             {job.audio ? "MP3" : job.actualQuality || job.quality || "MP4"}
           </span>
         </div>
+        {(job.playlistTitle || job.createdAt) && (
+          <div className="job-meta">
+            {job.playlistTitle && <span dir="auto">{job.playlistTitle}</span>}
+            {job.createdAt && (
+              <time dateTime={new Date(job.createdAt).toISOString()}>
+                {t("addedAt", {
+                  date: new Intl.DateTimeFormat(language, {
+                    dateStyle: "medium",
+                  }).format(job.createdAt),
+                })}
+              </time>
+            )}
+          </div>
+        )}
         <div
           className={`job-status ${complete ? "success" : job.status === "failed" ? "danger" : ""}`}
         >
@@ -128,6 +144,7 @@ export default function JobCard({
             {localizeError(job.error, language)}
           </p>
         )}
+        {job.interrupted && <p className="job-note">{t("retryInterrupted")}</p>}
       </div>
       <div className="job-action">
         {isPending(job) && (

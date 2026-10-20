@@ -110,11 +110,15 @@ export default function App() {
           (old) => old && { ...old, resolvedTheme: dark ? "dark" : "light" },
         );
     });
+    const unsubscribeHistory = window.utube.onHistoryError((message) => {
+      if (mounted) setError(message);
+    });
     Promise.all([window.utube.settings(), window.utube.jobs()])
       .then(([prefs, queue]) => {
         if (mounted) {
           setSettings(prefs);
           setJobs(queue);
+          if (prefs.historyError) setError(prefs.historyError);
         }
       })
       .catch((error) => {
@@ -124,6 +128,7 @@ export default function App() {
       mounted = false;
       unsubscribe();
       unsubscribeTheme();
+      unsubscribeHistory();
     };
   }, []);
   const action = (task: Promise<unknown>) => {
@@ -211,7 +216,7 @@ export default function App() {
           ["saved", "skipped"].includes(job.status)) ||
         (queueFilter === "attention" &&
           ["failed", "cancelled"].includes(job.status))) &&
-      job.title
+      `${job.title} ${job.playlistTitle || ""}`
         .toLocaleLowerCase(language)
         .includes(query.trim().toLocaleLowerCase(language)),
   );

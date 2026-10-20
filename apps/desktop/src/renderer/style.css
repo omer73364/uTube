@@ -632,6 +632,14 @@ select:disabled {
   color: var(--muted);
   margin-top: 8px;
 }
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 7px;
+}
 .success {
   color: var(--success);
 }
