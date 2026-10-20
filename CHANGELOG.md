@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Refresh the desktop with a charcoal and lime theme, larger controls, session counts, and clearer download states.
+- Simplify the desktop with a compact layout, neutral colors, saved light/dark/system appearance, and English/Arabic language choices with RTL support.
+- Open completed downloads in the default media application, with a separate action to reveal their containing folder.
 - Add queue search and status filters, a link-input keyboard shortcut, and quick access to the download folder.
 
 - Keep requested video quality across retries, try alternate encodings and HD-capable clients, and reduce rejected byte ranges before abandoning a stream.
