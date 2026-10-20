@@ -14,7 +14,8 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:desktop": "node test/bridge.cjs && node test/ui.cjs && node test/recovery.cjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@electron-forge/cli": "^8.0.1",
+    "@electron-forge/maker-deb": "^8.0.1",
     "@electron-forge/maker-zip": "^8.0.1",
     "@electron-forge/plugin-vite": "^8.0.1",
     "@playwright/test": "^1.64.1",
