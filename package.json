@@ -14,7 +14,10 @@
     "desktop:check": "npm run typecheck --workspace=@utube/desktop",
     "desktop:package": "npm run package --workspace=@utube/desktop",
     "desktop:make": "npm run make --workspace=@utube/desktop",
-    "desktop:test": "npm run test:desktop --workspace=@utube/desktop"
+    "desktop:test": "npm run test:desktop --workspace=@utube/desktop",
+    "site:build": "node scripts/build-site.mjs",
+    "site:preview": "npm run site:build && node scripts/serve-site.mjs",
+    "site:test": "npm run site:build && node website/test/smoke.cjs"
   },
   "homepage": "https://github.com/omer73364/uTube",
   "bugs": {
