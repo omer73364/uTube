@@ -2,7 +2,7 @@ import { checkAbort, withAbort, abortError } from "./cancellation.js";
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { videoFormats, selectFormat, selectAudioFormat } from "./formats.js";
+import { videoFormats, selectFormat, selectAudioFormat, matchingVideoFormats } from "./formats.js";
 import { saveStream, downloadFormat, streamStatus, retryableStreamError } from "./streams.js";
 import { specialRemover, getVideoOrListID, availavleQualities } from "./urls.js";
 import { getPlaylist } from "./playlist.js";
@@ -30,11 +30,10 @@ const ffmpeg = (args, executable = "ffmpeg", signal) => new Promise((resolve, re
   });
 });
 
-const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, info: suppliedInfo, audio: audioOnly = false, folder: destination, ffmpegPath, onEvent: emit, signal }, getVideoData) => {
+const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, selectedFormat, info: suppliedInfo, audio: audioOnly = false, folder: destination, ffmpegPath, onEvent: emit, signal }, getVideoData) => {
   checkAbort(signal);
   const info = suppliedInfo || await getVideoData(item.id);
-  const format = audioOnly ? selectAudioFormat(info) : selectFormat(info, quality);
-  if (!audioOnly && parseInt(format.quality_label) !== parseInt(quality)) emit({ type: "warning", message: `Requested ${quality} unavailable; using ${format.quality_label}.` });
+  const format = selectedFormat || (audioOnly ? selectAudioFormat(info) : selectFormat(info, quality));
   const folder = path.resolve(destination, ...(listTitle ? [specialRemover(listTitle)] : []));
   await fs.promises.mkdir(folder, { recursive: true });
   const title = specialRemover(String(item.title || info.basic_info?.title || item.id));
@@ -101,20 +100,33 @@ export function createDownloadEngine({ client, ffmpegPath = "ffmpeg" }) {
       if (!options.folder || !path.isAbsolute(options.folder)) throw new Error("An absolute download folder is required.");
       checkAbort(options.signal);
       const emit = options.onEvent || (() => {});
-      for (const [attempt, name] of ["IOS", "IOS", "ANDROID"].entries()) {
+      const clients = options.audio ? ["IOS", "IOS", "ANDROID"] : ["IOS", "VISIONOS", "ANDROID_VR", "ANDROID"];
+      let lastError;
+      let transferError;
+      for (const [attempt, name] of clients.entries()) {
         try {
           const info = attempt === 0 && options.info ? options.info : await withAbort(getVideoData(options.item.id, name), options.signal);
-          return await downloadAttempt({ ...options, info, ffmpegPath, onEvent: emit }, getVideoData);
+          const formats = options.audio ? [selectAudioFormat(info)] : matchingVideoFormats(info, options.quality);
+          for (const selectedFormat of formats) {
+            try {
+              return await downloadAttempt({ ...options, info, selectedFormat, ffmpegPath, onEvent: emit }, getVideoData);
+            } catch (error) {
+              checkAbort(options.signal);
+              if (!retryableStreamError(error)) throw error;
+              lastError = transferError = error;
+              emit({ type: 'retry', message: 'Trying another stream at the requested quality.' });
+            }
+          }
         } catch (error) {
           checkAbort(options.signal);
-          const status = streamStatus(error);
-          if (!retryableStreamError(error) || attempt === 2) {
-            if (status) throw new Error(`Download rejected (HTTP ${status}). Try again later${options.audio ? "" : " or choose another quality"}.`, { cause: error });
-            throw error;
-          }
-          emit({ type: "retry", attempt: attempt + 1, message: `Stream ${status ? `returned HTTP ${status}` : "was interrupted"}; refreshing download links (${attempt + 1}/2).` });
+          if (!retryableStreamError(error) && !['QUALITY_UNAVAILABLE', 'FORMATS_UNAVAILABLE'].includes(error.code)) throw error;
+          lastError = error;
         }
       }
+      const error = transferError || lastError;
+      const status = streamStatus(error);
+      if (status) throw new Error(`Download rejected (HTTP ${status})${options.quality ? ` at ${options.quality}` : ''}. Try again later or choose another quality.`, { cause: error });
+      throw error;
     },
   };
 }

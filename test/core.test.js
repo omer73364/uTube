@@ -8,6 +8,70 @@ import { createDownloadEngine } from '../packages/core/engine.js';
 const format = { itag: 18, url: 'https://example.test/video', has_video: true, has_audio: true, mime_type: 'video/mp4', quality_label: '360p' };
 const info = { basic_info: { title: 'Core test', author: 'uTube' }, streaming_data: { formats: [format] }, download: async () => new ReadableStream({ start(c) { c.enqueue(Buffer.from('media')); c.close(); } }) };
 
+for (const quality of ['720p', '1080p']) {
+  test(`${quality} retries other clients at the same resolution instead of downloading 360p`, async () => {
+    const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-quality-'));
+    const clients = [];
+    const events = [];
+    const high = { ...format, itag: 137, quality_label: quality };
+    const hd = { ...info, streaming_data: { formats: [high] } };
+    const engine = createDownloadEngine({ client: { getInfo: async (id, { client }) => {
+      clients.push(client);
+      return client === 'ANDROID_VR' ? hd : info;
+    } } });
+    try {
+      const result = await engine.download({ folder, item: { id: 'hd' }, quality, onEvent: (event) => events.push(event) });
+      assert.equal(result.status, 'saved');
+      assert.deepEqual(clients, ['IOS', 'VISIONOS', 'ANDROID_VR']);
+      assert.deepEqual(events.filter((event) => event.type === 'start').map((event) => event.quality), [quality]);
+    } finally { await fs.rm(folder, { recursive: true, force: true }); }
+  });
+}
+
+test('unavailable HD fails without saving a lower-resolution file', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-unavailable-'));
+  const engine = createDownloadEngine({ client: { getInfo: async () => info } });
+  try {
+    await assert.rejects(engine.download({ folder, item: { id: 'hd' }, quality: '1080p' }), /Requested 1080p is unavailable/);
+    assert.deepEqual(await fs.readdir(folder), []);
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
+
+test('a rejected HD stream never falls back to an alternate client\'s 360p stream', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-rejected-hd-'));
+  const downloads = [];
+  const hd = { ...info, streaming_data: { formats: [{ ...format, itag: 137, quality_label: '1080p' }] }, download: async ({ itag }) => {
+    downloads.push(itag);
+    const error = new Error('rejected');
+    error.info = { response: { status: 403 } };
+    throw error;
+  } };
+  const low = { ...info, download: async () => { throw new Error('Must not download 360p'); } };
+  const engine = createDownloadEngine({ client: { getInfo: async (id, { client }) => client === 'IOS' ? hd : low } });
+  try {
+    await assert.rejects(engine.download({ folder, item: { id: 'hd' }, quality: '1080p' }), /HTTP 403.*1080p/);
+    assert.deepEqual(downloads, [137]);
+    assert.deepEqual(await fs.readdir(folder), []);
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
+
+test('an HD format failure tries another encoding at the same resolution', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-encoding-'));
+  const calls = [];
+  const hd = { ...info, streaming_data: { formats: [format, { ...format, itag: 137, quality_label: '1080p' }, { ...format, itag: 399, quality_label: '1080p' }] },
+    download: async ({ itag }) => {
+      calls.push(itag);
+      if (itag === 137) { const error = new Error('rejected'); error.info = { response: { status: 403 } }; throw error; }
+      return info.download();
+    },
+  };
+  const engine = createDownloadEngine({ client: { getInfo: async () => hd } });
+  try {
+    await engine.download({ folder, item: { id: 'hd' }, quality: '1080p' });
+    assert.deepEqual(calls, [137, 399]);
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
+
 test('the core accepts explicit dependencies and emits serializable progress without a terminal', async () => {
   const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-core-'));
   const events = [];
