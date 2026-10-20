@@ -186,6 +186,12 @@ Downloads/
 
 Names are sanitized, and video IDs distinguish videos with identical titles. MP3 and MP4 files are tracked separately. Existing target files are skipped rather than overwritten: to replace an older low-quality copy, move or rename it before downloading again.
 
+## Website
+
+The [project website](website/README.md) introduces the desktop and CLI with English/Arabic content, light/dark appearance, real app previews, and platform-specific installer links.
+
+Preview it locally with `npm run site:preview`, or generate a static build with `npm run site:build`. Public hosting is a separate step.
+
 ## Development
 
 The repository contains three parts:
