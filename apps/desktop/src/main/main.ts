@@ -43,7 +43,7 @@ async function createWindow() {
   folder = app.getPath('downloads');
   try { const stored = JSON.parse(await fs.readFile(prefsFile(), 'utf8')); if (typeof stored.folder === 'string' && path.isAbsolute(stored.folder)) folder = stored.folder; } catch { /* First launch uses Downloads. */ }
   window = new BrowserWindow({
-    width: 1240, height: 860, minWidth: 850, minHeight: 640, backgroundColor: '#f6f7fb',
+    width: 1240, height: 860, minWidth: 850, minHeight: 640, backgroundColor: '#141715',
     title: 'uTube Desktop', autoHideMenuBar: true,
     icon: app.isPackaged ? path.join(process.resourcesPath, 'icon.png') : path.join(app.getAppPath(), 'assets/icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true },
