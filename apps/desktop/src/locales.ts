@@ -12,7 +12,7 @@ export const en = {
   downloadTitle: "Download from YouTube",
   downloadDescription: "Paste a video or playlist link to get started.",
   queueTitle: "Download queue",
-  queueDescription: "Manage downloads from this session.",
+  queueDescription: "Your saved videos, playlists, and download history.",
   settingsTitle: "Settings",
   settingsDescription: "Choose your appearance, language, and download folder.",
   link: "YouTube URL",
@@ -87,7 +87,18 @@ export const en = {
     "FFmpeg is needed for MP3 conversion and merging video and audio. Install it, then restart the app.",
   about: "About",
   aboutDescription:
-    "The queue is kept for this session. Pause/resume and persistent history are not included.",
+    "Videos and playlist downloads stay in your history after closing. Interrupted downloads can be retried from the beginning.",
+  interrupted: "Interrupted",
+  retryInterrupted:
+    "Stopped when the app closed. Retry to download from the beginning.",
+  addedAt: "Added {date}",
+  historyTitle: "Download history",
+  close: "Close",
+  historySaveError:
+    "Download history could not be saved. Check available disk space and permissions.",
+  historyReadError:
+    "Download history could not be read. Changes cannot be saved.",
+  historyBackup: "Download history could not be restored. A backup was kept.",
   dismissError: "Dismiss error",
   dismissNotice: "Dismiss notification",
   genericError: "Something went wrong. Please try again.",
@@ -126,7 +137,7 @@ export const en = {
   quitTitle: "Downloads are still in progress",
   quitQuestion: "Cancel downloads and quit?",
   quitDetail:
-    "Queued items will be cancelled and temporary files will be cleaned up.",
+    "Unfinished downloads will be saved for retry the next time you open the app. Temporary files will be cleaned up.",
   keepDownloading: "Keep downloading",
   cancelQuit: "Cancel and quit",
 };
@@ -139,7 +150,7 @@ const ar: Record<keyof typeof en, string> = {
   downloadTitle: "تنزيل من يوتيوب",
   downloadDescription: "ألصق رابط فيديو أو قائمة تشغيل للبدء.",
   queueTitle: "قائمة التنزيلات",
-  queueDescription: "إدارة تنزيلات هذه الجلسة.",
+  queueDescription: "الفيديوهات وقوائم التشغيل وسجل التنزيلات المحفوظة.",
   settingsTitle: "الإعدادات",
   settingsDescription: "اختر المظهر واللغة ومجلد التنزيل.",
   link: "رابط يوتيوب",
@@ -212,7 +223,16 @@ const ar: Record<keyof typeof en, string> = {
     "يلزم FFmpeg لتحويل MP3 ودمج الفيديو والصوت. ثبّته ثم أعد تشغيل التطبيق.",
   about: "حول التطبيق",
   aboutDescription:
-    "تُحفظ القائمة لهذه الجلسة فقط. الإيقاف المؤقت والاستئناف وسجل التنزيلات الدائم غير متاحة حاليًا.",
+    "تبقى الفيديوهات وتنزيلات قوائم التشغيل في السجل بعد إغلاق التطبيق. يمكن إعادة محاولة التنزيلات المتوقفة من البداية.",
+  interrupted: "توقّف التنزيل",
+  retryInterrupted: "توقّف عند إغلاق التطبيق. أعد المحاولة للتنزيل من البداية.",
+  addedAt: "أُضيف في {date}",
+  historyTitle: "سجل التنزيلات",
+  close: "إغلاق",
+  historySaveError:
+    "تعذّر حفظ سجل التنزيلات. تحقّق من مساحة القرص وصلاحيات الكتابة.",
+  historyReadError: "تعذّرت قراءة سجل التنزيلات. لا يمكن حفظ التغييرات.",
+  historyBackup: "تعذّرت استعادة سجل التنزيلات. احتُفظ بنسخة احتياطية.",
   dismissError: "إغلاق رسالة الخطأ",
   dismissNotice: "إغلاق الإشعار",
   genericError: "حدث خطأ. يرجى المحاولة مجددًا.",
@@ -248,7 +268,8 @@ const ar: Record<keyof typeof en, string> = {
   fallback: "تعذّر تنزيل {requested}؛ حُفظت أفضل جودة بديلة متاحة: {actual}.",
   quitTitle: "لا تزال هناك تنزيلات جارية",
   quitQuestion: "هل تريد إلغاء التنزيلات والخروج؟",
-  quitDetail: "ستُلغى التنزيلات المنتظرة وتُنظَّف الملفات المؤقتة.",
+  quitDetail:
+    "ستُحفظ التنزيلات غير المكتملة لإعادة المحاولة عند فتح التطبيق مجددًا. وستُنظَّف الملفات المؤقتة.",
   keepDownloading: "متابعة التنزيل",
   cancelQuit: "إلغاء التنزيلات والخروج",
 };

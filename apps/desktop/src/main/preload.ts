@@ -16,6 +16,11 @@ const api: DesktopAPI = {
   retry: (id) => invoke('utube:retry', id),
   openFolder: (id) => invoke('utube:open-folder', id),
   openFile: (id) => invoke('utube:open-file', id),
+  onHistoryError: (listener) => {
+    const handler = (_event: unknown, message: string) => listener(message);
+    ipcRenderer.on('utube:history-error', handler);
+    return () => ipcRenderer.removeListener('utube:history-error', handler);
+  },
   onTheme: (listener) => {
     const handler = (_event: unknown, dark: boolean) => listener(dark);
     ipcRenderer.on('utube:theme-changed', handler);

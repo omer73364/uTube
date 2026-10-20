@@ -5,6 +5,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { WorkerBridge } from './bridge';
 import { DownloadQueue } from './queue.mjs';
+import { DownloadHistory } from './history.mjs';
 import { validateURL, validateRequest, validateJobID } from './validation.mjs';
 import type { DownloadRequest, Job, Preferences } from '../shared';
 import { translator, languages } from '../locales';
@@ -18,10 +19,20 @@ let folder: string;
 let preferences: Preferences = { theme: 'system', language: 'en' };
 let writes = Promise.resolve();
 let closing = false;
+let closeRequested = false;
+let history: DownloadHistory;
+let historyError: string | undefined;
+function reportHistoryError(message: string) {
+  historyError = message;
+  if (window && !window.isDestroyed()) window.webContents.send('utube:history-error', message);
+}
 const bridge = new WorkerBridge();
 const queue = new DownloadQueue(
   (job: any, options: any) => { const { controller, ...request } = job; return bridge.call('download', { job: request }, options); },
-  (jobs: unknown) => { if (window && !window.isDestroyed()) window.webContents.send('utube:jobs-changed', jobs); },
+  (jobs: any[]) => {
+    if (window && !window.isDestroyed()) window.webContents.send('utube:jobs-changed', jobs);
+    if (history) void history.save(jobs).catch(() => reportHistoryError('Download history could not be saved. Check available disk space and permissions.'));
+  },
 );
 const prefsFile = () => path.join(app.getPath('userData'), 'settings.json');
 function saveSettings(patch: Partial<Preferences> & { folder?: string }) {
@@ -50,6 +61,10 @@ function handle(name: string, fn: (...args: any[]) => any) {
   });
 }
 async function createWindow() {
+  history = new DownloadHistory(path.join(app.getPath('userData'), 'downloads.json'));
+  const restored = await history.load();
+  historyError = history.warning;
+  queue.restore(restored);
   folder = app.getPath('downloads');
   try {
     const stored = JSON.parse(await fs.readFile(prefsFile(), 'utf8'));
@@ -75,7 +90,7 @@ async function createWindow() {
   const appearance = () => ({ ...preferences, resolvedTheme: nativeTheme.shouldUseDarkColors ? 'dark' as const : 'light' as const });
   handle('utube:settings', async () => {
     const ffmpeg = await hasFFmpeg();
-    return { folder, ...appearance(), version: app.getVersion(), ffmpeg };
+    return { folder, ...appearance(), version: app.getVersion(), ffmpeg, historyError };
   });
   handle('utube:preferences', async (patch: Partial<Preferences>) => {
     if (!patch || typeof patch !== 'object' || Array.isArray(patch) || Object.keys(patch).some((key) => !['theme', 'language'].includes(key)) ||
@@ -117,23 +132,36 @@ async function createWindow() {
   });
   window.on('close', (event) => {
     if (closing) return;
-    if (!queue.hasPending()) { bridge.dispose(); return; }
     event.preventDefault();
+    if (closeRequested) return;
+    closeRequested = true;
     void (async () => {
       const t = translator(preferences.language);
+      if (queue.hasPending()) {
       const { response } = await dialog.showMessageBox(window, {
         type: 'question', title: t('quitTitle'),
         message: t('quitQuestion'), detail: t('quitDetail'),
         buttons: [t('keepDownloading'), t('cancelQuit')], defaultId: 0, cancelId: 0,
       });
-      if (response !== 1) return;
-      closing = true;
+      if (response !== 1) { closeRequested = false; return; }
+      }
       const deadline = setTimeout(() => bridge.dispose(), 5000);
-      try { await queue.shutdown(); } finally { clearTimeout(deadline); bridge.dispose(); window.close(); }
+      try {
+        await queue.shutdown();
+        await history.flush();
+        await writes;
+      } catch {
+        await dialog.showMessageBox(window, { type: 'error', title: t('historyTitle'), message: t('historySaveError'), buttons: [t('close')] });
+      } finally { clearTimeout(deadline); bridge.dispose(); closing = true; window.close(); }
     })();
   });
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) await window.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   else await window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
 }
-app.whenReady().then(createWindow);
+if (app.requestSingleInstanceLock()) {
+  app.on('second-instance', () => {
+    if (window && !window.isDestroyed()) { if (window.isMinimized()) window.restore(); window.focus(); }
+  });
+  app.whenReady().then(createWindow);
+} else app.quit();
 app.on('window-all-closed', () => app.quit());

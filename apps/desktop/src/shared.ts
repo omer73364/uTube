@@ -9,6 +9,7 @@ export type Job = {
   status: 'queued' | 'running' | 'cancelling' | 'saved' | 'skipped' | 'failed' | 'cancelled';
   stage?: string; loaded: number; total?: number; speed?: number; eta?: number; note?: string; actualQuality?: string;
   path?: string; error?: string;
+  playlistTitle?: string; createdAt?: number; completedAt?: number; interrupted?: boolean;
 };
 export type DownloadRequest = {
   items: { id: string; title: string; index?: number }[];
@@ -16,11 +17,12 @@ export type DownloadRequest = {
 };
 export type Preferences = { theme: 'light' | 'dark' | 'system'; language: Language };
 export type Appearance = Preferences & { resolvedTheme: 'light' | 'dark' };
-export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean };
+export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean; historyError?: string };
 export type DesktopAPI = {
   settings(): Promise<Settings>;
   preferences(patch: Partial<Preferences>): Promise<Appearance>;
   onTheme(listener: (dark: boolean) => void): () => void;
+  onHistoryError(listener: (message: string) => void): () => void;
   chooseFolder(): Promise<string | null>;
   inspect(url: string): Promise<Preview>;
   enqueue(request: DownloadRequest): Promise<string[]>;
