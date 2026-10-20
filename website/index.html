@@ -6,19 +6,16 @@
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Build your offline collection with uTube. Download YouTube videos, playlists, and MP3s with a simple desktop app or a powerful CLI."
+      content="Download YouTube videos, playlists, and MP3 audio with uTube for Windows, macOS, and Linux."
     />
     <meta name="theme-color" content="#f5f6f8" />
-    <meta
-      property="og:title"
-      content="uTube — Your favorites, ready offline."
-    />
+    <meta property="og:title" content="uTube — Video & audio downloader" />
     <meta
       property="og:description"
-      content="Videos, playlists, or just the audio. A home for your offline collection."
+      content="Download YouTube videos, playlists, and MP3 audio on your computer."
     />
     <meta property="og:type" content="website" />
-    <title>uTube — Your favorites, ready offline.</title>
+    <title>uTube — Video & audio downloader</title>
     <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./style.css" />
     <script src="./app.js" defer></script>
@@ -26,7 +23,7 @@
   <body>
     <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
     <header class="site-header wrap">
-      <a class="brand" href="#" aria-label="uTube home"
+      <a class="brand" href="#" aria-label="uTube home" data-i18n-aria="home"
         ><img src="./assets/icon.svg" width="32" height="32" alt="" /><span
           >uTube<span class="brand-dot">.</span></span
         ></a
@@ -64,39 +61,36 @@
             class="release-label"
             href="https://github.com/omer73364/uTube/releases/tag/v2.2.0"
             ><span class="status-dot"></span
-            ><span data-i18n="release">2.2.0 is here</span
+            ><span data-i18n="release">Version 2.2.0 · Desktop preview</span
             ><span aria-hidden="true">↗</span></a
           >
           <h1>
-            <span data-i18n="heroFirst">Your favorites,</span><br /><span
+            <span data-i18n="heroFirst">uTube</span><br /><span
               class="accent"
               data-i18n="heroSecond"
-              >ready offline.</span
+              >Video & audio downloader</span
             >
           </h1>
           <p class="hero-description" data-i18n="heroDescription">
-            The tutorial for tomorrow. The playlist for the road. Save the
-            videos and music you come back to, in a collection that stays with
-            you.
+            Download YouTube videos and playlists, or save the audio as MP3.
+            Choose the video quality and where to save your files.
           </p>
           <div class="hero-actions">
             <a class="button primary" id="hero-download" href="#downloads"
               ><span aria-hidden="true">↓</span
-              ><span data-i18n="heroDownload">Get uTube Desktop</span></a
+              ><span data-i18n="heroDownload">Download the app</span></a
             ><a class="text-link" href="#cli"
-              ><span data-i18n="heroCli">Prefer the terminal?</span
+              ><span data-i18n="heroCli">Command-line version</span
               ><span aria-hidden="true">↗</span></a
             >
           </div>
           <p class="hero-note" data-i18n="heroNote">
-            Free & open source. No account required.
+            Free and open source · Windows, macOS, Linux
           </p>
         </div>
         <div class="hero-art" id="desktop">
           <div class="preview-caption">
-            <span class="mini-label" data-i18n="previewLabel"
-              >A little less work. A lot more watching.</span
-            ><span class="preview-number">01 / uTube</span>
+            <span class="mini-label" data-i18n="previewLabel">Desktop app</span>
           </div>
           <div class="app-preview">
             <img
@@ -108,83 +102,6 @@
               fetchpriority="high"
             />
           </div>
-          <div class="preview-footer">
-            <span class="status-dot"></span
-            ><span data-i18n="previewFooter"
-              >Your downloads. Your device. Your pace.</span
-            >
-          </div>
-        </div>
-      </section>
-
-      <section
-        class="collection-strip wrap"
-        aria-label="Download options"
-        data-i18n-aria="optionsLabel"
-      >
-        <span data-i18n="stripFirst">Keep what you love.</span>
-        <div>
-          <span>MP4 <small data-i18n="video">video</small></span
-          ><span class="strip-divider" aria-hidden="true"></span
-          ><span>MP3 <small data-i18n="audio">audio</small></span
-          ><span class="strip-divider" aria-hidden="true"></span
-          ><span data-i18n="playlists">Entire playlists</span>
-        </div>
-      </section>
-
-      <section class="features wrap" aria-labelledby="features-title">
-        <div class="section-intro">
-          <p class="eyebrow" data-i18n="featuresEyebrow">
-            From a link to your library
-          </p>
-          <h2 id="features-title" data-i18n="featuresTitle">
-            Less to manage.<br />More to keep.
-          </h2>
-          <p data-i18n="featuresIntro">
-            A straightforward way to build a collection, whether it starts with
-            one video or a whole playlist.
-          </p>
-        </div>
-        <div class="feature-list">
-          <article>
-            <span class="feature-number">01</span>
-            <div>
-              <h3 data-i18n="featureOneTitle">
-                Take the whole playlist. Or just your favorites.
-              </h3>
-              <p data-i18n="featureOneText">
-                Preview the list, pick the videos you want, and keep them
-                together in their own folder.
-              </p>
-            </div>
-            <span class="feature-symbol" aria-hidden="true">☷</span>
-          </article>
-          <article>
-            <span class="feature-number">02</span>
-            <div>
-              <h3 data-i18n="featureTwoTitle">
-                Watch your way. Listen on the go.
-              </h3>
-              <p data-i18n="featureTwoText">
-                Choose MP4 and your preferred resolution, or save just the audio
-                as a 192 kbps MP3.
-              </p>
-            </div>
-            <span class="feature-symbol" aria-hidden="true">♫</span>
-          </article>
-          <article>
-            <span class="feature-number">03</span>
-            <div>
-              <h3 data-i18n="featureThreeTitle">
-                Close the app. Keep your collection.
-              </h3>
-              <p data-i18n="featureThreeText">
-                Your history stays put. Find a video or playlist, open the file,
-                and retry interrupted downloads when you’re ready.
-              </p>
-            </div>
-            <span class="feature-symbol" aria-hidden="true">↗</span>
-          </article>
         </div>
       </section>
 
@@ -195,15 +112,11 @@
       >
         <div class="wrap download-layout">
           <div class="download-intro">
-            <p class="eyebrow" data-i18n="downloadEyebrow">
-              Make yourself at home
-            </p>
             <h2 id="download-title" data-i18n="downloadTitle">
-              Your next download<br />starts here.
+              Download uTube
             </h2>
             <p data-i18n="downloadIntro">
-              Light or dark. English or Arabic. A simple desktop app that
-              remembers how you like things.
+              Choose your operating system and download format.
             </p>
             <div class="version-line">
               <span class="status-dot"></span
@@ -214,7 +127,7 @@
             <a
               class="text-link"
               href="https://github.com/omer73364/uTube/releases/tag/v2.2.0"
-              ><span data-i18n="releaseNotes">Read the release notes</span
+              ><span data-i18n="releaseNotes">Release notes</span
               ><span aria-hidden="true">↗</span></a
             >
           </div>
@@ -281,21 +194,53 @@
         </div>
       </section>
 
+      <section class="features wrap" aria-labelledby="features-title">
+        <div class="section-intro">
+          <h2 id="features-title" data-i18n="featuresTitle">App features</h2>
+        </div>
+        <div class="feature-list">
+          <article>
+            <div>
+              <h3 data-i18n="featureOneTitle">Video and playlist downloads</h3>
+              <p data-i18n="featureOneText">
+                Download a single video, a whole playlist, or selected items.
+                Playlist files are saved together in their own folder.
+              </p>
+            </div>
+          </article>
+          <article>
+            <div>
+              <h3 data-i18n="featureTwoTitle">MP4 video or MP3 audio</h3>
+              <p data-i18n="featureTwoText">
+                Choose the video resolution, or download audio as a 192 kbps
+                MP3.
+              </p>
+            </div>
+          </article>
+          <article>
+            <div>
+              <h3 data-i18n="featureThreeTitle">Saved download history</h3>
+              <p data-i18n="featureThreeText">
+                Search previous downloads, open saved files, and retry
+                interrupted downloads. Your history stays on your device.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section class="cli-section wrap" id="cli" aria-labelledby="cli-title">
         <div>
-          <p class="eyebrow" data-i18n="cliEyebrow">At home in your terminal</p>
-          <h2 id="cli-title" data-i18n="cliTitle">
-            One command.<br />Your next collection.
-          </h2>
+          <h2 id="cli-title" data-i18n="cliTitle">Command-line version</h2>
           <p data-i18n="cliIntro">
-            Follow the guided menu or get straight to a download. The same
-            engine, with the control of your command line.
+            Install with npm, then run utube to open the interactive menu. You
+            can also pass a video link and quality directly.
           </p>
           <p class="requirements" data-i18n="cliRequirements">
             Requires Node.js 20+ and FFmpeg for MP3 conversion and HD merging.
           </p>
           <a class="text-link" href="https://github.com/omer73364/uTube#cli"
-            ><span data-i18n="cliDocs">Explore CLI commands</span
+            ><span data-i18n="cliDocs">Command reference</span
             ><span aria-hidden="true">↗</span></a
           >
         </div>
@@ -340,21 +285,17 @@
 
       <section class="faq wrap" aria-labelledby="faq-title">
         <div>
-          <p class="eyebrow" data-i18n="faqEyebrow">A few useful details</p>
-          <h2 id="faq-title" data-i18n="faqTitle">
-            Before you press<br />download.
-          </h2>
+          <h2 id="faq-title" data-i18n="faqTitle">Help & requirements</h2>
         </div>
         <div class="faq-list">
           <details>
             <summary data-i18n="faqOneTitle">
-              What happens if my chosen quality fails?
+              What if the selected quality cannot be downloaded?
             </summary>
             <p data-i18n="faqOneText">
-              uTube tries alternate encodings and clients at your requested
-              resolution first. If none work, it tries lower resolutions from
-              highest to lowest and reports the quality actually saved.
-              Available quality depends on the video.
+              uTube retries at the selected resolution first. If it still fails,
+              it downloads the best working lower resolution and shows the
+              quality saved.
             </p>
           </details>
           <details>
@@ -362,20 +303,20 @@
               Do I need to install anything else?
             </summary>
             <p data-i18n="faqTwoText">
-              Desktop downloads include the app runtime, so you don’t need
-              Node.js or npm. The Debian package installs FFmpeg through apt.
-              Windows, macOS, and portable Linux downloads need FFmpeg installed
-              separately for MP3 conversion and HD merging.
+              The desktop app does not need Node.js or npm. The Debian package
+              installs FFmpeg through apt. Windows, macOS, and portable Linux
+              downloads need FFmpeg installed separately for MP3 conversion and
+              HD merging.
             </p>
           </details>
           <details>
             <summary data-i18n="faqThreeTitle">
-              Will my downloads still be there tomorrow?
+              Are files and history saved after closing?
             </summary>
             <p data-i18n="faqThreeText">
-              Yes. Files stay in your chosen folder, and desktop history is
-              saved on your device. Interrupted transfers wait for you to retry;
-              retries start from the beginning.
+              Files stay in your chosen folder. The desktop also saves your
+              download history. Retry interrupted downloads manually; each retry
+              starts from the beginning.
             </p>
           </details>
           <details>
@@ -395,9 +336,7 @@
           >uTube<span class="brand-dot">.</span></span
         ></a
       >
-      <p data-i18n="footerText">
-        A little space for the things you come back to.
-      </p>
+      <p data-i18n="footerText">Free and open source · MIT license</p>
       <div>
         <a
           href="https://github.com/omer73364/uTube/issues"

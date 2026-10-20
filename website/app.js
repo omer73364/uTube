@@ -1,103 +1,90 @@
 const release = "https://github.com/omer73364/uTube/releases/download/v2.2.0/";
 const arabic = {
   skip: "انتقل إلى المحتوى",
+  home: "uTube — الصفحة الرئيسية",
   navigation: "التنقل الرئيسي",
-  navDesktop: "تطبيق سطح المكتب",
-  navCli: "الطرفية",
-  release: "الإصدار 2.2.0 متاح الآن",
-  heroFirst: "مفضّلاتك،",
-  heroSecond: "معك دون إنترنت.",
+  navDesktop: "التطبيق",
+  navCli: "سطر الأوامر",
+  release: "الإصدار 2.2.0 · نسخة تجريبية",
+  heroFirst: "uTube",
+  heroSecond: "لتنزيل الفيديو والصوت",
   heroDescription:
-    "الدرس الذي تحتاجه غدًا، وقائمة الموسيقى لرحلتك القادمة. احتفظ بالفيديوهات والمقاطع التي تحب العودة إليها، في مجموعتك الخاصة.",
-  heroDownload: "حمّل تطبيق uTube",
-  heroCli: "تفضّل الطرفية؟",
-  heroNote: "مجاني ومفتوح المصدر. لا حاجة إلى حساب.",
-  previewLabel: "خطوات أقل. وقت أكثر للمشاهدة.",
-  previewFooter: "تنزيلاتك. جهازك. على راحتك.",
-  optionsLabel: "خيارات التنزيل",
-  stripFirst: "احتفظ بما تحب.",
-  video: "فيديو",
-  audio: "صوت",
-  playlists: "قوائم تشغيل كاملة",
-  featuresEyebrow: "من رابط إلى مجموعتك الخاصة",
-  featuresTitle: "تنظيم أبسط.<br>ومحتوى يبقى معك.",
-  featuresIntro:
-    "طريقة مباشرة لبناء مجموعتك، سواء بدأت بفيديو واحد أو بقائمة تشغيل كاملة.",
-  featureOneTitle: "القائمة كاملة، أو المقاطع التي تختارها.",
+    "نزّل فيديوهات يوتيوب وقوائم التشغيل، أو احفظ الصوت بصيغة MP3. اختر دقة الفيديو ومجلد الحفظ.",
+  heroDownload: "تنزيل التطبيق",
+  heroCli: "نسخة سطر الأوامر",
+  heroNote: "مجاني ومفتوح المصدر · Windows وmacOS وLinux",
+  previewLabel: "تطبيق سطح المكتب",
+  featuresTitle: "ميزات التطبيق",
+  featureOneTitle: "تنزيل الفيديوهات وقوائم التشغيل",
   featureOneText:
-    "استعرض القائمة، وحدّد الفيديوهات التي تريدها، واحتفظ بها معًا في مجلد خاص بها.",
-  featureTwoTitle: "شاهد كما تحب. واستمع أينما ذهبت.",
+    "نزّل فيديو واحدًا، أو قائمة تشغيل كاملة، أو مقاطع تختارها منها. تُحفظ ملفات كل قائمة في مجلد خاص بها.",
+  featureTwoTitle: "فيديو MP4 أو صوت MP3",
   featureTwoText:
-    "اختر فيديو MP4 بالدقة التي تفضّلها، أو احتفظ بالصوت فقط بصيغة MP3 بمعدل 192 كيلوبت/ثانية.",
-  featureThreeTitle: "أغلق التطبيق. مجموعتك باقية.",
+    "اختر دقة الفيديو، أو نزّل الصوت بصيغة MP3 بمعدل 192 كيلوبت في الثانية.",
+  featureThreeTitle: "سجل تنزيلات محفوظ",
   featureThreeText:
-    "يبقى سجلّك محفوظًا. ابحث عن فيديو أو قائمة، وافتح الملف، وأعد محاولة التنزيلات المتوقفة عندما يناسبك.",
-  downloadEyebrow: "مساحة تناسبك",
-  downloadTitle: "تنزيلك القادم<br>يبدأ من هنا.",
-  downloadIntro:
-    "فاتح أو داكن. بالعربية أو الإنجليزية. تطبيق بسيط يتذكّر اختياراتك.",
-  versionLine: "الإصدار 2.2.0 · نسخة سطح المكتب التجريبية",
-  releaseNotes: "اقرأ ملاحظات الإصدار",
+    "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
+  downloadTitle: "تنزيل uTube",
+  downloadIntro: "اختر نظام التشغيل وصيغة ملف التثبيت المناسبة لجهازك.",
+  versionLine: "الإصدار 2.2.0 · نسخة تجريبية لسطح المكتب",
+  releaseNotes: "ملاحظات الإصدار",
   osLabel: "نظام التشغيل",
   unsigned:
-    "هذه نسخة تجريبية غير موقّعة، ونسخة macOS غير موثّقة لدى Apple. قد يعرض النظام تنبيهًا أمنيًا.",
-  installGuide: "دليل التثبيت والتحقّق من الملفات ↗",
-  cliEyebrow: "لمن يفضّل الطرفية",
-  cliTitle: "أمر واحد.<br>ومجموعتك التالية.",
+    "ملفات التطبيق غير موقّعة رقميًا، ونسخة macOS لم تحصل على توثيق Apple. قد يعرض النظام تنبيهًا عند فتحها.",
+  installGuide: "دليل التثبيت والتحقق من سلامة الملفات ↗",
+  cliTitle: "نسخة سطر الأوامر",
   cliIntro:
-    "اتبع القائمة التفاعلية أو ابدأ التنزيل مباشرة. المحرّك نفسه، مع مرونة سطر الأوامر.",
+    "ثبّت النسخة باستخدام npm، ثم شغّل utube لفتح القائمة التفاعلية. يمكنك أيضًا إدخال رابط الفيديو والدقة المطلوبة مباشرة في الأمر.",
   cliRequirements:
-    "يتطلّب Node.js 20 أو أحدث، وFFmpeg لتحويل MP3 ودمج الفيديو عالي الدقة.",
-  cliDocs: "استكشف أوامر الطرفية",
-  copyLabel: "انسخ أمر التثبيت",
+    "تحتاج إلى Node.js 20 أو أحدث، وإلى FFmpeg لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+  cliDocs: "دليل الأوامر",
+  copyLabel: "نسخ أمر التثبيت",
   copy: "نسخ",
-  terminalNote: "قوائم الطرفية متاحة حاليًا بالإنجليزية.",
-  faqEyebrow: "تفاصيل تفيدك",
-  faqTitle: "قبل أن تبدأ<br>التنزيل.",
-  faqOneTitle: "ماذا يحدث إذا فشل تنزيل الدقة التي اخترتها؟",
+  terminalNote: "قوائم سطر الأوامر متاحة حاليًا بالإنجليزية.",
+  faqTitle: "المساعدة ومتطلبات التشغيل",
+  faqOneTitle: "ماذا لو تعذّر تنزيل الفيديو بالدقة المطلوبة؟",
   faqOneText:
-    "يجرّب uTube ترميزات وعملاء بديلة بالدقة المطلوبة أولًا. إذا لم تنجح، يجرّب الدقات الأقل بالترتيب من الأعلى إلى الأدنى، ويعرض الدقة التي حُفظت فعليًا. تعتمد الدقات المتاحة على الفيديو.",
-  faqTwoTitle: "هل أحتاج إلى تثبيت برامج أخرى؟",
+    "يحاول uTube التنزيل بالدقة التي اخترتها أولًا. إذا تعذّر ذلك، ينتقل إلى أفضل دقة متاحة أقل من المطلوبة، ويعرض دقة الملف المحفوظ.",
+  faqTwoTitle: "هل أحتاج إلى تثبيت برامج إضافية؟",
   faqTwoText:
-    "يتضمّن تطبيق سطح المكتب بيئة تشغيله، ولا يحتاج إلى Node.js أو npm. تثبّت حزمة Debian برنامج FFmpeg عبر apt. أما Windows وmacOS ونسخ Linux المحمولة فتحتاج إلى تثبيت FFmpeg بشكل منفصل لتحويل MP3 ودمج الفيديو عالي الدقة.",
-  faqThreeTitle: "هل تبقى تنزيلاتي بعد إغلاق التطبيق؟",
+    "لا يحتاج تطبيق سطح المكتب إلى Node.js أو npm. تثبّت حزمة Debian برنامج FFmpeg تلقائيًا عبر apt. في Windows وmacOS ونسخ Linux المحمولة، تحتاج إلى تثبيت FFmpeg بنفسك لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+  faqThreeTitle: "هل تبقى الملفات والسجل بعد إغلاق التطبيق؟",
   faqThreeText:
-    "نعم. تبقى الملفات في المجلد الذي اخترته، ويُحفظ سجلّ سطح المكتب على جهازك. تنتظر التنزيلات المتوقفة إعادة المحاولة منك، وتبدأ المحاولة من البداية.",
-  faqFourTitle: "كيف أحدّث uTube؟",
+    "تبقى الملفات في المجلد الذي اخترته، ويحتفظ تطبيق سطح المكتب بسجل التنزيلات على جهازك. يمكنك إعادة محاولة التنزيلات المتوقفة يدويًا؛ وتبدأ كل محاولة من البداية.",
+  faqFourTitle: "كيف أحدّث التطبيق؟",
   faqFourText:
-    "حمّل نسخة أحدث من تطبيق سطح المكتب من GitHub Releases عندما تريد التحديث. وللطرفية، نفّذ أمر التثبيت مجددًا. التحديثات التلقائية لسطح المكتب غير متاحة بعد.",
-  footerText: "مساحة لما تحب العودة إليه.",
-  reportIssue: "أبلغ عن مشكلة",
-  windowsDescription: "Windows · أجهزة x64",
-  linuxDescription: "Linux · أجهزة x64",
-  macosDescription: "macOS · اختر معمارية جهازك",
-  setup: "مثبّت Windows",
-  portable: "نسخة محمولة",
+    "نزّل الإصدار الجديد من GitHub Releases وثبّته. لتحديث نسخة سطر الأوامر، نفّذ أمر التثبيت مجددًا. لا يدعم تطبيق سطح المكتب التحديث التلقائي حاليًا.",
+  footerText: "مجاني ومفتوح المصدر · بترخيص MIT",
+  reportIssue: "الإبلاغ عن مشكلة",
+  windowsDescription: "Windows · معالجات x64",
+  linuxDescription: "Linux · معالجات x64",
+  macosDescription: "macOS · اختر نوع المعالج",
+  setup: "ملف التثبيت",
+  portable: "ملف ZIP مضغوط",
   deb: "حزمة Debian / Ubuntu",
-  appimage: "AppImage",
-  apple: "Apple Silicon",
-  intel: "Intel",
+  appimage: "ملف AppImage",
+  apple: "معالجات Apple Silicon",
+  intel: "معالجات Intel",
   windowsDependency:
-    "ثبّت FFmpeg بشكل منفصل وأضفه إلى PATH لتحويل MP3 ودمج الفيديو عالي الدقة.",
+    "تحتاج إلى تثبيت FFmpeg وإضافته إلى PATH لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
   linuxDependency:
-    "تثبّت حزمة DEB برنامج FFmpeg تلقائيًا عبر apt. تحتاج نسختا AppImage وZIP إلى تثبيته بشكل منفصل.",
+    "تثبّت حزمة DEB برنامج FFmpeg تلقائيًا عبر apt. عند استخدام AppImage أو ZIP، تحتاج إلى تثبيته بنفسك.",
   macosDependency:
-    "اختر arm64 لمعالجات Apple Silicon، وx64 لأجهزة Intel. يتطلّب تحويل MP3 ودمج الفيديو عالي الدقة تثبيت FFmpeg بشكل منفصل.",
-  copied: "نُسخ!",
+    "اختر arm64 لأجهزة Apple Silicon، أو x64 لأجهزة Intel. تحتاج إلى تثبيت FFmpeg لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+  copied: "تم النسخ",
   copyFailed: "تعذّر النسخ. حدّد الأمر وانسخه يدويًا.",
   copySuccess: "تم نسخ أمر التثبيت.",
-  themeDark: "استخدم الوضع الداكن",
-  themeLight: "استخدم الوضع الفاتح",
-  downloadFor: "حمّل نسخة",
-  screenshot:
-    "تطبيق uTube بالعربية، مع الوضع الداكن واتجاه العرض من اليمين إلى اليسار",
+  themeDark: "التبديل إلى الوضع الداكن",
+  themeLight: "التبديل إلى الوضع الفاتح",
+  downloadFor: "تنزيل لنظام",
+  screenshot: "واجهة تطبيق uTube بالعربية في الوضع الداكن",
 };
 const english = {
   windowsDescription: "Windows · x64 computers",
   linuxDescription: "Linux · x64 computers",
-  macosDescription: "macOS · choose your chip",
+  macosDescription: "macOS · processor type",
   setup: "Windows installer",
-  portable: "Portable archive",
+  portable: "ZIP archive",
   deb: "Debian / Ubuntu package",
   appimage: "AppImage",
   apple: "Apple Silicon",
@@ -238,12 +225,12 @@ function renderLanguage() {
   image.alt = t("screenshot");
   document.title =
     language === "en"
-      ? "uTube — Your favorites, ready offline."
-      : "uTube — مفضّلاتك، معك دون إنترنت.";
+      ? "uTube — Video & audio downloader"
+      : "uTube — تنزيل الفيديو والصوت";
   document.querySelector('meta[name="description"]').content =
     language === "en"
-      ? "Build your offline collection with uTube. Download YouTube videos, playlists, and MP3s with a simple desktop app or a powerful CLI."
-      : "ابنِ مجموعتك الخاصة مع uTube. نزّل فيديوهات يوتيوب وقوائم التشغيل وملفات MP3 عبر تطبيق سطح المكتب أو الطرفية.";
+      ? "Download YouTube videos, playlists, and MP3 audio with uTube for Windows, macOS, and Linux."
+      : "نزّل فيديوهات يوتيوب وقوائم التشغيل وملفات MP3 باستخدام تطبيق uTube لأنظمة Windows وmacOS وLinux.";
   if (knownPlatform)
     document.querySelector("#hero-download [data-i18n]").textContent =
       `${t("downloadFor")} ${platform === "windows" ? "Windows" : platform === "macos" ? "macOS" : "Linux"}`;
