@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Keep desktop videos and playlist downloads across restarts with saved metadata, file actions, playlist search, and retryable interrupted downloads.
+- Write history atomically, flush it before closing, and preserve damaged history in a backup.
+
 - Simplify the desktop with a compact layout, neutral colors, saved light/dark/system appearance, and English/Arabic language choices with RTL support.
 - Open completed downloads in the default media application, with a separate action to reveal their containing folder.
 - Add queue search and status filters, a link-input keyboard shortcut, and quick access to the download folder.

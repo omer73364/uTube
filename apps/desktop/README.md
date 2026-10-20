@@ -6,6 +6,14 @@ The desktop uses a compact download form and neutral colors. In **Settings**, ch
 
 Search the queue by title or filter it to active, completed, or attention-needed downloads. Press Ctrl+L (Command+L on macOS) to return to the link input from any page. Completed downloads have separate **Open file** and **Show in folder** actions. Files open in your system's default media application; moved or deleted files produce a clear error.
 
+## Saved downloads
+
+Videos and playlist items stay in the queue after closing, including their titles, playlist names, dates, quality, status, and file locations. Search by video or playlist name. Failed downloads remain available to retry, and completed files can still be opened after restarting.
+
+Unfinished downloads reopen as **Interrupted** and wait for you to retry them. Retrying starts the transfer from the beginning; the app does not resume partial files or start downloads automatically on launch.
+
+History is stored locally as `downloads.json` in the application's user-data directory, alongside its preferences. Writes are atomic, and closing waits for the latest state to be saved. Damaged history is preserved as a `downloads.json.backup-*` file, with a visible recovery warning. The 500-item limit applies to unfinished downloads, so completed history does not prevent adding new videos.
+
 ## Adding a language
 
 UI strings live in `src/locales.ts`. Register a language code, native name, and text direction in `languages`, add its dictionary to `dictionaries`, and type it as `Record<TextKey, string>` so missing translations are caught by TypeScript. Language types, validation, and the picker use the same registry. Keep placeholders such as `{count}` and `{title}` intact. Known download errors are translated; upstream or operating-system diagnostics may retain their original wording.
@@ -42,4 +50,4 @@ npm run desktop:make
 
 Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian packaging needs `dpkg` and `fakeroot`. Nothing is uploaded by this command. FFmpeg remains a system dependency.
 
-This preview has no persistent download history, pause/resume, or automatic updates. Windows and macOS packages have not been verified. The desktop package is private and does not change the public CLI version.
+This preview has no partial-download resume or automatic updates. Windows and macOS packages have not been verified. The desktop package is private and does not change the public CLI version.
