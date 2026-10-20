@@ -45,6 +45,7 @@ async function createWindow() {
   window = new BrowserWindow({
     width: 1240, height: 860, minWidth: 850, minHeight: 640, backgroundColor: '#f6f7fb',
     title: 'uTube Desktop', autoHideMenuBar: true,
+    icon: app.isPackaged ? path.join(process.resourcesPath, 'icon.png') : path.join(app.getAppPath(), 'assets/icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true },
   });
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
