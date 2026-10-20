@@ -72,7 +72,7 @@ utube --version
 **Try a download**
 
 ```sh
-# Video: download at the requested quality, or the reported fallback
+# Video: download at the requested quality
 utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p
 
 # Playlist: paste your playlist URL to choose all or individual videos
@@ -176,7 +176,7 @@ Help, version, and folder settings work offline. Set `NO_COLOR` to disable color
 uTube saves **MP4 with audio**, or **MP3** when `--audio` is used. When YouTube serves video and audio separately, FFmpeg merges them.
 
 - **Resolutions:** 480p, 720p, and 1080p are supported when YouTube offers them, and other available resolutions are accepted too. A `720p` request can use a `720p60` stream.
-- **Fallback:** if your quality isn't available, uTube tries 360p, then the lowest available. If a server rejects a stream, uTube can refresh links and switch clients, which may change the resolution. The app always reports the quality actually used.
+- **Retries:** if a server rejects a stream, uTube tries other formats and refreshes links using alternate clients at the requested resolution. It reports an error if that resolution cannot be downloaded; it never silently substitutes 360p.
 - **Filenames** include the video ID:
 
 ```text
@@ -192,6 +192,8 @@ Video IDs distinguish videos with identical titles and help uTube recognize exis
 
 **Limitations:** existing target files are skipped; a failed download restarts from scratch (no partial resume); authenticated downloads are not available.
 
+To replace an earlier 360p fallback with HD, move or rename the existing MP4 before downloading again. The filename does not include resolution, so choosing a higher quality alone does not replace an existing file.
+
 ## 🩺 Troubleshooting
 
 <details>
@@ -203,7 +205,7 @@ Video IDs distinguish videos with identical titles and help uTube recognize exis
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `utube` is not found                              | Reopen your terminal and make sure npm's global bin directory is on your `PATH`.                      |
 | A download requires FFmpeg                        | Install FFmpeg and confirm `ffmpeg -version` works in the same terminal.                              |
-| A lower quality was downloaded                    | Read the fallback message. YouTube or the alternate client may not offer that resolution.             |
+| Requested quality cannot be downloaded            | Retry later or select an available resolution. Automatic retries preserve your chosen quality.       |
 | A download is rejected or interrupted             | Transient failures are retried automatically. If it still fails, try later or choose another quality. |
 | A playlist needs an interactive terminal          | Run the command directly, without piping its output.                                                  |
 | A private, restricted, or unavailable video fails | Confirm the video is public. The CLI has no login or cookie options.                                  |
