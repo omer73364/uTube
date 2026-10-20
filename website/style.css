@@ -1121,3 +1121,8 @@ footer > div {
     padding: 16px;
   }
 }
+
+.brand > span {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
