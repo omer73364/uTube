@@ -9,6 +9,7 @@ import { DownloadHistory } from './history.mjs';
 import { validateURL, validateRequest, validateJobID } from './validation.mjs';
 import type { DownloadRequest, Job, Preferences } from '../shared';
 import { translator, languages } from '../locales';
+import squirrelStartup from 'electron-squirrel-startup';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
@@ -158,7 +159,9 @@ async function createWindow() {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) await window.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   else await window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
 }
-if (app.requestSingleInstanceLock()) {
+if (squirrelStartup) {
+  app.quit();
+} else if (app.requestSingleInstanceLock()) {
   app.on('second-instance', () => {
     if (window && !window.isDestroyed()) { if (window.isMinimized()) window.restore(); window.focus(); }
   });
