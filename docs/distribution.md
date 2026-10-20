@@ -1,38 +1,52 @@
-# Desktop downloads: the plan
+# Install uTube Desktop
 
-The desktop should be something you install and open. Building from source should be a contributor workflow.
+Download the files for your system from [uTube 2.2.0 on GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.2.0). The desktop includes its runtime; you do not need Node.js, npm, or a compiler.
 
-This is a proposal, not a list of published downloads. Public desktop installers are not available yet. The current Electron Forge configuration creates local Debian packages and ZIP archives; Windows and macOS still need platform testing and installer setup.
+This is the first desktop preview. Builds are unsigned and macOS builds are not notarized. Linux has desktop integration coverage; Windows and macOS installers are built on native runners, with broader interactive testing still needed.
 
-## Start with Linux
+## Debian and Ubuntu
 
-Ship an x64 **`.deb` for Debian and Ubuntu** first, using the existing maker. Keep a **ZIP archive** as a portable alternative for compatible Linux systems, with clear launch instructions. Test installation, first launch, a video, a playlist, MP3 conversion, opening files, and history after restart on a clean machine.
+Download the x64 `.deb` and install it with apt so FFmpeg and other declared dependencies are installed too:
 
-Consider AppImage next for broader Linux distribution. It needs separate packaging work and testing; the current project does not build it.
+```sh
+sudo apt install ./uTube-Desktop-2.2.0-linux-x64.deb
+```
 
-## Add native Windows and macOS installers
+Launch uTube Desktop from your application menu.
 
-- **Windows:** a `Setup.exe` built with [Forge's Squirrel.Windows maker](https://www.electronforge.io/config/makers/squirrel.windows), including its startup event handling. Start with x64 and test on Windows.
-- **macOS:** a `.dmg` built with [Forge's DMG maker](https://www.electronforge.io/config/makers/dmg). Build and test Apple Silicon and Intel versions on macOS.
+## Portable Linux
 
-Prepare [code signing](https://www.electronforge.io/guides/code-signing) for public Windows and macOS distribution, including macOS notarization. Keep platform downloads labeled with their version and architecture.
+For AppImage, download the x64 file and make it executable:
 
-## Make installation complete
+```sh
+chmod +x uTube-Desktop-2.2.0-linux-x64.AppImage
+./uTube-Desktop-2.2.0-linux-x64.AppImage
+```
 
-Packaged desktop apps include Electron and its Node.js runtime, so users should not need Node.js, npm, or a compiler. FFmpeg is still an external dependency today.
+AppImage requires FUSE support on your distribution. On systems without it, try the AppImage runtime's `--appimage-extract-and-run` option. For ZIP, extract the entire archive and run `utube-desktop` inside the extracted directory. Install FFmpeg through your distribution's package manager for MP3 conversion and HD merging.
 
-Before calling the desktop a complete installer experience, include a suitable FFmpeg binary for each supported platform, review that build's redistribution requirements, and test MP3 conversion and HD merging on a machine without system FFmpeg. Until then, state the FFmpeg requirement next to the download.
+## Windows
 
-## Build first, publish separately
+Run the x64 `Setup.exe`, or extract the entire Windows ZIP and open `utube-desktop.exe`. Install [FFmpeg](https://ffmpeg.org/download.html) and make it available on your `PATH`, then restart uTube. The preview installer is unsigned, so Windows may show a security warning.
 
-Use manually triggered CI jobs on Linux, Windows, and macOS to build and retain test artifacts. Include checksums and verify each platform before promoting an artifact to a public download. Building must not automatically publish a release.
+## macOS
 
-When a desktop release is approved, attach the tested installers to its GitHub Release and link directly to them from the README and website. Keep the CLI available through npm; standalone CLI binaries can follow if users need them.
+Choose `arm64` for Apple Silicon or `x64` for Intel. Open the DMG and drag uTube Desktop into Applications, or extract the ZIP and move its `.app` into Applications. Install FFmpeg and restart uTube. If a GUI launch cannot find a custom FFmpeg installation, launch with `UTUBE_FFMPEG` set to its absolute executable path.
 
-## Give the project a home
+The preview is unsigned and not notarized. macOS may block opening it; follow Apple's guidance for [opening an app from an unidentified developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac). Only proceed when you trust the download.
 
-A small English/Arabic website would make the desktop easier to discover and install. Start with a static page in this repository, hosted on [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+## Verify a download
 
-Lead with the benefit, show real desktop screenshots, and give visitors a clear download for their operating system alongside all platform choices. Include a copyable CLI install command, requirements, release notes, and links to documentation and issues.
+Each platform has a `SHA256SUMS` file alongside its downloads. On Linux, put it next to the matching downloaded files and run `sha256sum --check SHA256SUMS-linux-x64.txt`. On macOS, use `shasum -a 256 <filename>`; on Windows, use PowerShell `Get-FileHash <filename> -Algorithm SHA256`. Compare the result with the corresponding line. A missing-file message is expected if you downloaded only one of the listed formats.
 
-Only show a platform download when its installer exists and has been tested. Keep downloads on GitHub Releases so the page can stay simple. A download page needs no account system or server-side video processing.
+## Build and release
+
+`npm run desktop:make` creates packages for the current platform under `apps/desktop/out/make/`. Linux builds need `dpkg` and `fakeroot`. AppImage packaging uses electron-builder through a Forge 8 adapter; Windows uses Squirrel.Windows, and DMG creation runs on macOS.
+
+The **Desktop release** workflow builds Linux x64, Windows x64, macOS Intel, and macOS Apple Silicon artifacts on native GitHub runners. A manual run keeps artifacts for inspection without publishing. A version-tag run publishes one GitHub Release only after all build jobs succeed. npm publishing remains a separate step.
+
+Release steps: keep root, desktop, lockfile, and `version.js` versions aligned; update the changelog and versioned release notes; run tests; commit; then push the matching `vX.Y.Z` tag when a release is authorized. Signing and notarization are future work. Do not describe these builds as signed or as including FFmpeg.
+
+## Project website
+
+A small English/Arabic download page is the next proposed step. It should show real screenshots, explain platform requirements, link to tested GitHub Release assets, and include the CLI installation command. Keep it in this repository and host it as a static site; account systems and server-side video processing are unnecessary.

@@ -8,7 +8,7 @@ Save a tutorial for later, keep a playlist together, or take your favorite track
 
 [![npm](https://img.shields.io/npm/v/utube-cli?style=flat-square&color=3769d6)](https://www.npmjs.com/package/utube-cli)
 [![License: MIT](https://img.shields.io/badge/license-MIT-64748b?style=flat-square)](LICENSE)
-[![Desktop: local preview](https://img.shields.io/badge/desktop-local_preview-3769d6?style=flat-square)](#desktop)
+[![Desktop: preview](https://img.shields.io/badge/desktop-preview-3769d6?style=flat-square)](#desktop)
 
 [CLI](#cli) · [Desktop](#desktop) · [Download behavior](#download-behavior) · [Development](#development) · [Troubleshooting](#troubleshooting)
 
@@ -35,7 +35,7 @@ Follow the guided menu, or use a command when you already know what you want. Do
 [Install the CLI ↓](#cli)
 
 > [!NOTE]
-> The CLI is available on npm. Desktop is currently a source preview; public installers are not available yet. See the [installer plan](docs/distribution.md) for the proposed downloads. This README describes the current repository; the [changelog](CHANGELOG.md) lists improvements that may not be in the published CLI yet.
+> Desktop 2.2.0 is the first public preview. Get the platform installers from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.2.0), or use the CLI from npm. See the [installation guide](docs/distribution.md) for requirements and platform details.
 
 ## CLI
 
@@ -109,7 +109,19 @@ A compact download form, a queue you can come back to, and direct access to your
 
 ![uTube Desktop in English with the light theme](docs/images/desktop-light.png)
 
-### Run the preview
+### Download and install
+
+Get **uTube Desktop 2.2.0** from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.2.0):
+
+- **Linux:** Debian/Ubuntu `.deb`, portable `.AppImage`, or `.zip` (x64).
+- **Windows:** `Setup.exe` or portable `.zip` (x64).
+- **macOS:** `.dmg` or `.zip` for Apple Silicon (arm64) and Intel (x64).
+
+Desktop installers include the app runtime: Node.js and npm are not needed. The Debian package installs FFmpeg through apt. Other downloads need [FFmpeg](https://ffmpeg.org/download.html) installed separately for MP3 conversion and HD video merging. These preview builds are unsigned and macOS builds are not notarized.
+
+See the [installation guide](docs/distribution.md) for installation commands and checksum verification.
+
+### Run from source
 
 Use **Node.js 22.13+**, **npm 10.9+**, and FFmpeg on your `PATH`.
 
@@ -146,7 +158,7 @@ The queue is stored locally in `downloads.json` inside the application's user-da
 
 Unfinished downloads return as **Interrupted** and wait for you to select **Retry**. Retries start from the beginning; opening the app does not automatically start transfers. The queue allows up to 500 unfinished downloads, while completed history is retained separately from that limit.
 
-See the [desktop guide](apps/desktop/README.md) for storage details, adding languages, testing, and local Linux packages. The [distribution plan](docs/distribution.md) covers proposed ready-to-install downloads.
+See the [desktop guide](apps/desktop/README.md) for storage details, adding languages, testing, and local Linux packages. The [installation guide](docs/distribution.md) covers ready-to-install downloads.
 
 ## Download behavior
 
@@ -204,7 +216,7 @@ npm run desktop:check
 npm run desktop:package
 npm run desktop:test
 
-# Build local Linux ZIP and Debian previews
+# Build local installers for the current platform
 npm run desktop:make
 ```
 
@@ -229,7 +241,7 @@ YouTube changes can break downloads. For a reproducible problem, [open an issue]
 
 ### Current limits
 
-Linux is the verified platform; Windows and macOS need broader testing. FFmpeg is a system dependency. Partial-download resume, authenticated downloads, and automatic desktop updates are not available. Live-stream recording is not verified, even though live-style URLs are recognized.
+Linux is the verified platform; Windows and macOS need broader testing. FFmpeg is a system dependency, installed automatically by the Debian package. Partial-download resume, authenticated downloads, and automatic desktop updates are not available. Live-stream recording is not verified, even though live-style URLs are recognized.
 
 ## Contributing
 

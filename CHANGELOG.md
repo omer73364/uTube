@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 2.2.0 — 2026-10-21
+
+- Introduce the first public desktop preview with Debian, AppImage, Windows Setup, macOS DMG, and portable ZIP packaging.
+- Build native platform artifacts through GitHub Actions and include versioned filenames and SHA-256 checksums.
+- Install FFmpeg automatically with the Debian package; other platforms require a separate FFmpeg installation.
 
 - Keep desktop videos and playlist downloads across restarts with saved metadata, file actions, playlist search, and retryable interrupted downloads.
 - Write history atomically, flush it before closing, and preserve damaged history in a backup.
@@ -12,10 +16,10 @@
 - Keep requested video quality across retries, try alternate encodings and HD-capable clients, and reduce rejected byte ranges before abandoning a stream.
 - After exhausting the requested resolution across clients, try lower qualities from highest to lowest and report the quality successfully saved.
 
-- Add a private Electron desktop preview with video and playlist previews, item selection, MP4/MP3 downloads, folder settings, and a visible download queue.
+- Add an Electron desktop preview with video and playlist previews, item selection, MP4/MP3 downloads, folder settings, and a visible download queue.
 - Support cancelling and retrying desktop jobs, safe shutdown, and missing-FFmpeg guidance.
 - Share the download engine between CLI and desktop with explicit inputs, progress events, and cancellation cleanup.
-- Add desktop integration checks and local Linux packaging. The public CLI version remains 2.1.0.
+- Add desktop integration checks and local Linux packaging.
 
 ## 2.1.0 — 2026-10-20
 
