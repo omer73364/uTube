@@ -1,265 +1,239 @@
 <div align="center">
 
-# ▶ uTube CLI
+# uTube
 
-**Download YouTube videos, playlists, and MP3s from your terminal.**
+**YouTube downloads for your terminal and desktop.**
 
-Interactive prompts · Quality selection · Readable progress · Automatic recovery
+Videos, playlists, and MP3s — with quality selection, automatic recovery, and files saved on your device.
 
-[![npm version](https://img.shields.io/npm/v/utube-cli?color=06b6d4&label=npm)](https://www.npmjs.com/package/utube-cli)
-[![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A520-22c55e)](https://nodejs.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-a78bfa)](LICENSE)
+[![npm](https://img.shields.io/npm/v/utube-cli?style=flat-square&color=3769d6)](https://www.npmjs.com/package/utube-cli)
+[![License: MIT](https://img.shields.io/badge/license-MIT-64748b?style=flat-square)](LICENSE)
+[![Desktop: local preview](https://img.shields.io/badge/desktop-local_preview-3769d6?style=flat-square)](#desktop)
 
-[Quick start](#-quick-start) · [Usage](#-usage) · [Reference](#-command-reference) · [Troubleshooting](#-troubleshooting) · [Changelog](CHANGELOG.md)
+[CLI](#cli) · [Desktop](#desktop) · [Download behavior](#download-behavior) · [Development](#development) · [Troubleshooting](#troubleshooting)
 
 </div>
 
-```text
-  ╭──────────────────────────────────────────────────────╮
-  │ ▶  uTube   /   v2.1.0                                │
-  ├──────────────────────────────────────────────────────┤
-  │ Your next watch, ready to go.                        │
-  │                                                      │
-  │ VIDEOS  /  PLAYLISTS  /  MP3                         │
-  ╰──────────────────────────────────────────────────────╯
+## Choose your interface
 
-  ◆ What would you like to do?
-  ❯ ↓  Download a video or playlist
-    ♫  Download audio (MP3)
-    ▣  Change download folder
-    ↗  Exit
-```
+|                  | CLI                                            | Desktop                                                    |
+| :--------------- | :--------------------------------------------- | :--------------------------------------------------------- |
+| **Workflow**     | Guided terminal menu or command-line arguments | Video previews, playlist selection, and a searchable queue |
+| **Get started**  | `npm install -g utube-cli@latest`              | Run from this repository                                   |
+| **Requirements** | Node.js 20+                                    | Node.js 22.13+ and npm 10.9+ for development               |
+| **Preferences**  | Remember your download folder                  | Remember your folder, theme, and language                  |
+| **History**      | Progress and summaries for the current command | Videos and playlist downloads saved across restarts        |
+| **Language**     | English                                        | English and العربية, with right-to-left support            |
 
-## ✨ Features
+Both interfaces download MP4 videos and 192 kbps MP3 audio using the same engine, built on [YouTube.js](https://github.com/LuanRT/YouTube.js).
 
-|                          |                                                                                         |
-| ------------------------ | --------------------------------------------------------------------------------------- |
-| 🧭 **Guided workflow**   | Paste a URL, pick a quality, download. Stay in the menu to start another.               |
-| 📂 **Playlist control**  | Grab everything or select individual videos. Each playlist gets its own folder.         |
-| 🎧 **MP3 mode**          | Convert videos or whole playlists to 192 kbps MP3 with the title embedded.              |
-| 📊 **Clear progress**    | Separate video, audio, and merge stages with size, speed, and ETA when available.                      |
-| 🛡️ **Built-in recovery** | Ranged transfers, bounded retries, refreshed links, and an alternate YouTube client.    |
-| 🗂️ **Predictable files** | MP4 output, sanitized names with video IDs, skip-if-exists, and cleanup after failures. |
+> [!NOTE]
+> Desktop is a **local preview**, run from source. This README describes the current repository; the [changelog](CHANGELOG.md) lists unreleased improvements that may not be in the published npm CLI yet.
 
-Built on [YouTube.js](https://github.com/LuanRT/YouTube.js).
+## CLI
 
-## 🚀 Quick start
+### Install and run
 
-**Requirements**
-
-- [Node.js](https://nodejs.org/) 20 or newer
-- [FFmpeg](https://ffmpeg.org/download.html) on your `PATH`. It is needed to merge separate video and audio streams, and for every MP3 conversion.
-
-Check that FFmpeg is available in the same terminal:
-
-```sh
-ffmpeg -version
-```
-
-**Install and run**
+Install [Node.js](https://nodejs.org/) 20 or newer. Install [FFmpeg](https://ffmpeg.org/download.html) on your `PATH` for MP3 conversion and video/audio merging.
 
 ```sh
 npm install -g utube-cli@latest
 utube
 ```
 
-**Update** by running the same install command, then check your version:
+Running `utube` opens the interactive menu:
 
-```sh
-utube --version
+```text
+◆ What would you like to do?
+❯ ↓  Download a video or playlist
+  ♫  Download audio (MP3)
+  ▣  Change download folder
+  ↗  Exit
 ```
 
-**Try a download**
+Paste a link, select playlist items if needed, and choose a video quality. Use `↑` / `↓` to navigate, `Enter` to confirm, and `Space` to select playlist items. A playlist summary shows saved, skipped, and failed downloads; one failed item does not stop the rest.
+
+### Examples
 
 ```sh
-# Video: download at the requested quality
-utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p
-
-# Playlist: paste your playlist URL to choose all or individual videos
-utube -u "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
-
-# Audio: convert to MP3 (requires FFmpeg)
-utube --audio -u "https://youtu.be/jNQXAC9IVRw"
-```
-
-Replace `YOUR_PLAYLIST_ID` with your playlist's ID. Playlist selection requires an interactive terminal.
-
-> [!NOTE]
-> Live downloads have been verified on Linux. Windows and macOS need broader testing.
-
-## 📖 Usage
-
-### Interactive menu
-
-Run `utube` with no arguments, then:
-
-1. Choose **Download a video or playlist**.
-2. Paste the YouTube URL (typos can be corrected in the prompt).
-3. For a playlist, download everything or pick individual entries.
-4. Choose a quality and watch the progress.
-
-When a playlist finishes, you get a summary of saved, skipped, and failed items. One failed video never stops the rest.
-
-| Key       | Action                                  |
-| --------- | --------------------------------------- |
-| `↑` / `↓` | Move between choices                    |
-| `Enter`   | Confirm or submit                       |
-| `Space`   | Toggle a video in playlist selection    |
-| `a`       | Toggle all videos in playlist selection |
-| `Ctrl+C`  | Exit                                    |
-
-### Download a video
-
-```sh
-# Choose the quality interactively
+# Video: choose quality interactively
 utube -u "https://youtu.be/jNQXAC9IVRw"
 
-# Skip every prompt
-utube -u "https://www.youtube.com/watch?v=jNQXAC9IVRw" -q 720p
-```
+# Video: request a resolution without prompts
+utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p
 
-Watch, Shorts, embed, live, mobile, and short URL formats are all recognized. Live URLs are accepted, but recording live streams is not a verified feature.
-
-### Download a playlist
-
-```sh
+# Playlist: choose all or specific videos
 utube -u "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
-```
 
-Or paste the full URL into the interactive menu.
-
-> [!IMPORTANT]
-> Playlist selection needs an interactive terminal. For non-interactive MP4 downloads, pass both `-u` and `-q`. For MP3, use `--audio -u` without `-q`.
-
-### Download audio as MP3
-
-Pick **Download audio (MP3)** in the menu, or use `--audio` (`-a`):
-
-```sh
+# Audio: save a video as MP3
 utube --audio -u "https://youtu.be/jNQXAC9IVRw"
+
+# Audio: select tracks from a playlist
 utube --audio -u "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
-```
 
-- Output is **192 kbps MP3** with the title stored in the metadata.
-- Original audio-only streams are preferred. If only a combined stream exists, the audio is extracted from it.
-- Playlist selection, retries, skipping, and cleanup all work in audio mode.
-- Don't combine `--audio` with `-q`. `-q` selects video resolution, not audio bitrate.
-- MP3 and MP4 files are tracked separately, so an existing video won't block its audio download.
-
-### Choose where files go
-
-By default, uTube saves to the current directory. Change it from the main menu, or from the command line:
-
-```sh
+# Remember a download folder
 utube --set-download-folder "~/Downloads"
 utube --get-download-folder
 ```
 
-Quote paths that contain spaces. Settings are stored in `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json` if `XDG_CONFIG_HOME` is unset.
+Replace `YOUR_PLAYLIST_ID` with your playlist's ID. Playlist selection requires an interactive terminal. For a non-interactive video download, provide `-u` and `-q`; for audio, provide `--audio -u` without `-q`.
 
-## ⚙️ Command reference
+### Command reference
 
-| Option                         | Description                                 |
-| ------------------------------ | ------------------------------------------- |
-| `-u <url>`                     | Video or playlist URL                       |
-| `-q <quality>`                 | Video quality, e.g. `480p`, `720p`, `1080p` |
-| `-a`, `--audio`                | Download as MP3 (requires FFmpeg)           |
-| `-v`, `--version`              | Print the installed version                 |
-| `--set-download-folder <path>` | Save a default download folder              |
-| `--get-download-folder`        | Print the current download folder           |
-| `-h`, `--help`                 | Show help                                   |
+| Option                         | Description                                              |
+| :----------------------------- | :------------------------------------------------------- |
+| `-u <url>`                     | Video or playlist URL                                    |
+| `-q <quality>`                 | Requested resolution, such as `480p`, `720p`, or `1080p` |
+| `-a`, `--audio`                | Download as MP3; do not combine with `-q`                |
+| `--set-download-folder <path>` | Save a default destination                               |
+| `--get-download-folder`        | Print the current destination                            |
+| `-v`, `--version`              | Print the installed version                              |
+| `-h`, `--help`                 | Show help                                                |
 
-Help, version, and folder settings work offline. Set `NO_COLOR` to disable colors. Piped output uses plain status lines with no animations.
+Without a saved destination, the CLI uses the current directory. Settings live in `$XDG_CONFIG_HOME/utube-cli/settings.json`, falling back to `~/.config/utube-cli/settings.json`. Quote paths containing spaces.
 
-## 🎞️ Quality and output
+Help, version, and folder settings work offline. `NO_COLOR` disables terminal colors; piped output uses plain status lines.
 
-uTube saves **MP4 with audio**, or **MP3** when `--audio` is used. When YouTube serves video and audio separately, FFmpeg merges them.
+To update, run `npm install -g utube-cli@latest` again, then check `utube --version`.
 
-- **Resolutions:** 480p, 720p, and 1080p are supported when YouTube offers them, and other available resolutions are accepted too. A `720p` request can use a `720p60` stream.
-- **Retries:** uTube first tries other formats and alternate clients at your requested resolution. If it is unavailable or every attempt fails, uTube tries lower resolutions from highest to lowest and reports the quality successfully saved. Retries stay silent and keep the progress display steady.
-- **Filenames** include the video ID:
+## Desktop
 
-```text
-Downloads/
-├── Me at the zoo [jNQXAC9IVRw].mp4
-├── Me at the zoo [jNQXAC9IVRw].mp3
-└── My playlist/
-    ├── #1_First video [VIDEO_ID].mp4
-    └── #2_Second video [VIDEO_ID].mp4
-```
+A compact download form, a queue you can come back to, and direct access to your files.
 
-Video IDs distinguish videos with identical titles and help uTube recognize existing downloads. MP3 and MP4 versions have separate filenames.
+![uTube Desktop in English with the light theme](docs/images/desktop-light.png)
 
-**Limitations:** existing target files are skipped; a failed download restarts from scratch (no partial resume); authenticated downloads are not available.
+### Run the preview
 
-To replace an earlier 360p fallback with HD, move or rename the existing MP4 before downloading again. The filename does not include resolution, so choosing a higher quality alone does not replace an existing file.
-
-## 🩺 Troubleshooting
-
-<details>
-<summary><strong>Common problems and fixes</strong></summary>
-
-<br>
-
-| What you see                                      | What to try                                                                                           |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `utube` is not found                              | Reopen your terminal and make sure npm's global bin directory is on your `PATH`.                      |
-| A download requires FFmpeg                        | Install FFmpeg and confirm `ffmpeg -version` works in the same terminal.                              |
-| A lower quality was downloaded                    | The requested resolution was unavailable or failed across clients. uTube saved the best working lower quality. |
-| A download is rejected or interrupted             | Transient failures are retried automatically. If it still fails, try later or choose another quality. |
-| A playlist needs an interactive terminal          | Run the command directly, without piping its output.                                                  |
-| A private, restricted, or unavailable video fails | Confirm the video is public. The CLI has no login or cookie options.                                  |
-
-</details>
-
-YouTube changes can still break downloads. If a problem persists, [open an issue](https://github.com/omer73364/uTube/issues) with your uTube and Node.js versions, OS, the exact error, and a public example URL if possible.
-
-## ⬆️ Upgrading from 1.x
-
-<details>
-<summary><strong>What changed in v2</strong></summary>
-
-<br>
-
-- **Node.js 20+** is now required. Upgrade it before installing v2.
-- Note your old download folder first, then set it again with `--set-download-folder`. Legacy package-local settings are read as a fallback, but npm upgrades can replace that file.
-- Update manually with `npm install -g utube-cli@latest`. Startup no longer runs a global npm update.
-- Filenames now include video IDs, so files from older versions may not be recognized and could be downloaded again.
-
-</details>
-
-See the [changelog](CHANGELOG.md) for the full release history.
-
-## 🖥️ Desktop preview
-
-The repository now includes a local desktop app with video previews, playlist selection, MP4 and MP3 downloads, and a queue with cancellation and retry controls.
-
-With Node.js 22.13+ and npm 10.9+, run `npm ci` followed by `npm run desktop`. Install FFmpeg for MP3 conversion and video/audio merging. See the [desktop guide](apps/desktop/README.md) for testing, local Linux packages, and preview limitations.
-
-## 🛠️ Development
-
-Repository development uses Node.js 22.13+ and npm 10.9+ for desktop tooling. The published CLI continues to support Node.js 20+.
+Use **Node.js 22.13+**, **npm 10.9+**, and FFmpeg on your `PATH`.
 
 ```sh
 git clone https://github.com/omer73364/uTube.git
 cd uTube
 npm ci
-npm test
-npm start
+npm run desktop
 ```
 
-Pass CLI arguments through npm with `--`:
+1. Paste a video or playlist link and select **Find**.
+2. Choose video or audio, a resolution, and playlist items.
+3. Check the destination, then start the download.
+4. Use **Queue** to search, filter, cancel, retry, or open completed files.
+
+### Made for everyday downloads
+
+| Feature                | What it does                                                                             |
+| :--------------------- | :--------------------------------------------------------------------------------------- |
+| **Saved history**      | Keeps videos, playlist names, dates, status, quality, and file locations after closing   |
+| **Search and filters** | Finds videos or playlists by name; filters active, completed, and attention-needed items |
+| **File actions**       | Opens a completed file in your default media app, or reveals it in its containing folder |
+| **Appearance**         | Light, dark, or system mode, with a quick theme toggle                                   |
+| **Languages**          | English and Arabic, including a mirrored RTL layout and readable URLs and paths          |
+| **Saved preferences**  | Remembers your download folder, theme, and language                                      |
+| **Keyboard shortcut**  | `Ctrl+L` / `⌘+L` returns to the link input, including with an Arabic keyboard layout     |
+
+<details>
+<summary><strong>Arabic · Dark mode</strong></summary>
+
+![uTube Desktop in Arabic with the dark theme and RTL layout](docs/images/desktop-ar-dark.png)
+
+</details>
+
+### Close it. Come back later.
+
+The queue is stored locally in `downloads.json` inside the application's user-data directory, alongside its preferences. Closing waits for the latest history to be written. Saved files remain available through **Open file** and **Show in folder** after restarting.
+
+Unfinished downloads return as **Interrupted** and wait for you to select **Retry**. Retries start from the beginning; opening the app does not automatically start transfers. The queue allows up to 500 unfinished downloads, while completed history is retained separately from that limit.
+
+See the [desktop guide](apps/desktop/README.md) for storage details, adding languages, testing, and local Linux packages.
+
+## Download behavior
+
+### Quality and recovery
+
+- **Requested quality first.** The current engine tries matching encodings and alternate clients at your chosen resolution. A `720p` request can use a `720p60` stream.
+- **Best working fallback.** Only after the requested resolution is unavailable or exhausted does it try lower resolutions, from highest to lowest. The successfully saved quality is reported.
+- **Quiet retries.** Automatic recovery happens without repeated warnings or a progress bar jumping back to zero. The display holds its position until a new attempt catches up.
+- **Audio included.** Separate video and audio streams are merged into MP4 with FFmpeg. MP3 output uses 192 kbps audio with title metadata.
+
+Available resolutions depend on the video. Requesting 1080p cannot create a resolution YouTube does not offer.
+
+### Files and destinations
+
+The desktop starts with your system Downloads folder; the CLI starts with the current directory. Their preferences are separate. Playlists get their own subfolder.
+
+```text
+Downloads/
+├── Video title [VIDEO_ID].mp4
+├── Video title [VIDEO_ID].mp3
+└── Playlist title/
+    ├── #1_First video [VIDEO_ID].mp4
+    └── #2_Second video [VIDEO_ID].mp4
+```
+
+Names are sanitized, and video IDs distinguish videos with identical titles. MP3 and MP4 files are tracked separately. Existing target files are skipped rather than overwritten: to replace an older low-quality copy, move or rename it before downloading again.
+
+## Development
+
+The repository contains three parts:
+
+```text
+apps/cli/       Terminal interface and command handling
+apps/desktop/   Electron, React, and TypeScript desktop app
+packages/core/  Shared YouTube and download engine
+```
+
+Use Node.js 22.13+ and npm 10.9+ for repository development. The published CLI runtime requirement remains Node.js 20+.
 
 ```sh
+npm ci
+
+# Run either interface
+npm start
+npm run desktop
+
+# Pass arguments to the CLI
 npm start -- -u "https://youtu.be/jNQXAC9IVRw" -q 360p
+
+# Core, CLI, media, queue, and history tests
+npm test
+
+# Desktop type checking and integration tests
+npm run desktop:check
+npm run desktop:package
+npm run desktop:test
+
+# Build local Linux ZIP and Debian previews
+npm run desktop:make
 ```
 
-The test suite covers argument handling, settings, playlist rendering and pagination, failed-download cleanup, ranged transfers, and retry behavior. With FFmpeg and FFprobe installed, extra media tests generate real MP3 files and verify 480p, 720p, and 1080p merging; they're skipped when those tools are missing. Live checks against YouTube are kept separate from automated tests.
+Media tests use FFmpeg and FFprobe to generate and inspect real output; those checks are skipped if the tools are missing. Desktop integration tests require a graphical session and cover downloads, playlists, recovery, file actions, themes, Arabic/RTL, and history across restarts. Build the desktop before running them.
 
-## 🤝 Contributing
+Local desktop artifacts are written under `apps/desktop/out/`. Debian packaging requires `dpkg` and `fakeroot`. Packaging commands create local files and do not publish them.
 
-Bug reports and pull requests are welcome. For major changes, please open an issue first so we can agree on scope.
+## Troubleshooting
 
-## 📄 License
+| Problem                                     | What to check                                                                                           |
+| :------------------------------------------ | :------------------------------------------------------------------------------------------------------ |
+| `utube` is not found                        | Reopen the terminal and check that npm's global bin directory is on your `PATH`.                        |
+| MP3 conversion or HD merging is unavailable | Confirm `ffmpeg -version` works. Restart the desktop after installing FFmpeg.                           |
+| A lower resolution was saved                | The requested resolution was unavailable or failed; the engine selected the best working lower quality. |
+| An older file is skipped                    | Move or rename it before downloading again at a different quality.                                      |
+| A playlist requires a terminal              | CLI playlist selection is interactive. Run it without piping, or use the desktop.                       |
+| A file will not open                        | Check that it still exists and that your OS has a default app for MP4 or MP3.                           |
+| A transfer returns as Interrupted           | Select Retry. It starts again from the beginning.                                                       |
+| YouTube rejects a download                  | Retry later, try another available quality, and confirm the video is public.                            |
+
+YouTube changes can break downloads. For a reproducible problem, [open an issue](https://github.com/omer73364/uTube/issues) with your OS, interface, uTube and Node.js versions, exact error, and a public example URL if possible.
+
+### Current limits
+
+Linux is the verified platform; Windows and macOS need broader testing. FFmpeg is a system dependency. Partial-download resume, authenticated downloads, and automatic desktop updates are not available. Live-stream recording is not verified, even though live-style URLs are recognized.
+
+## Contributing
+
+Bug reports, fixes, and translations are welcome. For larger changes, open an issue first to discuss scope. The [desktop guide](apps/desktop/README.md#adding-a-language) explains how to add a language.
+
+See [CHANGELOG.md](CHANGELOG.md) for release history and unreleased changes.
+
+## License
 
 [MIT](LICENSE) © OMER ANWAR
