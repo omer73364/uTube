@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { createProgressFilter } from '../../../../packages/core/progress.js';
 
 // Sequential by default: avoid overwhelming YouTube or running several encoders.
 export class DownloadQueue {
@@ -50,10 +51,12 @@ export class DownloadQueue {
     job.status = 'running';
     this.#emit();
     this.#idle = (async () => {
+      const showProgress = createProgressFilter();
       try {
         const result = await this.run(job, {
           signal: job.controller.signal,
           onEvent: (event) => {
+            if (!showProgress(event)) return;
             // Automatic fallbacks are internal; keep the active job on screen.
             if (event.type === 'retry') { job.note = undefined; return; }
             if (event.type === 'stage') Object.assign(job, { stage: event.stage, total: event.total, loaded: 0, startedAt: Date.now(), speed: undefined, eta: undefined });

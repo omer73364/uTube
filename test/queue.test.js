@@ -11,12 +11,15 @@ test('automatic fallbacks stay silent while the same queue job succeeds', async 
     onEvent({ type: 'retry', message: 'HTTP 403; refreshing download links' });
     onEvent({ type: 'start', quality: '360p' });
     onEvent({ type: 'stage', stage: 'video', total: 80 });
+    onEvent({ type: 'progress', loaded: 5, total: 80 });
     onEvent({ type: 'progress', loaded: 80, total: 80 });
     return { status: 'saved', path: '/tmp/success.mp4' };
   }, (jobs) => snapshots.push(jobs));
   queue.add([{ videoId: 'fallback' }]);
   await queue.whenIdle();
   assert.ok(snapshots.every(([job]) => !job.note));
+  const running = snapshots.map(([job]) => job).filter((job) => job.status === 'running');
+  assert.ok(running.every((job, i) => i === 0 || job.loaded >= running[i - 1].loaded));
   assert.equal(queue.snapshot()[0].status, 'saved');
   assert.equal(queue.snapshot()[0].actualQuality, '360p');
 });
