@@ -53,7 +53,7 @@ const os = require("node:os");
     );
     await page.reload();
     await page
-      .getByRole("heading", { name: "Your favorites, ready offline." })
+      .getByRole("heading", { name: "uTube Video & audio downloader" })
       .waitFor();
     await page.getByRole("tab", { name: "Linux", exact: true }).click();
     assert.equal(await page.locator("#download-links a").count(), 3);
@@ -93,8 +93,20 @@ const os = require("node:os");
       .getByRole("button", { name: "Switch to Arabic", exact: true })
       .click();
     assert.equal(await page.locator("html").getAttribute("dir"), "rtl");
+    assert.equal(
+      await page.locator("h1").innerText(),
+      "uTube\nلتنزيل الفيديو والصوت",
+    );
+    assert.equal(
+      (await page.locator("#download-title").innerText()).trim(),
+      "تنزيل uTube",
+    );
+    assert.equal(
+      await page.locator("#cli-title").innerText(),
+      "نسخة سطر الأوامر",
+    );
     await page
-      .getByRole("button", { name: "استخدم الوضع الداكن", exact: true })
+      .getByRole("button", { name: "التبديل إلى الوضع الداكن", exact: true })
       .click();
     await page.reload();
     assert.equal(await page.locator("html").getAttribute("lang"), "ar");
