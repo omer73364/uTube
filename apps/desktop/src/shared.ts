@@ -15,10 +15,12 @@ export type DownloadRequest = {
   playlistTitle?: string; audio: boolean; quality?: string;
 };
 export type Preferences = { theme: 'light' | 'dark' | 'system'; language: Language };
-export type Settings = Preferences & { folder: string; version: string; ffmpeg: boolean };
+export type Appearance = Preferences & { resolvedTheme: 'light' | 'dark' };
+export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean };
 export type DesktopAPI = {
   settings(): Promise<Settings>;
-  preferences(patch: Partial<Preferences>): Promise<Preferences>;
+  preferences(patch: Partial<Preferences>): Promise<Appearance>;
+  onTheme(listener: (dark: boolean) => void): () => void;
   chooseFolder(): Promise<string | null>;
   inspect(url: string): Promise<Preview>;
   enqueue(request: DownloadRequest): Promise<string[]>;

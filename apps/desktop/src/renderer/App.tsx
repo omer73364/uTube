@@ -59,21 +59,13 @@ export default function App() {
   const [notice, setNotice] = useState<number>();
   const [queueFilter, setQueueFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [systemDark, setSystemDark] = useState(
-    () => matchMedia("(prefers-color-scheme: dark)").matches,
-  );
   const urlInput = useRef<HTMLInputElement>(null);
   const language = settings?.language || "en";
   const t = translator(language);
   const theme = settings?.theme || "system";
-  const dark = theme === "dark" || (theme === "system" && systemDark);
-
-  useEffect(() => {
-    const media = matchMedia("(prefers-color-scheme: dark)");
-    const update = () => setSystemDark(media.matches);
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
+  const dark = settings
+    ? settings.resolvedTheme === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
   useLayoutEffect(() => {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     document.documentElement.lang = language;
@@ -112,6 +104,12 @@ export default function App() {
     const unsubscribe = window.utube.onJobs((value) => {
       if (mounted) setJobs(value);
     });
+    const unsubscribeTheme = window.utube.onTheme((dark) => {
+      if (mounted)
+        setSettings(
+          (old) => old && { ...old, resolvedTheme: dark ? "dark" : "light" },
+        );
+    });
     Promise.all([window.utube.settings(), window.utube.jobs()])
       .then(([prefs, queue]) => {
         if (mounted) {
@@ -125,6 +123,7 @@ export default function App() {
     return () => {
       mounted = false;
       unsubscribe();
+      unsubscribeTheme();
     };
   }, []);
   const action = (task: Promise<unknown>) => {

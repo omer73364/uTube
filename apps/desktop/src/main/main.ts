@@ -67,14 +67,23 @@ async function createWindow() {
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   window.webContents.on('will-navigate', (event) => event.preventDefault());
   window.webContents.session.setPermissionRequestHandler((_contents, _permission, callback) => callback(false));
-  handle('utube:settings', async () => ({ folder, ...preferences, version: app.getVersion(), ffmpeg: await hasFFmpeg() }));
+  nativeTheme.on('updated', () => {
+    if (window.isDestroyed()) return;
+    window.setBackgroundColor(nativeTheme.shouldUseDarkColors ? '#17191d' : '#f7f8fa');
+    window.webContents.send('utube:theme-changed', nativeTheme.shouldUseDarkColors);
+  });
+  const appearance = () => ({ ...preferences, resolvedTheme: nativeTheme.shouldUseDarkColors ? 'dark' as const : 'light' as const });
+  handle('utube:settings', async () => {
+    const ffmpeg = await hasFFmpeg();
+    return { folder, ...appearance(), version: app.getVersion(), ffmpeg };
+  });
   handle('utube:preferences', async (patch: Partial<Preferences>) => {
     if (!patch || typeof patch !== 'object' || Array.isArray(patch) || Object.keys(patch).some((key) => !['theme', 'language'].includes(key)) ||
       ('theme' in patch && !['light', 'dark', 'system'].includes(patch.theme!)) ||
       ('language' in patch && !languages.some((item) => item.code === patch.language))) throw new Error('Invalid preferences.');
     await saveSettings(patch);
     window.setBackgroundColor(nativeTheme.shouldUseDarkColors ? '#17191d' : '#f7f8fa');
-    return preferences;
+    return appearance();
   });
   handle('utube:choose-folder', async () => {
     const result = await dialog.showOpenDialog(window, { title: translator(preferences.language)('saveTo'), defaultPath: folder, properties: ['openDirectory', 'createDirectory'] });

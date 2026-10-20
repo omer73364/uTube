@@ -16,6 +16,11 @@ const api: DesktopAPI = {
   retry: (id) => invoke('utube:retry', id),
   openFolder: (id) => invoke('utube:open-folder', id),
   openFile: (id) => invoke('utube:open-file', id),
+  onTheme: (listener) => {
+    const handler = (_event: unknown, dark: boolean) => listener(dark);
+    ipcRenderer.on('utube:theme-changed', handler);
+    return () => ipcRenderer.removeListener('utube:theme-changed', handler);
+  },
   onJobs: (listener) => {
     const handler = (_event: unknown, jobs: Job[]) => listener(jobs);
     ipcRenderer.on('utube:jobs-changed', handler);
