@@ -17,7 +17,7 @@ const os = require('node:os');
   try {
     const page = await app.firstWindow(); const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await expect(page.getByRole('heading', { name: /Good things/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Download from YouTube' })).toBeVisible();
     await expect(page.getByText('Ready to download')).toBeVisible();
     await app.evaluate(({ shell }) => { shell.openPath = async (folder) => { globalThis.openedDownloadFolder = folder; return ''; }; });
     await page.getByRole('button', { name: 'Open folder', exact: true }).click();
@@ -42,7 +42,7 @@ const os = require('node:os');
     await page.getByRole('button', { name: 'Download 2 tracks', exact: true }).click();
     await expect.poll(() => page.evaluate(async () => (await window.utube.jobs()).filter(job => job.status === 'saved').length), { timeout: 20000 }).toBe(3);
     await page.getByRole('button', { name: /^Queue/ }).click();
-    await expect(page.getByRole('heading', { name: 'Your download queue.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Download queue', level: 1 })).toBeVisible();
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
     await expect(page.getByTestId('job')).toHaveCount(3);
     const filters = page.getByRole('group', { name: 'Filter downloads' });
