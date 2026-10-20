@@ -19,7 +19,7 @@
     "site:preview": "npm run site:build && node scripts/serve-site.mjs",
     "site:test": "npm run site:build && node website/test/smoke.cjs"
   },
-  "homepage": "https://github.com/omer73364/uTube",
+  "homepage": "https://omer73364.github.io/uTube/",
   "bugs": {
     "url": "https://github.com/omer73364/uTube/issues",
     "email": "anwar733649039@gmail.com"
