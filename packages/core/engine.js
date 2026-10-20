@@ -45,8 +45,9 @@ const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, info: 
     if (audioOnly || !format.has_audio) await ffmpeg(["-version"], ffmpegPath, signal);
     emit({ type: "start", title, folder, format: audioOnly ? "mp3" : "mp4", quality: format.quality_label });
     const transfer = async (stage, media, filename) => {
+      const stream = await downloadFormat(info, media, signal);
       emit({ type: "stage", stage, total: Number(media.content_length) || undefined });
-      await saveStream(await downloadFormat(info, media, signal), filename, (loaded) => emit({ type: "progress", stage, loaded, total: Number(media.content_length) || undefined }), signal);
+      await saveStream(stream, filename, (loaded) => emit({ type: "progress", stage, loaded, total: Number(media.content_length) || undefined }), signal);
     };
     const source = path.join(temp, audioOnly ? "source.media" : "video.mp4");
     await transfer(audioOnly ? "audio" : "video", format, source);
