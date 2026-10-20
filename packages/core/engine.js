@@ -2,7 +2,7 @@ import { checkAbort, withAbort, abortError } from "./cancellation.js";
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { videoFormats, selectFormat, selectAudioFormat, matchingVideoFormats } from "./formats.js";
+import { videoFormats, selectFormat, selectAudioFormat, matchingVideoFormats, lowerVideoFormats } from "./formats.js";
 import { saveStream, downloadFormat, streamStatus, retryableStreamError } from "./streams.js";
 import { specialRemover, getVideoOrListID, availavleQualities } from "./urls.js";
 import { getPlaylist } from "./playlist.js";
@@ -68,6 +68,9 @@ const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, select
     checkAbort(signal);
     // Exclusive creation avoids overwriting a download created by another process.
     await fs.promises.copyFile(result, target, fs.constants.COPYFILE_EXCL);
+    if (!audioOnly && quality && parseInt(format.quality_label) < parseInt(quality)) {
+      emit({ type: 'warning', message: `Could not download ${quality}; saved the best working alternative at ${format.quality_label}.` });
+    }
     emit({ type: "saved", path: target });
     return { status: "saved", path: target };
   } finally {
@@ -103,9 +106,11 @@ export function createDownloadEngine({ client, ffmpegPath = "ffmpeg" }) {
       const clients = options.audio ? ["IOS", "IOS", "ANDROID"] : ["IOS", "VISIONOS", "ANDROID_VR", "ANDROID"];
       let lastError;
       let transferError;
+      const sources = [];
       for (const [attempt, name] of clients.entries()) {
         try {
           const info = attempt === 0 && options.info ? options.info : await withAbort(getVideoData(options.item.id, name), options.signal);
+          sources.push(info);
           const formats = options.audio ? [selectAudioFormat(info)] : matchingVideoFormats(info, options.quality);
           for (const selectedFormat of formats) {
             try {
@@ -121,6 +126,23 @@ export function createDownloadEngine({ client, ffmpegPath = "ffmpeg" }) {
           checkAbort(options.signal);
           if (!retryableStreamError(error) && !['QUALITY_UNAVAILABLE', 'FORMATS_UNAVAILABLE'].includes(error.code)) throw error;
           lastError = error;
+        }
+      }
+      // Exhaust the requested resolution on every client before considering
+      // lower qualities. Rank across clients so 720p beats another client's 360p.
+      if (!options.audio && options.quality) {
+        const alternatives = sources.flatMap((info) => lowerVideoFormats(info, options.quality).map((selectedFormat) => ({ info, selectedFormat })))
+          .sort((a, b) => parseInt(b.selectedFormat.quality_label) - parseInt(a.selectedFormat.quality_label));
+        for (const { info, selectedFormat } of alternatives) {
+          checkAbort(options.signal);
+          try {
+            return await downloadAttempt({ ...options, info, selectedFormat, ffmpegPath, onEvent: emit }, getVideoData);
+          } catch (error) {
+            checkAbort(options.signal);
+            if (!retryableStreamError(error)) throw error;
+            lastError = transferError = error;
+            emit({ type: 'retry', message: 'Trying the next available quality.' });
+          }
         }
       }
       const error = transferError || lastError;

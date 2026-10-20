@@ -28,16 +28,25 @@ for (const quality of ['720p', '1080p']) {
   });
 }
 
-test('unavailable HD fails without saving a lower-resolution file', async () => {
+test('unavailable HD falls back to the highest lower resolution across all clients', async () => {
   const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-unavailable-'));
-  const engine = createDownloadEngine({ client: { getInfo: async () => info } });
+  const clients = [];
+  const events = [];
+  const engine = createDownloadEngine({ client: { getInfo: async (id, { client }) => {
+    clients.push(client);
+    return client === 'VISIONOS' ? { ...info, streaming_data: { formats: [{ ...format, quality_label: '720p' }] } } : info;
+  } } });
   try {
-    await assert.rejects(engine.download({ folder, item: { id: 'hd' }, quality: '1080p' }), /Requested 1080p is unavailable/);
-    assert.deepEqual(await fs.readdir(folder), []);
+    const result = await engine.download({ folder, item: { id: 'hd' }, quality: '1080p', onEvent: (event) => events.push(event) });
+    assert.equal(result.status, 'saved');
+    assert.deepEqual(clients, ['IOS', 'VISIONOS', 'ANDROID_VR', 'ANDROID']);
+    assert.deepEqual(events.filter((event) => event.type === 'start').map((event) => event.quality), ['720p']);
+    assert.match(events.find((event) => event.type === 'warning').message, /1080p.*720p/);
+    assert.equal(events.at(-1).type, 'saved');
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
 
-test('a rejected HD stream never falls back to an alternate client\'s 360p stream', async () => {
+test('a rejected HD stream falls back only after exhausting clients at the requested quality', async () => {
   const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-rejected-hd-'));
   const downloads = [];
   const hd = { ...info, streaming_data: { formats: [{ ...format, itag: 137, quality_label: '1080p' }] }, download: async ({ itag }) => {
@@ -46,12 +55,42 @@ test('a rejected HD stream never falls back to an alternate client\'s 360p strea
     error.info = { response: { status: 403 } };
     throw error;
   } };
-  const low = { ...info, download: async () => { throw new Error('Must not download 360p'); } };
-  const engine = createDownloadEngine({ client: { getInfo: async (id, { client }) => client === 'IOS' ? hd : low } });
+  const clients = [];
+  const low = { ...info, download: async () => {
+    assert.deepEqual(clients, ['IOS', 'VISIONOS', 'ANDROID_VR', 'ANDROID']);
+    downloads.push(18);
+    return info.download();
+  } };
+  const engine = createDownloadEngine({ client: { getInfo: async (id, { client }) => {
+    clients.push(client);
+    return client === 'IOS' ? hd : low;
+  } } });
   try {
-    await assert.rejects(engine.download({ folder, item: { id: 'hd' }, quality: '1080p' }), /HTTP 403.*1080p/);
-    assert.deepEqual(downloads, [137]);
-    assert.deepEqual(await fs.readdir(folder), []);
+    const result = await engine.download({ folder, item: { id: 'hd' }, quality: '1080p' });
+    assert.equal(result.status, 'saved');
+    assert.deepEqual(downloads, [137, 18]);
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
+
+test('lower-quality fallbacks descend until a working format is found', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-best-fallback-'));
+  const calls = [];
+  const events = [];
+  const source = { ...info, streaming_data: { formats: ['360p', '720p', '480p', '1440p'].map((quality_label, index) => ({ ...format, itag: index + 1, quality_label })) },
+    download: async ({ itag }) => {
+      calls.push(itag);
+      if (itag === 2) { const error = new Error('rejected'); error.info = { response: { status: 403 } }; throw error; }
+      return info.download();
+    },
+  };
+  const engine = createDownloadEngine({ client: { getInfo: async () => source } });
+  try {
+    const result = await engine.download({ folder, item: { id: 'hd' }, quality: '1080p', onEvent: (event) => events.push(event) });
+    assert.equal(result.status, 'saved');
+    assert.deepEqual(calls, [2, 2, 2, 2, 3]);
+    const warnings = events.filter((event) => event.type === 'warning');
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0].message, /480p/);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
 
