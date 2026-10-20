@@ -26,6 +26,10 @@ export const matchingVideoFormats = (info, quality) => {
 
 export const selectFormat = (info, quality) => matchingVideoFormats(info, quality)[0];
 
+export const lowerVideoFormats = (info, quality) => videoFormats(info)
+  .filter((format) => parseInt(format.quality_label) < parseInt(quality))
+  .sort((a, b) => parseInt(b.quality_label) - parseInt(a.quality_label) || Number(!!b.has_audio) - Number(!!a.has_audio));
+
 export const audioFormats = (info) => [
   ...(info.streaming_data?.adaptive_formats || []),
   ...(info.streaming_data?.formats || []),
