@@ -3,6 +3,24 @@ import assert from 'node:assert/strict';
 import { DownloadQueue } from '../apps/desktop/src/main/queue.mjs';
 
 const tick = () => new Promise((resolve) => setImmediate(resolve));
+test('automatic fallbacks stay silent while the same queue job succeeds', async () => {
+  const snapshots = [];
+  const queue = new DownloadQueue(async (job, { onEvent }) => {
+    onEvent({ type: 'stage', stage: 'video', total: 100 });
+    onEvent({ type: 'progress', loaded: 20, total: 100 });
+    onEvent({ type: 'retry', message: 'HTTP 403; refreshing download links' });
+    onEvent({ type: 'start', quality: '360p' });
+    onEvent({ type: 'stage', stage: 'video', total: 80 });
+    onEvent({ type: 'progress', loaded: 80, total: 80 });
+    return { status: 'saved', path: '/tmp/success.mp4' };
+  }, (jobs) => snapshots.push(jobs));
+  queue.add([{ videoId: 'fallback' }]);
+  await queue.whenIdle();
+  assert.ok(snapshots.every(([job]) => !job.note));
+  assert.equal(queue.snapshot()[0].status, 'saved');
+  assert.equal(queue.snapshot()[0].actualQuality, '360p');
+});
+
 test('queue runs sequentially and continues after failures', async () => {
   const calls = [];
   let release;

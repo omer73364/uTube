@@ -54,13 +54,15 @@ export class DownloadQueue {
         const result = await this.run(job, {
           signal: job.controller.signal,
           onEvent: (event) => {
+            // Automatic fallbacks are internal; keep the active job on screen.
+            if (event.type === 'retry') { job.note = undefined; return; }
             if (event.type === 'stage') Object.assign(job, { stage: event.stage, total: event.total, loaded: 0, startedAt: Date.now(), speed: undefined, eta: undefined });
             if (event.type === 'progress') {
               const speed = event.loaded / Math.max((Date.now() - job.startedAt) / 1000, 0.1);
               Object.assign(job, { loaded: event.loaded, total: event.total, speed, eta: event.total ? Math.max(0, Math.ceil((event.total - event.loaded) / speed)) : undefined });
             }
             if (event.type === 'start') job.actualQuality = event.quality;
-            if (['warning', 'retry'].includes(event.type)) job.note = event.message;
+            if (event.type === 'warning') job.note = event.message;
             this.#emit();
           },
         });
