@@ -57,6 +57,9 @@ jobs:
         run: xvfb-run -a npm run desktop:test
         env:
           UTUBE_TEST_NO_SANDBOX: '1'
+      - name: Require trusted signatures for public releases
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: node scripts/verify-desktop-signatures.mjs
       - name: Collect versioned installers and checksums
         run: node scripts/collect-release.mjs
       - uses: actions/upload-artifact@v4
