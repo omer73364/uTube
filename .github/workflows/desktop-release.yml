@@ -47,6 +47,11 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
           APPIMAGE_EXTRACT_AND_RUN: '1'
+      - name: Check installed worker on Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run desktop:test:packaged
+        env:
+          UTUBE_TEST_NO_SANDBOX: '1'
       - name: Test desktop on Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npm run desktop:test
