@@ -45,7 +45,7 @@ Each platform has a `SHA256SUMS` file alongside its downloads. On Linux, put it 
 
 The **Desktop release** workflow builds Linux x64, Windows x64, macOS Intel, and macOS Apple Silicon artifacts on native GitHub runners. A manual run keeps artifacts for inspection without publishing. A version-tag run publishes one GitHub Release only after all build jobs succeed. npm publishing remains a separate step.
 
-Release steps: keep root, desktop, lockfile, and `version.js` versions aligned; update the changelog and versioned release notes; run tests; commit; then push the matching `vX.Y.Z` tag when a release is authorized. Signing and notarization are future work. Do not describe these builds as signed or as including FFmpeg.
+Release steps: keep root, desktop, lockfile, and `version.js` versions aligned; update the changelog and versioned release notes; run tests; commit; then push the matching `vX.Y.Z` tag when a release is authorized. Public Windows/macOS releases are now blocked locally unless the app and archived payloads pass native signature and notarization checks. Signing provider setup remains pending; see the [trusted release guide](signing.md). Do not describe existing 2.2.0 builds as signed or as including FFmpeg.
 
 ## Project website
 

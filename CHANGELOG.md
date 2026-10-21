@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Block future public Windows/macOS releases unless the packaged app and Windows installer pass native signature checks; macOS must also pass Gatekeeper and have a stapled notarization ticket. Signing accounts and provider integration are still required.
+
 - Bundle YouTube.js and its dependencies with the desktop worker so installed apps can inspect and download videos without the source checkout.
 - Test an isolated copy of the packaged app against the real YouTube client with network access blocked; run this check before Linux release artifacts can be published.
 
