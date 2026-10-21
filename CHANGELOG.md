@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Bundle YouTube.js and its dependencies with the desktop worker so installed apps can inspect and download videos without the source checkout.
+- Test an isolated copy of the packaged app against the real YouTube client with network access blocked; run this check before Linux release artifacts can be published.
+
 ## 2.2.0 — 2026-10-21
 
 - Introduce the first public desktop preview with Debian, AppImage, Windows Setup, macOS DMG, and portable ZIP packaging.

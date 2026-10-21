@@ -38,9 +38,12 @@ npm test
 npm run desktop:check
 npm run desktop:package
 npm run desktop:test
+npm run desktop:test:packaged
 ```
 
 The desktop tests require a graphical session and FFmpeg/FFprobe. They use generated media and temporary settings to verify previews, playlist selection, MP4/MP3 downloads, failures, retries, cancellation, shutdown, themes, Arabic RTL, saved preferences, and file actions. Package first so the tests can load the built application. On restricted development hosts that cannot start Chromium's sandbox, tests accept `UTUBE_TEST_NO_SANDBOX=1`; normal application startup keeps its sandbox enabled.
+
+The packaged check copies the actual installed app outside the repository and starts its production worker. It loads the real YouTube client, blocks network access in the test harness, and fails if any runtime dependency is missing. This catches packaging problems that generated-media tests cannot detect. `UTUBE_PACKAGED_APP` can point to another extracted package directory, including an extracted AppImage.
 
 ## Local packages
 
