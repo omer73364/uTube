@@ -17,7 +17,8 @@
     "desktop:test": "npm run test:desktop --workspace=@utube/desktop",
     "site:build": "node scripts/build-site.mjs",
     "site:preview": "npm run site:build && node scripts/serve-site.mjs",
-    "site:test": "npm run site:build && node website/test/smoke.cjs"
+    "site:test": "npm run site:build && node website/test/smoke.cjs",
+    "desktop:test:packaged": "npm run test:packaged --workspace=@utube/desktop"
   },
   "homepage": "https://omer73364.github.io/uTube/",
   "bugs": {

@@ -15,7 +15,8 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "typecheck": "tsc --noEmit",
-    "test:desktop": "node test/bridge.cjs && node test/ui.cjs && node test/recovery.cjs && node test/preferences.cjs && node test/history.cjs"
+    "test:desktop": "node test/bridge.cjs && node test/ui.cjs && node test/recovery.cjs && node test/preferences.cjs && node test/history.cjs",
+    "test:packaged": "node test/packaged.cjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
