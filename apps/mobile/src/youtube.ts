@@ -2,7 +2,7 @@ import { nativeFetch, bounded } from "./requests";
 import { inspectVideo, resolveVideo } from "./inspect";
 import { downloads } from "./native";
 import { getVideoOrListID } from "../../../packages/core/url-parser.js";
-import { normalizePlaylistItem } from "../../../packages/core/playlist.js";
+import { collectPlaylist } from "./playlist";
 import type { MediaMode, Preview, PlaylistPreview } from "./domain";
 
 export function createYouTubeService(
@@ -52,30 +52,11 @@ export function createYouTubeService(
       const parsed = getVideoOrListID(url.trim());
       const yt = await client(signal);
       if (parsed.type === "video") return inspectVideo(parsed.id, yt);
-      let page = await yt.getPlaylist(parsed.id);
-      const title = String(page.info.title || parsed.id).slice(0, 180);
-      const items: PlaylistPreview["items"] = [];
-      const seen = new Set<string>();
-      for (let pages = 0; ; pages++) {
-        if (signal?.aborted) throw new Error("CANCELLED");
-        for (const raw of page.items) {
-          const item = normalizePlaylistItem(raw);
-          if (
-            item &&
-            /^[A-Za-z0-9_-]{11}$/.test(item.id) &&
-            !seen.has(item.id)
-          ) {
-            seen.add(item.id);
-            items.push({ ...item, index: items.length + 1 });
-          }
-        }
-        if (!page.has_continuation) break;
-        if (pages >= 199 || items.length > 20000)
-          throw new Error("PLAYLIST_TOO_LARGE");
-        page = await page.getContinuation();
-      }
-      if (!items.length) throw new Error("EMPTY_PLAYLIST");
-      return { kind: "playlist", id: parsed.id, title, items };
+      return collectPlaylist(
+        parsed.id,
+        await yt.getPlaylist(parsed.id),
+        signal,
+      );
     },
     async resolve(
       id: string,
