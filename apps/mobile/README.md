@@ -87,7 +87,7 @@ transfer, and check both languages and themes. Check a failed link and airplane 
 
 The standalone APK builds successfully for ARM64 and x86-64, passes Android's vital
 lint checks, and verifies with `apksigner`. Its JavaScript is bundled; Metro is not
-needed to run it. Six mobile tests and the 54 existing project tests pass, along with
+needed to run it. Nine mobile tests and the 54 existing project tests pass, along with
 mobile and desktop type checking. A live inspection of `jNQXAC9IVRw` found an MP4
 whose normal GET request returned HTTP 200.
 
@@ -100,7 +100,11 @@ operation still need device testing before moving on to playlists, MP3, or HD me
 ### Implementation
 
 `App.tsx` is the native interface. `src/youtube.ts` uses YouTube.js's React Native
-entry point and the shared Node-free URL parser. Player deciphering runs in a hidden
+entry point and the shared Node-free URL parser. Startup installs a `structuredClone`
+polyfill when the runtime lacks it; the player parser needs it to copy syntax nodes.
+Regression tests exercise the real parser with the native API removed and check that
+cloning preserves values such as regular expressions and undefined fields.
+Player deciphering runs in a hidden
 WebView with network and file access disabled; only validated signature results return
 to the app. Kotlin's `DownloadModule` validates media URLs, owns transfer IDs, and uses
 Android content URIs to open saved files. The Node/FFmpeg download engine is not loaded
