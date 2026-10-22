@@ -44,10 +44,20 @@ test("successful metadata calls clear their deadline and preserve request bodies
 test("aborting lookup rejects promptly and cancels its native request", async () => {
   const controller = new AbortController();
   let started;
-  const ready = new Promise(resolve => { started = resolve; });
+  const ready = new Promise((resolve) => {
+    started = resolve;
+  });
   const cancelled = [];
-  const request = nativeFetch(async () => { started(); return new Promise(() => {}); }, id => cancelled.push(id));
-  const result = request("https://www.youtube.com/iframe_api", { signal: controller.signal });
+  const request = nativeFetch(
+    async () => {
+      started();
+      return new Promise(() => {});
+    },
+    (id) => cancelled.push(id),
+  );
+  const result = request("https://www.youtube.com/iframe_api", {
+    signal: controller.signal,
+  });
   await ready;
   controller.abort();
   await assert.rejects(result, /CANCELLED/);

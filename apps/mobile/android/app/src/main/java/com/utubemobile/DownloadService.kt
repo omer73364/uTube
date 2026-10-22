@@ -21,15 +21,17 @@ class DownloadService : Service() {
     }
 
     fun cancel(id: String) {
-      cancelled.add(id)
       PreparationService.cancel(id)
       current?.let {
         if (it.activeId == id) {
+          cancelled.add(id)
           it.connection?.disconnect()
           if (it.processing) MediaProcessor.cancel()
         }
       }
     }
+
+    fun isActive(id: String) = current?.activeId == id
   }
 
   private val executor = Executors.newSingleThreadExecutor()
@@ -157,7 +159,10 @@ class DownloadService : Service() {
     fun isCancelled() = stopping || cancelled.contains(id)
     try {
       if (isCancelled()) throw InterruptedException("CANCELLED")
-      store.edit(id) { it.put("status", "preparing") }
+      store.edit(id) {
+        if (it.optString("status") != "queued") throw InterruptedException("CANCELLED")
+        it.put("status", "preparing")
+      }
       notification(job.getString("title"), "Preparing download")
       val plan = PreparationService.prepare(this, job)
       check(
@@ -314,7 +319,10 @@ class DownloadService : Service() {
     } catch (e: Exception) {
       pendingUri?.let { runCatching { contentResolver.delete(it, null, null) } }
       val status =
-        if (stopping) "interrupted" else if (cancelled.contains(id)) "cancelled" else "failed"
+        if (stopping) "interrupted"
+        else if (cancelled.contains(id) || store.get(id).optString("status") == "cancelled")
+          "cancelled"
+        else "failed"
       runCatching {
         store.terminal(id, status, if (status == "failed") safeError(e) else status.uppercase())
       }

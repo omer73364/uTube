@@ -19,6 +19,7 @@ class MetadataHttp {
   }
 
   fun close() {
+    tokens.values.forEach { it.set(true) }
     connections.values.forEach { it.disconnect() }
     pool.shutdownNow()
   }
