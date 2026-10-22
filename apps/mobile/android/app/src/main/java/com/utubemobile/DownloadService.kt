@@ -246,6 +246,10 @@ class DownloadService : Service() {
         } catch (e: Exception) {
           if (isCancelled() || e is InterruptedException) throw InterruptedException("CANCELLED")
           lastError = e
+          android.util.Log.w(
+            "uTubeDownload",
+            "Format ${candidate.optJSONObject("video")?.optInt("itag")} / ${candidate.optJSONObject("audio")?.optInt("itag")}: ${safeError(e)}",
+          )
           // Keep one job and its progress; candidate/client retries remain silent.
         }
       }
@@ -320,7 +324,10 @@ class DownloadService : Service() {
       pendingUri?.let { runCatching { contentResolver.delete(it, null, null) } }
       val status =
         if (stopping) "interrupted"
-        else if (cancelled.contains(id) || store.get(id).optString("status") == "cancelled")
+        else if (
+          cancelled.contains(id) ||
+            runCatching { store.get(id).optString("status") }.getOrNull() == "cancelled"
+        )
           "cancelled"
         else "failed"
       runCatching {
