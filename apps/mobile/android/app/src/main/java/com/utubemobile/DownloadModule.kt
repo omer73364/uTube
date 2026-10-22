@@ -31,8 +31,8 @@ class DownloadModule(private val context: ReactApplicationContext) : ReactContex
         connection.connectTimeout = 10000
         connection.readTimeout = 10000
         connection.instanceFollowRedirects = false
-        connection.setRequestProperty("Range", "bytes=0-0")
-        // Read headers only. React Native fetch would buffer the whole video.
+        // Match DownloadManager's initial GET, then disconnect after headers.
+        // A range-only probe can pass when the full request would be rejected.
         promise.resolve(connection.responseCode in 200..299)
       } catch (error: Exception) { promise.resolve(false) }
       finally { connection?.disconnect() }
