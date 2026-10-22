@@ -7,7 +7,7 @@
     "android": "react-native run-android",
     "typecheck": "tsc --noEmit",
     "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output build/index.android.bundle --assets-dest build",
-    "test": "node --test test/*.test.mjs",
+    "test": "node --experimental-strip-types --test test/*.test.mjs",
     "build:android": "cd android && ./gradlew assemblePrototype"
   },
   "dependencies": {
