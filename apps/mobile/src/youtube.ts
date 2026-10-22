@@ -1,5 +1,6 @@
+import { inspectVideo } from "./inspect";
 import { downloads } from "./native";
-import { mediaURL, videoId, type Preview } from "./domain";
+import { videoId, type Preview } from "./domain";
 import type { PlayerEvaluator } from "./PlayerSandbox";
 
 export function createInspector(evaluate: PlayerEvaluator["evaluate"]) {
@@ -49,39 +50,6 @@ export function createInspector(evaluate: PlayerEvaluator["evaluate"]) {
   return async (url: string): Promise<Preview> => {
     const id = videoId(url);
     const yt = await client();
-    let lastError: unknown;
-    for (const clientType of ["IOS", "ANDROID_VR", "ANDROID"] as const) {
-      try {
-        const info = await yt.getBasicInfo(id, { client: clientType });
-        const candidates = (info.streaming_data?.formats || []).filter(
-          (format) =>
-            format.has_video &&
-            format.has_audio &&
-            format.mime_type?.startsWith("video/mp4"),
-        );
-        const formats = [];
-        for (const format of candidates) {
-          try {
-            formats.push({
-              id: format.itag,
-              quality: format.quality_label || `${format.height}p`,
-              url: mediaURL(await format.decipher(yt.session.player)),
-            });
-          } catch (error) {
-            lastError = error;
-          }
-        }
-        if (formats.length)
-          return {
-            id,
-            title: info.basic_info.title || id,
-            author: info.basic_info.author || "",
-            formats,
-          };
-      } catch (error) {
-        lastError = error;
-      }
-    }
-    throw lastError || new Error("NO_COMBINED_MP4");
+    return inspectVideo(id, yt, (streamURL) => downloads.probe(streamURL));
   };
 }
