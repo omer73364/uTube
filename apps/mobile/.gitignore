@@ -2,6 +2,7 @@ node_modules/
 build/
 android/local.properties
 android/.gradle/
+android/.kotlin/
 android/.cxx/
 android/app/build/
 android/app/.cxx/
