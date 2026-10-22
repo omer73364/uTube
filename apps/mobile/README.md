@@ -60,11 +60,17 @@ cd apps/mobile/android
 npm run mobile:check
 npm run mobile:test
 npm run bundle:android --workspace=@utube/mobile
+# After building the standalone APK:
+npm run test:bundle --workspace=@utube/mobile
 ```
 
 Domain tests cover shared URL parsing, media-host restrictions, progress values, and
 messages from the player sandbox. Inspector tests verify rejected links fall through
 to another client. These checks do not replace a real Android download test.
+
+The bundle check rejects duplicate React instances in the packaged source map.
+`mobile:build` runs it automatically after Gradle succeeds. Metro pins React and its
+subpaths to this workspace so hoisted native libraries cannot load the desktop's copy.
 
 The dependency audit currently flags `braces` through Metro/CLI's file-matching tools.
 The latest published `braces` version is still affected. Do not use
@@ -85,10 +91,11 @@ needed to run it. Six mobile tests and the 54 existing project tests pass, along
 mobile and desktop type checking. A live inspection of `jNQXAC9IVRw` found an MP4
 whose normal GET request returned HTTP 200.
 
-Native UI and end-to-end transfers are **not verified yet**. There was no connected
-phone or hardware-accelerated emulator; the software emulator did not become
-available for installation. Test the APK on an Android device before moving on to
-playlists, MP3, or HD merging.
+The original APK's startup crash was reproduced on an Android 15 emulator:
+`Cannot read property 'useState' of null`. Its bundle contained two React instances.
+The corrected APK passes the bundle check, renders its screen, survives repeated
+cold starts, and supports Arabic and dark mode. End-to-end transfers and background
+operation still need device testing before moving on to playlists, MP3, or HD merging.
 
 ### Implementation
 
