@@ -183,10 +183,10 @@ npm run desktop
 
 ## 📱 Android prototype
 
-An Android app is being developed in [`apps/mobile`](apps/mobile/README.md). The first
-phase focuses on individual MP4 videos, native Android transfers, saved history,
-English/Arabic, and light/dark appearance. It is not yet a public mobile release;
-playlists, MP3, and HD merging are planned for later phases.
+The [Android app](apps/mobile/README.md) now includes HD MP4 downloads, MP3
+conversion, playlist selection, and a persistent background queue. Open or share
+saved files, retry interrupted work, and choose Arabic or English with light/dark
+appearance. It remains a local prototype; public mobile builds are not published.
 
 ## 🧪 How downloads work
 
