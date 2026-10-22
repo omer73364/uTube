@@ -2035,6 +2035,7 @@
   version "0.1.0"
   resolved "file:apps/mobile"
   dependencies:
+    "@ungap/structured-clone" "^1.4.0"
     react "19.3.0"
     react-native "0.88.0"
     react-native-get-random-values "^1.11.0"
@@ -3946,7 +3947,7 @@ inquirer@^8.2.4:
     through "^2.3.6"
     wrap-ansi "^6.0.1"
 
-invariant@^2.2.4, invariant@2.2.4:
+invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5385,14 +5386,6 @@ react-native-url-polyfill@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/react-native-url-polyfill/-/react-native-url-polyfill-4.0.0.tgz"
   integrity sha512-eqYM3wBAA0eL1sPYbBAoNfbES3+NkgcxUdelQ7QzmoVtqKB5qGG0U13MPTRUroAWK+y2EoJFS3MZUK0fwTf0pA==
-
-react-native-webview@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.npmjs.org/react-native-webview/-/react-native-webview-14.0.1.tgz"
-  integrity sha512-lBUuvFk459Mo+5vUNqwzGvn+I8rDJE6zvOulG2hWWudeEOJfWTsQwOfuYnRu+27djUIXrESFfC+EQE3PGu+FWA==
-  dependencies:
-    escape-string-regexp "^4.0.0"
-    invariant "2.2.4"
 
 react-native@*, react-native@>=0.56, react-native@0.88.0:
   version "0.88.0"
