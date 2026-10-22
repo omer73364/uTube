@@ -1,27 +1,59 @@
 import { getVideoOrListID } from "../../../packages/core/url-parser.js";
+export type MediaMode = "video" | "mp3";
+export type Stream = { url: string; size: number; itag: number };
+export type Candidate = { quality: string; video?: Stream; audio?: Stream };
+export type DownloadPlan = {
+  videoId: string;
+  title: string;
+  mode: MediaMode;
+  requestedQuality: string;
+  candidates: Candidate[];
+  playlistTitle?: string;
+  playlistIndex?: number;
+};
 export type Format = { id: number; quality: string; url: string };
 export type Preview = {
+  kind: "video";
   id: string;
   title: string;
   author: string;
-  formats: Format[];
+  qualities: string[];
+  audioAvailable: boolean;
+};
+export type PlaylistItem = { id: string; title: string; index: number };
+export type PlaylistPreview = {
+  kind: "playlist";
+  id: string;
+  title: string;
+  items: PlaylistItem[];
 };
 export type Job = {
-  id: number;
+  id: string;
+  videoId: string;
   title: string;
+  mode: MediaMode;
   quality: string;
+  requestedQuality: string;
+  playlistTitle?: string;
+  playlistIndex?: number;
   createdAt: number;
   status:
     | "queued"
+    | "preparing"
     | "running"
-    | "paused"
+    | "merging"
+    | "converting"
+    | "publishing"
+    | "interrupted"
     | "saved"
     | "failed"
     | "cancelled"
     | "missing";
   loaded?: number;
   total?: number;
-  reason?: number;
+  fraction?: number;
+  error?: string;
+  downgraded?: boolean;
 };
 export function videoId(input: string): string {
   const parsed = getVideoOrListID(input.trim());
@@ -34,12 +66,15 @@ export function mediaURL(input: string): string {
     url.protocol !== "https:" ||
     !url.hostname.endsWith(".googlevideo.com") ||
     url.username ||
-    url.password
+    url.password ||
+    (url.port !== "" && url.port !== "443")
   )
     throw new Error("INVALID_MEDIA_URL");
   return url.href;
 }
 export function progress(job: Job): number | undefined {
+  if (Number.isFinite(job.fraction))
+    return Math.max(0, Math.min(1, job.fraction!));
   if (
     !Number.isFinite(job.total) ||
     !job.total ||

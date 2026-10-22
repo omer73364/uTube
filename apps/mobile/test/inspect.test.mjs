@@ -1,59 +1,116 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { inspectVideo } from "../src/inspect.ts";
+import { inspectVideo, resolveVideo } from "../src/inspect.ts";
 
-const format = (client, extra = {}) => ({
+const id = "jNQXAC9IVRw";
+const format = (quality, extra = {}) => ({
   itag: 18,
-  quality_label: "360p",
+  quality_label: quality,
+  height: parseInt(quality),
+  url: `https://rr1.googlevideo.com/video?q=${quality}`,
   mime_type: "video/mp4",
   has_video: true,
   has_audio: true,
-  decipher: async () => `https://rr1.googlevideo.com/video?client=${client}`,
+  async decipher() {
+    return this.url;
+  },
   ...extra,
 });
-test("rejected media links fall through to another client before a format is shown", async () => {
-  const clients = [];
-  const yt = {
-    session: { player: {} },
-    async getBasicInfo(id, { client }) {
-      clients.push(client);
-      return {
-        basic_info: { title: "Test video", author: "Author" },
-        streaming_data: { formats: client === "IOS" ? [] : [format(client)] },
-      };
+const info = (formats, adaptive_formats = []) => ({
+  basic_info: { title: "Test video", author: "Author" },
+  streaming_data: { formats, adaptive_formats },
+});
+const client = (getBasicInfo) => ({ session: { player: {} }, getBasicInfo });
+
+test("lookup exposes adaptive HD choices without deciphering media", async () => {
+  const hd = format("1080p", {
+    has_audio: false,
+    decipher() {
+      throw Error("lookup must not decipher");
     },
-  };
-  const result = await inspectVideo(
-    "jNQXAC9IVRw",
-    yt,
-    async (url) => new URL(url).searchParams.get("client") === "ANDROID",
+  });
+  const preview = await inspectVideo(
+    id,
+    client(async () => info([format("360p")], [hd])),
   );
-  assert.deepEqual(clients, ["IOS", "ANDROID_VR", "ANDROID"]);
-  assert.equal(result.title, "Test video");
-  assert.equal(
-    new URL(result.formats[0].url).searchParams.get("client"),
-    "ANDROID",
+  assert.deepEqual(preview.qualities, ["1080p", "360p"]);
+  assert.equal(preview.title, "Test video");
+});
+test("lookup tries another client after unavailable metadata", async () => {
+  const calls = [];
+  const preview = await inspectVideo(
+    id,
+    client(async (_, { client }) => {
+      calls.push(client);
+      if (client === "IOS") throw Error("unavailable");
+      return info([format("720p")]);
+    }),
+  );
+  assert.deepEqual(calls, ["IOS", "VISIONOS"]);
+  assert.deepEqual(preview.qualities, ["720p"]);
+});
+test("HD resolution pairs separate audio and exhausts exact quality before downgrading", async () => {
+  let ready = false;
+  const audio = format(undefined, {
+    url: "https://rr1.googlevideo.com/audio",
+    has_video: false,
+    has_audio: true,
+    mime_type: "audio/mp4",
+    bitrate: 128000,
+  });
+  const yt = client(async (_, { client }) => {
+    assert.equal(ready, true);
+    return info(
+      [format("360p", { url: `https://rr1.googlevideo.com/low?c=${client}` })],
+      [
+        format("1080p", {
+          has_audio: false,
+          url: `https://rr1.googlevideo.com/hd?c=${client}`,
+        }),
+        audio,
+      ],
+    );
+  });
+  const plan = await resolveVideo(id, yt, "1080p", "video", async () => {
+    ready = true;
+  });
+  assert.deepEqual(
+    plan.candidates.map((c) => c.quality),
+    ["1080p", "1080p", "1080p", "1080p", "360p", "360p", "360p", "360p"],
+  );
+  assert.ok(plan.candidates[0].video);
+  assert.ok(plan.candidates[0].audio);
+  assert.equal(plan.candidates[4].audio, undefined);
+});
+test("best chooses highest resolution and ignores unsafe stream URLs", async () => {
+  const yt = client(async () =>
+    info([
+      format("360p"),
+      format("720p"),
+      format("1080p", { url: "https://evil.example/video" }),
+    ]),
+  );
+  const plan = await resolveVideo(id, yt, "best", "video", async () => {});
+  assert.deepEqual(
+    plan.candidates.map((c) => c.quality),
+    ["720p", "360p"],
   );
 });
-test("unusable and video-only streams never become download choices", async () => {
-  let probes = 0;
-  const yt = {
-    session: { player: {} },
-    async getBasicInfo() {
-      return {
-        basic_info: {},
-        streaming_data: {
-          formats: [format("bad"), format("silent", { has_audio: false })],
-        },
-      };
-    },
-  };
-  await assert.rejects(
-    inspectVideo("jNQXAC9IVRw", yt, async () => {
-      probes++;
-      return false;
-    }),
-    /NO_COMBINED_MP4/,
+test("MP3 resolves audio-only tracks without requiring video", async () => {
+  const audio = format(undefined, {
+    has_video: false,
+    mime_type: "audio/mp4",
+    url: "https://rr1.googlevideo.com/audio",
+  });
+  const plan = await resolveVideo(
+    id,
+    client(async () => info([], [audio])),
+    "best",
+    "mp3",
+    async () => {},
   );
-  assert.equal(probes, 3);
+  assert.equal(plan.requestedQuality, "MP3");
+  assert.equal(plan.candidates.length, 1);
+  assert.ok(plan.candidates[0].audio);
+  assert.equal(plan.candidates[0].video, undefined);
 });
