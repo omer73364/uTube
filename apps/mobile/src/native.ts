@@ -2,6 +2,7 @@ import { NativeModules } from "react-native";
 import type { Job } from "./domain";
 export const downloads = NativeModules.UTubeDownloads as {
   sha1(input: string): Promise<string>;
+  probe(url: string): Promise<boolean>;
   start(
     url: string,
     id: string,
