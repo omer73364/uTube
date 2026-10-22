@@ -1,4 +1,5 @@
 import { nativeFetch, bounded } from "./requests";
+import { playbackFetch } from "./playback";
 import { inspectVideo, resolveVideo } from "./inspect";
 import { downloads } from "./native";
 import { getVideoOrListID } from "../../../packages/core/url-parser.js";
@@ -9,9 +10,11 @@ export function createYouTubeService(
   evaluate: (script: string) => Promise<Record<string, string>>,
 ) {
   let player: import("youtubei.js").Player | undefined;
-  const transport = nativeFetch(
-    (...args) => downloads.http(...args),
-    (id) => downloads.cancelHttp(id),
+  const transport = playbackFetch(
+    nativeFetch(
+      (...args) => downloads.http(...args),
+      (id) => downloads.cancelHttp(id),
+    ),
   );
   async function client(signal?: AbortSignal) {
     if (signal?.aborted) throw new Error("CANCELLED");
