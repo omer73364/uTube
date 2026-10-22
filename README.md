@@ -181,6 +181,13 @@ npm run desktop
 
 <br>
 
+## 📱 Android prototype
+
+An Android app is being developed in [`apps/mobile`](apps/mobile/README.md). The first
+phase focuses on individual MP4 videos, native Android transfers, saved history,
+English/Arabic, and light/dark appearance. It is not yet a public mobile release;
+playlists, MP3, and HD merging are planned for later phases.
+
 ## 🧪 How downloads work
 
 **🎯 Quality first.** uTube tries your resolution first, including alternate encodings and clients (a `720p` request can use a `720p60` stream). If that fails, it falls back from the highest lower resolution down, and tells you what it saved. Retries are quiet and the progress bar never jumps back to zero.
@@ -232,6 +239,7 @@ Names are cleaned up and include the video ID, so same-titled videos never colli
 ```
 apps/cli/       🖥️  Terminal interface and commands
 apps/desktop/   🪟  Electron + React + TypeScript app
+apps/mobile/    📱  React Native Android prototype
 packages/core/  ⚙️  Shared YouTube & download engine
 website/        🌐  Project site (GitHub Pages)
 ```
