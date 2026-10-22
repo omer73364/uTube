@@ -2007,6 +2007,11 @@
   resolved "https://registry.npmjs.org/@typescript/typescript-linux-x64/-/typescript-linux-x64-7.0.2.tgz"
   integrity sha512-EYdf2cNg7rgCWJnxCdJ+F3V39O8ihb37eHAu1LK8oAFizgTQbPOK7zHHXbPt8rX24COqODXeI3sIf0fCXG7H/A==
 
+"@ungap/structured-clone@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.4.0.tgz"
+  integrity sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==
+
 "@utube/cli@file:/home/omar/D/Development/tools/uTube/apps/cli":
   version "2.1.0"
   resolved "file:apps/cli"

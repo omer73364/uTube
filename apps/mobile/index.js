@@ -1,3 +1,4 @@
+import "./src/polyfills";
 import "react-native-get-random-values";
 import "react-native-url-polyfill/auto";
 import { AppRegistry } from "react-native";

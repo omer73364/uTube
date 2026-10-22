@@ -12,6 +12,7 @@
     "build:android": "cd android && ./gradlew assemblePrototype && node ../scripts/check-bundle.cjs"
   },
   "dependencies": {
+    "@ungap/structured-clone": "^1.4.0",
     "react": "19.3.0",
     "react-native": "0.88.0",
     "react-native-get-random-values": "^1.11.0",
