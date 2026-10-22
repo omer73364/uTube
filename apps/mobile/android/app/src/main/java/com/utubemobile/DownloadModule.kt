@@ -59,6 +59,10 @@ class DownloadModule(private val context: ReactApplicationContext) :
     try {
       require(json.length <= 2 * 1024 * 1024)
       val requests = JSONArray(json)
+      for (i in 0 until requests.length()) {
+        val retry = requests.getJSONObject(i).optString("retryId")
+        check(retry.isBlank() || !DownloadService.isActive(retry)) { "DOWNLOAD_BUSY" }
+      }
       val old = store.all().associateBy { it.getString("id") }
       val ids = store.enqueueBatch(requests)
       for (i in 0 until requests.length()) requests
