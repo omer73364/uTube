@@ -6,7 +6,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.net.HttpURLConnection
-import java.net.URL
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Test
@@ -70,8 +69,11 @@ class MediaEngineTest {
         { false },
         {},
         { done, _ -> progress.add(done) },
-        {
-          object : HttpURLConnection(URL("https://rr1.googlevideo.com/test")) {
+        { uri ->
+          val range = Regex("range=(\\d+)-(\\d+)").find(uri.rawQuery)!!
+          val start = range.groupValues[1].toInt()
+          val end = range.groupValues[2].toInt()
+          object : HttpURLConnection(uri.toURL()) {
             override fun connect() {}
 
             override fun disconnect() {}
@@ -81,16 +83,63 @@ class MediaEngineTest {
             override fun getResponseCode() = 206
 
             override fun getHeaderField(name: String?): String? =
-              if (name == "Content-Range") "bytes 0-${bytes.lastIndex}/${bytes.size}" else null
+              if (name == "Content-Range") "bytes $start-$end/${bytes.size}" else null
 
             override fun getInputStream() =
-              ByteArrayInputStream(if (attempt++ == 0) bytes.copyOf(100) else bytes)
+              ByteArrayInputStream(
+                if (attempt++ == 0) bytes.copyOf(100) else bytes.copyOfRange(start, end + 1)
+              )
           }
         },
       )
       assertArrayEquals(bytes, output.readBytes())
-      assertEquals(listOf(bytes.size.toLong()), progress)
-      assertEquals(2, attempt)
+      assertEquals(listOf(131072L, bytes.size.toLong()), progress)
+      assertEquals(3, attempt)
+    } finally {
+      output.delete()
+    }
+  }
+
+  @Test
+  fun youtubeQueryRangesAcceptBoundedHttp200Responses() {
+    val output = File(instrumentation.targetContext.cacheDir, "query-range-test")
+    val bytes = ByteArray(600000) { (it % 117).toByte() }
+    val offsets = mutableListOf<Int>()
+    try {
+      RangedTransfer.download(
+        JSONObject()
+          .put("url", "https://rr1.googlevideo.com/test?signature=abc")
+          .put("size", bytes.size),
+        output,
+        { false },
+        {},
+        { _, _ -> },
+        { uri ->
+          val range = Regex("range=(\\d+)-(\\d+)").find(uri.rawQuery)!!
+          val start = range.groupValues[1].toInt()
+          val end = range.groupValues[2].toInt()
+          offsets.add(start)
+          object : HttpURLConnection(uri.toURL()) {
+            override fun connect() {}
+
+            override fun disconnect() {}
+
+            override fun usingProxy() = false
+
+            override fun getResponseCode() = 200
+
+            override fun getContentLengthLong() = (end - start + 1).toLong()
+
+            override fun getInputStream(): ByteArrayInputStream {
+              assertNull(getRequestProperty("Range"))
+              assertEquals("https://www.youtube.com", getRequestProperty("Origin"))
+              return ByteArrayInputStream(bytes.copyOfRange(start, end + 1))
+            }
+          }
+        },
+      )
+      assertArrayEquals(bytes, output.readBytes())
+      assertEquals(listOf(0, 262144, 524288), offsets)
     } finally {
       output.delete()
     }

@@ -18,23 +18,33 @@ object RangedTransfer {
     val uri = TransferPolicy.mediaUrl(stream.getString("url"))
     var total = stream.optLong("size", 0L)
     var offset = 0L
-    var chunk = 1024 * 1024L
+    var chunk = 256 * 1024L
     var failures = 0
     target.outputStream().use { output ->
       while (total == 0L || offset < total) {
         if (cancelled()) throw InterruptedException("CANCELLED")
         val end = if (total > 0) minOf(total - 1, offset + chunk - 1) else offset + chunk - 1
-        val connection = open(uri)
+        val queryRange = total > 0
+        val requestUri =
+          if (queryRange)
+            URI("$uri${if(uri.rawQuery.isNullOrEmpty()) "?" else "&"}range=$offset-$end")
+          else uri
+        val connection = open(requestUri)
         var status = -1
+        var streamedResponse = false
         connectionChanged(connection)
         try {
           connection.connectTimeout = 15000
           connection.readTimeout = 20000
           connection.instanceFollowRedirects = false
-          connection.setRequestProperty("Range", "bytes=$offset-$end")
+          if (!queryRange) connection.setRequestProperty("Range", "bytes=$offset-$end")
+          connection.setRequestProperty("Accept", "*/*")
+          connection.setRequestProperty("Origin", "https://www.youtube.com")
+          connection.setRequestProperty("Referer", "https://www.youtube.com/")
           connection.setRequestProperty("Accept-Encoding", "identity")
           status = connection.responseCode
-          if (status == 200 && offset == 0L) {
+          if (status == 200 && !queryRange && offset == 0L) {
+            streamedResponse = true
             val length = connection.contentLengthLong
             if (length > 0) total = length
             var copied = 0L
@@ -52,18 +62,28 @@ object RangedTransfer {
             check(copied > 0 && (total <= 0 || copied == total)) { "INCOMPLETE_STREAM" }
             return
           }
-          check(status == 206) { "HTTP_$status" }
-          val range =
-            Regex("bytes (\\d+)-(\\d+)/(\\d+)")
-              .matchEntire(connection.getHeaderField("Content-Range") ?: "")
-              ?: error("INVALID_RANGE")
-          val start = range.groupValues[1].toLong()
-          val last = range.groupValues[2].toLong()
-          val size = range.groupValues[3].toLong()
-          check(start == offset && last >= start && last <= end && size > last) { "INVALID_RANGE" }
-          if (total > 0) check(size == total) { "STREAM_CHANGED" }
-          total = size
-          val expected = (last - start + 1).toInt()
+          check(status == 206 || (queryRange && status == 200)) { "HTTP_$status" }
+          val expected =
+            if (status == 206) {
+              val range =
+                Regex("bytes (\\d+)-(\\d+)/(\\d+)")
+                  .matchEntire(connection.getHeaderField("Content-Range") ?: "")
+                  ?: error("INVALID_RANGE")
+              val start = range.groupValues[1].toLong()
+              val last = range.groupValues[2].toLong()
+              val size = range.groupValues[3].toLong()
+              check(start == offset && last >= start && last <= end && size > last) {
+                "INVALID_RANGE"
+              }
+              if (total > 0) check(size == total) { "STREAM_CHANGED" }
+              total = size
+              (last - start + 1).toInt()
+            } else {
+              val count = (end - offset + 1).toInt()
+              val length = connection.contentLengthLong
+              check(length < 0 || length == count.toLong()) { "INVALID_RANGE" }
+              count
+            }
           check(expected <= chunk)
           val bytes =
             connection.inputStream.use { input ->
@@ -75,6 +95,7 @@ object RangedTransfer {
                 check(n > 0) { "INCOMPLETE_RANGE" }
                 read += n
               }
+              check(input.read() == -1) { "INVALID_RANGE" }
               data
             }
           if (cancelled()) throw InterruptedException("CANCELLED")
@@ -85,7 +106,7 @@ object RangedTransfer {
         } catch (error: Exception) {
           if (cancelled() || error is InterruptedException) throw InterruptedException("CANCELLED")
           // An un-ranged response may already have written bytes; restart via another candidate.
-          if (status == 200 || failures++ >= 4) throw error
+          if (streamedResponse || failures++ >= 4) throw error
           chunk = maxOf(65536, chunk / 2)
         } finally {
           connectionChanged(null)
