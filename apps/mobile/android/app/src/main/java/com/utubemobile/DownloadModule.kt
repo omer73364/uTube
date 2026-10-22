@@ -1,156 +1,304 @@
 package com.utubemobile
 
 import android.app.DownloadManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.net.Uri
-import android.os.Environment
 import com.facebook.react.bridge.*
+import com.facebook.react.modules.core.DeviceEventManagerModule
+import java.security.MessageDigest
 import org.json.JSONArray
 import org.json.JSONObject
-import java.security.MessageDigest
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.concurrent.Executors
 
-class DownloadModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule(context) {
-  private val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+class DownloadModule(private val context: ReactApplicationContext) :
+  ReactContextBaseJavaModule(context) {
+  private val metadata = MetadataHttp()
+  private val player = PlayerRuntime(context.applicationContext)
+  private val store = JobStore(context)
   private val prefs = context.getSharedPreferences("utube-mobile", Context.MODE_PRIVATE)
-  private val probes = Executors.newSingleThreadExecutor()
-  private fun mediaUri(url: String): Uri {
-    val uri = Uri.parse(url)
-    require(uri.scheme == "https" && uri.host?.lowercase()?.endsWith(".googlevideo.com") == true && uri.userInfo == null) { "Invalid media URL." }
-    return uri
+  private val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+  override fun getName() = "UTubeDownloads"
+
+  override fun invalidate() {
+    metadata.close()
+    player.close()
+    super.invalidate()
   }
-  @ReactMethod fun probe(url: String, promise: Promise) {
-    try { mediaUri(url) } catch (error: Exception) { promise.reject("MEDIA_URL", error.message); return }
-    probes.execute {
-      var connection: HttpURLConnection? = null
-      try {
-        connection = URL(url).openConnection() as HttpURLConnection
-        connection.connectTimeout = 10000
-        connection.readTimeout = 10000
-        connection.instanceFollowRedirects = false
-        // Match DownloadManager's initial GET, then disconnect after headers.
-        // A range-only probe can pass when the full request would be rejected.
-        promise.resolve(connection.responseCode in 200..299)
-      } catch (error: Exception) { promise.resolve(false) }
-      finally { connection?.disconnect() }
+
+  @ReactMethod
+  fun http(
+    id: String,
+    url: String,
+    method: String,
+    headers: ReadableMap,
+    body: String?,
+    promise: Promise,
+  ) = metadata.request(id, url, method, headers, body, promise)
+
+  @ReactMethod fun cancelHttp(id: String) = metadata.cancel(id)
+
+  @ReactMethod fun evaluate(script: String, promise: Promise) = player.evaluate(script, promise)
+
+  @ReactMethod
+  fun sha1(input: String, promise: Promise) {
+    try {
+      promise.resolve(
+        MessageDigest.getInstance("SHA-1").digest(input.toByteArray(Charsets.UTF_8)).joinToString(
+          ""
+        ) {
+          "%02x".format(it.toInt() and 255)
+        }
+      )
+    } catch (e: Exception) {
+      promise.reject("HASH_FAILED", e.message, e)
     }
   }
-  override fun invalidate() { probes.shutdownNow(); super.invalidate() }
-  override fun getName() = "UTubeDownloads"
-  private fun records(): JSONArray = JSONArray(prefs.getString("history", "[]") ?: "[]")
-  private fun write(records: JSONArray) {
-    check(prefs.edit().putString("history", records.toString()).commit()) { "Could not save download history." }
-  }
-  private fun owned(id: Long): JSONObject {
-    val all = records()
-    for (index in 0 until all.length()) if (all.getJSONObject(index).getLong("id") == id) return all.getJSONObject(index)
-    throw IllegalArgumentException("Unknown download.")
-  }
-  @ReactMethod fun sha1(input: String, promise: Promise) {
-    val digest = MessageDigest.getInstance("SHA-1").digest(input.toByteArray(Charsets.UTF_8))
-    promise.resolve(digest.joinToString("") { "%02x".format(it.toInt() and 255) })
-  }
-  @ReactMethod @Synchronized fun start(url: String, videoId: String, title: String, quality: String, promise: Promise) {
+
+  @ReactMethod
+  fun enqueue(json: String, promise: Promise) {
     try {
-      val uri = mediaUri(url)
-      require(Regex("^[A-Za-z0-9_-]{11}$").matches(videoId)) { "Invalid video ID." }
-      var safeTitle = title.replace(Regex("[<>:\"/\\\\|?*\\p{Cntrl}]"), "_").trim().trimEnd('.').take(80).ifBlank { "Video" }
-      if (safeTitle.isNotEmpty() && Character.isHighSurrogate(safeTitle.last())) safeTitle = safeTitle.dropLast(1)
-      while (safeTitle.toByteArray(Charsets.UTF_8).size > 150) {
-        safeTitle = safeTitle.dropLast(if (Character.isLowSurrogate(safeTitle.last())) 2 else 1)
-      }
-      val name = "$safeTitle [$videoId]-${System.currentTimeMillis()}.mp4"
-      val request = DownloadManager.Request(uri)
-        .setTitle(title.take(180))
-        .setDescription("uTube · $quality · MP4")
-        .setMimeType("video/mp4")
-        .setAllowedOverMetered(true)
-        .setAllowedOverRoaming(false)
-        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "uTube/$name")
-      val id = manager.enqueue(request)
-      try {
-        val all = records()
-        all.put(JSONObject().put("id", id).put("videoId", videoId).put("title", title.take(180)).put("quality", quality).put("createdAt", System.currentTimeMillis()))
-        write(all)
-      } catch (error: Exception) { manager.remove(id); throw error }
-      promise.resolve(id.toDouble())
-    } catch (error: Exception) { promise.reject("DOWNLOAD_START", error.message, error) }
-  }
-  @ReactMethod @Synchronized fun list(promise: Promise) {
-    try {
-      val result = Arguments.createArray()
-      val all = records()
-      for (index in all.length() - 1 downTo 0) {
-        val record = all.getJSONObject(index)
-        val item = Arguments.createMap()
-        item.putDouble("id", record.getLong("id").toDouble())
-        item.putString("title", record.getString("title"))
-        item.putString("quality", record.getString("quality"))
-        item.putDouble("createdAt", record.getLong("createdAt").toDouble())
-        manager.query(DownloadManager.Query().setFilterById(record.getLong("id"))).use { cursor ->
-          if (cursor != null && cursor.moveToFirst()) {
-            val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-            item.putString("status", when (status) {
-              DownloadManager.STATUS_PENDING -> "queued"
-              DownloadManager.STATUS_RUNNING -> "running"
-              DownloadManager.STATUS_PAUSED -> "paused"
-              DownloadManager.STATUS_SUCCESSFUL -> "saved"
-              else -> "failed"
-            })
-            item.putDouble("loaded", cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)).toDouble())
-            item.putDouble("total", cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)).toDouble())
-            if (status == DownloadManager.STATUS_FAILED) item.putInt("reason", cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON)))
-          } else { item.putString("status", if (record.optBoolean("cancelled")) "cancelled" else "missing") }
+      require(json.length <= 2 * 1024 * 1024)
+      val requests = JSONArray(json)
+      val old = store.all().associateBy { it.getString("id") }
+      val ids = store.enqueueBatch(requests)
+      for (i in 0 until requests.length()) requests
+        .getJSONObject(i)
+        .optString("retryId")
+        .takeIf { it.isNotBlank() }
+        ?.let {
+          old[it]
+            ?.optLong("legacyId", -1)
+            ?.takeIf { legacy -> legacy >= 0 }
+            ?.let { legacy -> manager.remove(legacy) }
         }
-        result.pushMap(item)
+      try {
+        DownloadService.start(context)
+      } catch (e: Exception) {
+        for (i in 0 until ids.length()) {
+          val id = ids.getString(i)
+          if (store.get(id).optString("status") == "queued")
+            store.terminal(id, "interrupted", "START_INTERRUPTED")
+        }
+        throw e
       }
-      promise.resolve(result)
-    } catch (error: Exception) { promise.reject("DOWNLOAD_HISTORY", error.message, error) }
+      promise.resolve(ids.toString())
+    } catch (e: Exception) {
+      promise.reject("QUEUE_START", e.message, e)
+    }
   }
-  @ReactMethod @Synchronized fun cancel(id: Double, promise: Promise) {
+
+  @ReactMethod
+  fun prepared(id: String, plan: String?, error: String?, promise: Promise) {
     try {
-      require(id.isFinite() && id == id.toLong().toDouble()) { "Invalid download ID." }
-      owned(id.toLong())
-      manager.query(DownloadManager.Query().setFilterById(id.toLong())).use { cursor ->
-        require(cursor != null && cursor.moveToFirst()) { "Download no longer exists." }
-        val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-        require(status != DownloadManager.STATUS_SUCCESSFUL) { "Completed downloads cannot be cancelled." }
+      PreparationService.complete(id, plan?.let { JSONObject(it) }, error?.take(180))
+      promise.resolve(null)
+    } catch (e: Exception) {
+      PreparationService.complete(id, null, "INVALID_PLAN")
+      promise.reject("PLAN_INVALID", e.message, e)
+    }
+  }
+
+  @ReactMethod
+  fun list(promise: Promise) {
+    try {
+      promise.resolve(store.snapshot().toString())
+    } catch (e: Exception) {
+      promise.reject("HISTORY_READ", e.message, e)
+    }
+  }
+
+  @ReactMethod
+  fun resume(promise: Promise) {
+    try {
+      DownloadService.start(context)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("QUEUE_START", e.message, e)
+    }
+  }
+
+  private fun cancelJob(id: String) {
+    val job = store.get(id)
+    if (job.has("legacyId")) {
+      manager.query(DownloadManager.Query().setFilterById(job.getLong("legacyId"))).use { cursor ->
+        if (cursor != null && cursor.moveToFirst())
+          require(
+            cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)) !=
+              DownloadManager.STATUS_SUCCESSFUL
+          ) {
+            "Completed files cannot be cancelled."
+          }
       }
-      val all = records()
-      for (index in 0 until all.length()) if (all.getJSONObject(index).getLong("id") == id.toLong()) all.getJSONObject(index).put("cancelled", true)
-      write(all)
-      manager.remove(id.toLong())
-      promise.resolve(null)
-    } catch (error: Exception) { promise.reject("DOWNLOAD_CANCEL", error.message, error) }
+      manager.remove(job.getLong("legacyId"))
+    } else
+      require(
+        job.getString("status") in JobStore.activeStates || job.getString("status") == "interrupted"
+      ) {
+        "Download is not active."
+      }
+    store.terminal(id, "cancelled")
+    DownloadService.cancel(id)
+    if (context.hasActiveReactInstance())
+      context
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+        .emit("utubeCancelPreparation", id)
   }
-  @ReactMethod fun open(id: Double, promise: Promise) {
+
+  @ReactMethod
+  fun cancel(id: String, promise: Promise) {
     try {
-      require(id.isFinite() && id == id.toLong().toDouble()) { "Invalid download ID." }
-      owned(id.toLong())
-      val uri = manager.getUriForDownloadedFile(id.toLong()) ?: throw IllegalStateException("The file is not available.")
-      context.contentResolver.openFileDescriptor(uri, "r")?.use { }
-        ?: throw IllegalStateException("The file is not available.")
-      val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "video/mp4")
-        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
-      context.startActivity(intent)
+      cancelJob(id)
       promise.resolve(null)
-    } catch (error: Exception) { promise.reject("DOWNLOAD_OPEN", error.message, error) }
+    } catch (e: Exception) {
+      promise.reject("DOWNLOAD_CANCEL", e.message, e)
+    }
   }
-  @ReactMethod fun settings(promise: Promise) {
-    promise.resolve(Arguments.createMap().apply {
-      putString("language", prefs.getString("language", "en"))
-      putString("theme", prefs.getString("theme", "system"))
-    })
-  }
-  @ReactMethod fun saveSettings(language: String, theme: String, promise: Promise) {
+
+  @ReactMethod
+  fun cancelAll(promise: Promise) {
     try {
-      require(language in listOf("en", "ar") && theme in listOf("light", "dark", "system")) { "Invalid preference." }
+      val jobs = store.snapshot()
+      for (i in 0 until jobs.length()) {
+        val job = jobs.getJSONObject(i)
+        if (
+          job.getString("status") in JobStore.activeStates ||
+            job.getString("status") == "interrupted"
+        )
+          runCatching { cancelJob(job.getString("id")) }
+      }
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("DOWNLOAD_CANCEL", e.message, e)
+    }
+  }
+
+  private fun file(id: String): Pair<Uri, String> {
+    val job = store.get(id)
+    val uri =
+      if (job.has("legacyId")) manager.getUriForDownloadedFile(job.getLong("legacyId"))
+      else job.optString("fileUri").takeIf { it.startsWith("content://") }?.let { Uri.parse(it) }
+    try {
+      check(uri != null)
+      context.contentResolver.openFileDescriptor(uri, "r")?.use {} ?: error("MISSING_FILE")
+    } catch (e: Exception) {
+      store.terminal(id, "missing", "MISSING_FILE")
+      throw IllegalStateException("MISSING_FILE")
+    }
+    return Pair(uri!!, if (job.optString("mode") == "mp3") "audio/mpeg" else "video/mp4")
+  }
+
+  @ReactMethod
+  fun open(id: String, promise: Promise) {
+    try {
+      val (uri, mime) = file(id)
+      context.startActivity(
+        Intent(Intent.ACTION_VIEW)
+          .setDataAndType(uri, mime)
+          .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("FILE_OPEN", e.message, e)
+    }
+  }
+
+  @ReactMethod
+  fun share(id: String, promise: Promise) {
+    try {
+      val (uri, mime) = file(id)
+      val send =
+        Intent(Intent.ACTION_SEND)
+          .setType(mime)
+          .putExtra(Intent.EXTRA_STREAM, uri)
+          .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+      send.clipData = ClipData.newUri(context.contentResolver, "uTube", uri)
+      context.startActivity(
+        Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      )
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("FILE_SHARE", e.message, e)
+    }
+  }
+
+  @ReactMethod
+  fun clearFinished(promise: Promise) {
+    try {
+      store.clearFinished()
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("HISTORY_CLEAR", e.message, e)
+    }
+  }
+
+  @ReactMethod
+  fun settings(promise: Promise) {
+    promise.resolve(
+      Arguments.createMap().apply {
+        putString("language", prefs.getString("language", "en"))
+        putString("theme", prefs.getString("theme", "system"))
+      }
+    )
+  }
+
+  @ReactMethod
+  fun saveSettings(language: String, theme: String, promise: Promise) {
+    try {
+      require(language in listOf("en", "ar") && theme in listOf("light", "dark", "system"))
       check(prefs.edit().putString("language", language).putString("theme", theme).commit())
       promise.resolve(null)
-    } catch (error: Exception) { promise.reject("SETTINGS_SAVE", error.message, error) }
+    } catch (e: Exception) {
+      promise.reject("SETTINGS_SAVE", e.message, e)
+    }
+  }
+
+  @ReactMethod
+  fun consumeSharedLink(promise: Promise) {
+    val value = prefs.getString("shared-link", null)
+    prefs.edit().remove("shared-link").apply()
+    promise.resolve(value)
+  }
+
+  @ReactMethod
+  fun licenses(promise: Promise) {
+    try {
+      val names =
+        listOf(
+          "utube_license",
+          "gpl_v3",
+          "license",
+          "license_lame",
+          "license_cpu_features",
+          "license_libiconv",
+          "license_libilbc",
+          "license_libogg",
+          "license_libsndfile",
+          "license_libvorbis",
+          "license_opencore_amr",
+          "license_opus",
+          "license_shine",
+          "license_soxr",
+          "license_speex",
+          "license_twolame",
+          "license_vo_amrwbenc",
+        )
+      val text =
+        names
+          .mapNotNull { name ->
+            val id = context.resources.getIdentifier(name, "raw", context.packageName)
+            if (id == 0) null
+            else
+              name +
+                "\n\n" +
+                context.resources.openRawResource(id).bufferedReader().use { it.readText() }
+          }
+          .joinToString("\n\n────────────────\n\n")
+      promise.resolve(
+        "uTube Mobile · MIT\nFFmpegKit Audio 8.1.9 · LGPL-3.0\nSource: https://github.com/ffmpegkit-maintained/ffmpeg/tree/469e560b89a9ba4cab357d2c306c676b0c611745\n\n" +
+          text
+      )
+    } catch (e: Exception) {
+      promise.reject("LICENSES_READ", e.message, e)
+    }
   }
 }

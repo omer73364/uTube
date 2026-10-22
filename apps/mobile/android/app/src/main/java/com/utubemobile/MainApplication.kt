@@ -23,6 +23,7 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    JobStore(this).recover()
     loadReactNative(this)
   }
 }
