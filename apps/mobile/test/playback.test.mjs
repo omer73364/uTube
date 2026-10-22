@@ -49,3 +49,20 @@ test("playlist, other client and foreign-host requests keep their original bodie
     body: ios,
   });
 });
+
+test("SDK Request objects carry the method while init carries the JSON body", async () => {
+  const input = new Request("https://www.youtube.com/youtubei/v1/player", {
+    method: "POST",
+  });
+  let calls = 0;
+  const fetch = playbackFetch(async (request, init) => {
+    calls++;
+    assert.equal(request, input);
+    assert.equal(JSON.parse(init.body).params, "2AMB");
+    return new Response("{}");
+  });
+  await fetch(input, {
+    body: JSON.stringify({ context: { client: { clientName: "iOS" } } }),
+  });
+  assert.equal(calls, 1);
+});

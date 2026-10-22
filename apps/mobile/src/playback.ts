@@ -11,7 +11,9 @@ export function playbackFetch(transport: typeof fetch): typeof fetch {
         url.hostname,
       ) ||
       !/^\/youtubei\/v\d+\/player$/.test(url.pathname) ||
-      (init.method || "GET").toUpperCase() !== "POST"
+      (
+        init.method || (input instanceof Request ? input.method : "GET")
+      ).toUpperCase() !== "POST"
     )
       return transport(input, init);
     let body;
