@@ -78,9 +78,10 @@ export async function resolveVideo(
               (b.bitrate || 0) - (a.bitrate || 0),
           );
         if (mode === "mp3")
-          return (audios.length ? audios : audioFormats(info)).map(
-            (audio: RawFormat) => ({ audio, quality: "MP3" }),
-          );
+          return [
+            ...audios,
+            ...audioFormats(info).filter((f: RawFormat) => f.has_video),
+          ].map((audio: RawFormat) => ({ audio, quality: "MP3" }));
         const audio = audios.find((f) => f.mime_type?.startsWith("audio/mp4"));
         return videoFormats(info)
           .filter((video: RawFormat) => video.has_audio || audio)
@@ -102,17 +103,31 @@ export async function resolveVideo(
     .sort((a, b) => parseInt(b.quality) - parseInt(a.quality));
   const ordered =
     mode === "mp3"
-      ? entries
+      ? [...entries].sort(
+          (a, b) =>
+            Number(!!a.audio?.has_video) - Number(!!b.audio?.has_video) ||
+            Number(!!b.audio?.is_original) - Number(!!a.audio?.is_original) ||
+            (b.audio?.bitrate || 0) - (a.audio?.bitrate || 0),
+        )
       : quality === "best"
         ? [...entries].sort((a, b) => parseInt(b.quality) - parseInt(a.quality))
         : [...exact, ...lower];
   const candidates: DownloadPlan["candidates"] = [];
   const seen = new Set<string>();
-  const decipher = async (format: RawFormat): Promise<Stream> => ({
-    url: mediaURL(await format.decipher(yt.session.player)),
-    size: Number(format.content_length) || 0,
-    itag: format.itag,
-  });
+  const cpns = new Map<RawFormat, string>();
+  for (const info of sources)
+    for (const format of [...videoFormats(info), ...audioFormats(info)])
+      cpns.set(format, info.cpn);
+  const decipher = async (format: RawFormat): Promise<Stream> => {
+    const url = new URL(mediaURL(await format.decipher(yt.session.player)));
+    const cpn = cpns.get(format);
+    if (cpn) url.searchParams.set("cpn", cpn);
+    return {
+      url: url.href,
+      size: Number(format.content_length) || 0,
+      itag: format.itag,
+    };
+  };
   for (const entry of ordered) {
     if (candidates.length >= 24) break;
     try {

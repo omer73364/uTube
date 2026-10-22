@@ -114,3 +114,36 @@ test("MP3 resolves audio-only tracks without requiring video", async () => {
   assert.ok(plan.candidates[0].audio);
   assert.equal(plan.candidates[0].video, undefined);
 });
+
+test("resolved links retain the playback nonce for native ranged transfers", async () => {
+  const value = { ...info([format("720p")]), cpn: "playback-nonce" };
+  const plan = await resolveVideo(
+    id,
+    client(async () => value),
+    "720p",
+    "video",
+    async () => {},
+  );
+  assert.equal(
+    new URL(plan.candidates[0].video.url).searchParams.get("cpn"),
+    "playback-nonce",
+  );
+});
+
+test("MP3 can extract a combined stream after audio-only candidates fail", async () => {
+  const audio = format(undefined, {
+    has_video: false,
+    mime_type: "audio/mp4",
+    url: "https://rr1.googlevideo.com/audio",
+  });
+  const plan = await resolveVideo(
+    id,
+    client(async () => info([format("360p")], [audio])),
+    "MP3",
+    "mp3",
+    async () => {},
+  );
+  assert.equal(plan.candidates.length, 2);
+  assert.equal(plan.candidates[0].audio.url, audio.url);
+  assert.match(plan.candidates[1].audio.url, /q=360p/);
+});
