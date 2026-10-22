@@ -1,0 +1,14 @@
+node_modules/
+build/
+android/local.properties
+android/.gradle/
+android/.cxx/
+android/app/build/
+android/app/.cxx/
+*.jks
+*.p12
+*.pfx
+*.keystore
+!android/app/debug.keystore
+.env
+.env.*

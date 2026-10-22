@@ -1,0 +1,40 @@
+{
+  "name": "@utube/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "typecheck": "tsc --noEmit",
+    "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output build/index.android.bundle --assets-dest build",
+    "test": "node --test test/*.test.mjs",
+    "build:android": "cd android && ./gradlew assemblePrototype"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-safe-area-context": "^5.5.2",
+    "react-native-url-polyfill": "^4.0.0",
+    "react-native-webview": "^14.0.1",
+    "youtubei.js": "18.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-export-namespace-from": "^7.29.7",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/runtime": "^7.25.0",
+    "@react-native-community/cli": "20.2.0",
+    "@react-native-community/cli-platform-android": "20.2.0",
+    "@react-native/babel-preset": "0.88.0",
+    "@react-native/metro-config": "0.88.0",
+    "@react-native/typescript-config": "0.88.0",
+    "@types/react": "^19.2.0",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">= 22.11.0"
+  },
+  "description": "Android download prototype for uTube",
+  "license": "MIT"
+}

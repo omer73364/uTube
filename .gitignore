@@ -8,3 +8,13 @@ node_modules
 /release-artifacts/
 
 /website/dist/
+
+# Android development files and generated mobile output
+/apps/mobile/build/
+/apps/mobile/android/.gradle/
+/apps/mobile/android/.cxx/
+/apps/mobile/android/build/
+/apps/mobile/android/app/build/
+/apps/mobile/android/app/.cxx/
+/apps/mobile/android/local.properties
+/apps/mobile/node_modules/
