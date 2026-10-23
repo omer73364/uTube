@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="apps/desktop/assets/icon.svg" alt="uTube logo" width="88">
-
-# uTube
+# 🎬 uTube
 
 ### Your YouTube library, offline. In one command or one click.
 

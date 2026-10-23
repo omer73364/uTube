@@ -115,8 +115,10 @@ h3 {
   display: grid;
   place-items: center;
   width: 28px;
-  height: 28px;
+  height: 30px;
   border-radius: 7px;
+  background: var(--accent);
+  color: var(--surface);
 }
 nav {
   display: flex;
