@@ -56,6 +56,22 @@ npm run mobile:start
 npm run mobile:android
 ```
 
+Start Metro before launching the debug app, and keep that terminal running.
+If running commands from `apps/mobile`, use `npm start` first, then
+`npm run android` in another terminal. The repository root's `npm start` runs
+the CLI, so use the `mobile:*` commands shown above from there.
+
+For a USB-connected phone, ensure Metro is reachable:
+
+```sh
+adb reverse tcp:8081 tcp:8081
+```
+
+Repeat this after reconnecting the phone. With multiple devices, pass
+`adb -s YOUR_DEVICE_ID reverse tcp:8081 tcp:8081`. Over Wi-Fi, configure the
+phone's React Native development server address to your computer's LAN IP and
+port 8081, with both devices on the same network.
+
 For a standalone APK with JavaScript bundled:
 
 ```sh

@@ -1,3 +1,6 @@
+// Keep the SDK in the initial Metro bundle. Dynamic imports trigger a second
+// development-server request when a foreground/headless download starts.
+import { Innertube, Platform, Player } from "youtubei.js/react-native";
 import { nativeFetch, bounded } from "./requests";
 import { playbackFetch } from "./playback";
 import { inspectVideo, resolveVideo } from "./inspect";
@@ -9,7 +12,7 @@ import type { MediaMode, Preview, PlaylistPreview } from "./domain";
 export function createYouTubeService(
   evaluate: (script: string) => Promise<Record<string, string>>,
 ) {
-  let player: import("youtubei.js").Player | undefined;
+  let player: Player | undefined;
   const transport = playbackFetch(
     nativeFetch(
       (...args) => downloads.http(...args),
@@ -18,7 +21,6 @@ export function createYouTubeService(
   );
   async function client(signal?: AbortSignal) {
     if (signal?.aborted) throw new Error("CANCELLED");
-    const { Innertube, Platform } = await import("youtubei.js/react-native");
     Platform.shim.eval = (data) => evaluate(data.output);
     Platform.shim.sha1Hash = (input) => downloads.sha1(input);
     Platform.shim.uuidv4 = () => {
@@ -70,7 +72,6 @@ export function createYouTubeService(
       const yt = await client(signal);
       return resolveVideo(id, yt, quality, mode, async () => {
         if (!player) {
-          const { Player } = await import("youtubei.js/react-native");
           player = await bounded(
             Player.create(undefined, yt.session.http.fetch_function),
             60000,
