@@ -66,6 +66,14 @@ Run `utube` for the guided menu:
 
 Use `↑` `↓` to move, `Enter` to confirm, and `Space` to select playlist items. A summary at the end shows what was saved, skipped, or failed. One bad item never stops the rest. 💪
 
+### Download details
+
+Each video gets a compact card with its channel, duration, views, format,
+destination, and watch link when those details are available. A single live
+progress block follows video, audio, and processing stages, with transfer speed,
+ETA, and a layout that adapts to narrow terminals. Automatic stream retries keep
+the displayed progress from jumping backwards.
+
 ### 🚀 Or go direct
 
 ```bash
