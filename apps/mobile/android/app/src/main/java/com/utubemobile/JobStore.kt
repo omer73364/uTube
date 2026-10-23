@@ -286,4 +286,11 @@ class JobStore(private val context: Context, private val scope: String = "") {
       all().filter { it.getString("id") !in finished }.forEach { keep.put(it) }
       write(keep)
     }
+
+  fun remove(id: String) =
+    synchronized(lock) {
+      val job = get(id)
+      require(job.getString("status") !in activeStates) { "DOWNLOAD_BUSY" }
+      check(db.delete("jobs", "id=?", arrayOf(id)) == 1) { "UNKNOWN_DOWNLOAD" }
+    }
 }

@@ -236,6 +236,23 @@ class DownloadModule(private val context: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun remove(id: String, promise: Promise) {
+    try {
+      check(!DownloadService.isActive(id)) { "DOWNLOAD_BUSY" }
+      val visible = store.snapshot()
+      val job =
+        (0 until visible.length())
+          .map { visible.getJSONObject(it) }
+          .first { it.getString("id") == id }
+      require(job.getString("status") !in JobStore.activeStates) { "DOWNLOAD_BUSY" }
+      store.remove(id)
+      promise.resolve(null)
+    } catch (e: Exception) {
+      promise.reject("HISTORY_REMOVE", e.message, e)
+    }
+  }
+
+  @ReactMethod
   fun settings(promise: Promise) {
     promise.resolve(
       Arguments.createMap().apply {

@@ -48,10 +48,34 @@ class JobStoreTest {
     assertTrue(store.all().isEmpty())
     assertTrue(
       runCatching {
-          store.enqueueBatch(JSONArray().put(request().put("retryId", "somebody-elses-id")))
-        }
+        store.enqueueBatch(JSONArray().put(request().put("retryId", "somebody-elses-id")))
+      }
         .isFailure
     )
     assertTrue(store.all().isEmpty())
+  }
+
+  @Test
+  fun removingAnEntryPersistsAndKeepsItsFile() {
+    val scope = "test-${UUID.randomUUID()}-"
+    val store = JobStore(context, scope)
+    store.recover()
+    val id = store.enqueueBatch(JSONArray().put(request())).getString(0)
+    assertTrue(runCatching { store.remove(id) }.isFailure)
+    val file =
+      java.io.File(context.cacheDir, "remove-test-${UUID.randomUUID()}").apply {
+        writeText("keep me")
+      }
+    try {
+      store.edit(id) {
+        it.put("status", "saved").put("fileUri", android.net.Uri.fromFile(file).toString())
+      }
+      store.remove(id)
+      assertTrue(JobStore(context, scope).all().isEmpty())
+      assertEquals("keep me", file.readText())
+      assertTrue(runCatching { store.remove("unknown-id") }.isFailure)
+    } finally {
+      file.delete()
+    }
   }
 }

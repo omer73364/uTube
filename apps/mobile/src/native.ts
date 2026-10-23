@@ -43,6 +43,7 @@ interface Bridge {
   open(id: string): Promise<void>;
   share(id: string): Promise<void>;
   clearFinished(): Promise<void>;
+  remove(id: string): Promise<void>;
   settings(): Promise<{
     language: "en" | "ar";
     theme: "light" | "dark" | "system";
@@ -77,6 +78,7 @@ export const downloads = {
   open: (id: string) => bridge.open(id),
   share: (id: string) => bridge.share(id),
   clearFinished: () => bridge.clearFinished(),
+  remove: (id: string) => bridge.remove(id),
   settings: () => bridge.settings(),
   saveSettings: (language: "en" | "ar", theme: "light" | "dark" | "system") =>
     bridge.saveSettings(language, theme),
