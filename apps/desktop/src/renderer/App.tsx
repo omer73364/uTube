@@ -23,8 +23,12 @@ import {
   Search,
   Sun,
   Moon,
+  Home,
+  Library,
+  Monitor,
 } from "lucide-react";
 import JobCard from "./JobCard";
+import Thumbnail from "./Thumbnail";
 import { languages, translator, localizeError } from "../locales";
 import type { Preview, Job, Settings, Preferences } from "../shared";
 
@@ -42,9 +46,9 @@ const safeThumbnail = (value?: string | null) => {
 };
 
 export default function App() {
-  const [screen, setScreen] = useState<"download" | "queue" | "settings">(
-    "download",
-  );
+  const [screen, setScreen] = useState<
+    "download" | "queue" | "library" | "settings"
+  >("download");
   const [settings, setSettings] = useState<Settings>();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [url, setURL] = useState("");
@@ -59,7 +63,12 @@ export default function App() {
   const [notice, setNotice] = useState<number>();
   const [queueFilter, setQueueFilter] = useState("all");
   const [query, setQuery] = useState("");
+  const [libraryMode, setLibraryMode] = useState<"files" | "playlists">(
+    "files",
+  );
+  const [playlist, setPlaylist] = useState<string>();
   const urlInput = useRef<HTMLInputElement>(null);
+  const pageContent = useRef<HTMLElement>(null);
   const language = settings?.language || "en";
   const t = translator(language);
   const theme = settings?.theme || "system";
@@ -74,8 +83,20 @@ export default function App() {
     )!.dir;
   }, [dark, language]);
   useEffect(() => {
-    window.scrollTo(0, 0);
+    pageContent.current?.scrollTo(0, 0);
   }, [screen]);
+  useEffect(() => {
+    const closeMenus = () =>
+      document
+        .querySelectorAll<HTMLElement>(".job-menu:popover-open")
+        .forEach((menu) => menu.hidePopover());
+    document.addEventListener("scroll", closeMenus, true);
+    window.addEventListener("resize", closeMenus);
+    return () => {
+      document.removeEventListener("scroll", closeMenus, true);
+      window.removeEventListener("resize", closeMenus);
+    };
+  }, []);
   useEffect(() => {
     if (notice === undefined) return;
     const timeout = window.setTimeout(() => setNotice(undefined), 5000);
@@ -89,6 +110,7 @@ export default function App() {
       ) {
         event.preventDefault();
         setScreen("download");
+        setPreview(undefined);
         requestAnimationFrame(() => urlInput.current?.focus());
       }
     };
@@ -220,6 +242,25 @@ export default function App() {
         .toLocaleLowerCase(language)
         .includes(query.trim().toLocaleLowerCase(language)),
   );
+  const saved = jobs.filter((job) => ["saved", "skipped"].includes(job.status));
+  const libraryFiles = saved.filter(
+    (job) =>
+      (!playlist || job.playlistTitle === playlist) &&
+      `${job.title} ${job.playlistTitle || ""}`
+        .toLocaleLowerCase(language)
+        .includes(query.trim().toLocaleLowerCase(language)),
+  );
+  const playlistNames = [
+    ...new Set(
+      saved
+        .map((job) => job.playlistTitle)
+        .filter((name): name is string => !!name),
+    ),
+  ].filter((name) =>
+    name
+      .toLocaleLowerCase(language)
+      .includes(query.trim().toLocaleLowerCase(language)),
+  );
   const qualities = !preview
     ? []
     : preview.type === "video"
@@ -235,24 +276,27 @@ export default function App() {
     ["attention", t("attention"), attention],
   ] as const;
   const navigation = [
-    { id: "download", label: t("download"), icon: Download },
-    { id: "queue", label: t("queue"), icon: Layers },
-    { id: "settings", label: t("settings"), icon: Settings2 },
+    { id: "download", label: t("home"), icon: Home },
+    { id: "library", label: t("library"), icon: Library },
+    { id: "queue", label: t("downloads"), icon: Download },
   ] as const;
   const folderControl = (choose = false) => (
     <div className="destination">
-      <FolderOpen size={18} />
-      <div>
-        <span>{t("saveTo")}</span>
+      <span className="destination-icon" aria-hidden="true">
+        <FolderOpen size={21} />
+      </span>
+      <div className="destination-details">
+        <span className="destination-label">{t("saveTo")}</span>
         <strong dir="auto" title={settings?.folder}>
           {settings?.folder || t("loadingFolder")}
         </strong>
       </div>
       <button
-        className="text-button"
+        className="button secondary destination-change"
         disabled={!settings}
         onClick={chooseFolder}
       >
+        <FolderOpen size={15} />
         {t(choose ? "chooseFolder" : "change")}
       </button>
     </div>
@@ -357,21 +401,7 @@ export default function App() {
           />
           uTube
         </div>
-        <nav aria-label={t("navigation")}>
-          {navigation.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              aria-current={screen === id ? "page" : undefined}
-              onClick={() => setScreen(id)}
-            >
-              <Icon size={17} />
-              {label}
-              {id === "queue" && pending > 0 && (
-                <span className="count">{pending}</span>
-              )}
-            </button>
-          ))}
-        </nav>
+
         <div className="header-actions">
           <button
             className="icon-button"
@@ -385,6 +415,15 @@ export default function App() {
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           <button
+            className="icon-button"
+            aria-label={t("settings")}
+            title={t("settings")}
+            aria-pressed={screen === "settings"}
+            onClick={() => setScreen("settings")}
+          >
+            <Settings2 size={20} />
+          </button>
+          <button
             className="button secondary folder-shortcut"
             disabled={!settings}
             onClick={() => action(window.utube.openFolder())}
@@ -394,7 +433,7 @@ export default function App() {
           </button>
         </div>
       </header>
-      <main className="page-content">
+      <main className="page-content" ref={pageContent} tabIndex={0}>
         {error !== undefined && (
           <div className="alert error-alert" role="alert">
             <AlertCircle size={18} />
@@ -428,7 +467,9 @@ export default function App() {
                 ? "downloadTitle"
                 : screen === "queue"
                   ? "queueTitle"
-                  : "settingsTitle",
+                  : screen === "library"
+                    ? "library"
+                    : "settingsTitle",
             )}
           </h1>
           <p>
@@ -437,257 +478,404 @@ export default function App() {
                 ? "downloadDescription"
                 : screen === "queue"
                   ? "queueDescription"
-                  : "settingsDescription",
+                  : screen === "library"
+                    ? "libraryDescription"
+                    : "settingsDescription",
             )}
           </p>
         </div>
         {screen === "download" && (
           <>
             <section className="card download-card">
-              <form className="link-section" onSubmit={inspect}>
-                <label htmlFor="youtube-url">{t("linkHeading")}</label>
-                <div className="url-form">
-                  <Link2 size={18} />
-                  <input
-                    id="youtube-url"
-                    ref={urlInput}
-                    aria-label={t("link")}
-                    dir="ltr"
-                    type="url"
-                    placeholder="https://www.youtube.com/watch?v=…"
-                    value={url}
-                    required
-                    disabled={loading}
-                    onChange={(event) => {
-                      setURL(event.target.value);
-                      setPreview(undefined);
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="button primary"
-                    disabled={loading || !url.trim() || !settings}
-                  >
-                    {loading ? (
-                      <LoaderCircle size={16} className="spin" />
-                    ) : (
-                      <Search size={16} />
-                    )}
-                    {t(loading ? "loading" : "find")}
-                  </button>
-                </div>
-                <span className="shortcut">{t("shortcut")}</span>
-              </form>
-              <div className="options-section">
-                <h2>{t("options")}</h2>
-                <div className="format-options">
-                  <button
-                    aria-pressed={!audio}
-                    onClick={() => setAudio(false)}
-                    className={`format-choice ${!audio ? "chosen" : ""}`}
-                  >
-                    <Film size={20} />
-                    <div>
-                      <strong>{t("video")}</strong>
-                      <span>{t("videoDescription")}</span>
-                    </div>
-                    {!audio && <Check size={16} />}
-                  </button>
-                  <button
-                    aria-pressed={audio}
-                    onClick={() => setAudio(true)}
-                    className={`format-choice ${audio ? "chosen" : ""}`}
-                  >
-                    <AudioLines size={20} />
-                    <div>
-                      <strong>{t("audio")}</strong>
-                      <span>{t("audioDescription")}</span>
-                    </div>
-                    {audio && <Check size={16} />}
-                  </button>
-                </div>
-                {preview && (
-                  <div className="source-preview" data-testid="source-preview">
-                    <div className="thumbnail">
-                      {image ? (
-                        <img src={image} alt="" />
-                      ) : preview.type === "playlist" ? (
-                        <Layers size={25} />
-                      ) : (
-                        <Play size={25} />
-                      )}
-                    </div>
-                    <div>
-                      <span>
-                        {t(
-                          preview.type === "playlist"
-                            ? "playlistPreview"
-                            : "videoPreview",
-                          { count: preview.items?.length || 0 },
-                        )}
-                      </span>
-                      <h3 dir="auto">{preview.title}</h3>
-                      {preview.author && <p dir="auto">{preview.author}</p>}
-                    </div>
-                  </div>
-                )}
-                {preview?.type === "playlist" && !preview.items?.length && (
-                  <p className="inline-note">{t("noPlaylist")}</p>
-                )}
-                {preview?.type === "playlist" && (
-                  <div className="playlist-picker">
-                    <div className="playlist-heading">
-                      <strong>
-                        {t("selected", { count: selected.length })}
-                      </strong>
+              {!preview && (
+                <form className="link-section" onSubmit={inspect}>
+                  <label htmlFor="youtube-url">{t("linkHeading")}</label>
+                  <div className="url-form">
+                    <Link2 size={18} />
+                    <input
+                      id="youtube-url"
+                      ref={urlInput}
+                      aria-label={t("link")}
+                      dir="ltr"
+                      type="url"
+                      placeholder={t("linkPlaceholder")}
+                      value={url}
+                      required
+                      disabled={loading}
+                      onChange={(event) => {
+                        setURL(event.target.value);
+                        setPreview(undefined);
+                      }}
+                    />
+                    {url && (
                       <button
-                        className="text-button"
-                        onClick={() =>
-                          setSelected(
-                            selected.length === preview.items!.length
-                              ? []
-                              : preview.items!.map((_, index) => index),
-                          )
-                        }
+                        type="button"
+                        className="icon-button"
+                        aria-label={t("clearLink")}
+                        onClick={() => {
+                          setURL("");
+                          urlInput.current?.focus();
+                        }}
                       >
-                        {t(
-                          selected.length === preview.items!.length
-                            ? "deselectAll"
-                            : "selectAll",
-                        )}
+                        <X size={17} />
                       </button>
-                    </div>
-                    <div className="playlist-list">
-                      {preview.items!.map((item, index) => (
-                        <label key={`${item.id}-${index}`}>
-                          <input
-                            type="checkbox"
-                            checked={selected.includes(index)}
-                            onChange={(event) =>
-                              setSelected((old) =>
-                                event.target.checked
-                                  ? [...old, index].sort((a, b) => a - b)
-                                  : old.filter((value) => value !== index),
-                              )
-                            }
-                          />
-                          <span className="playlist-index">{index + 1}</span>
-                          <span dir="auto">{item.title}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {!audio && (
-                  <div className="quality-row">
-                    <label htmlFor="quality">{t("quality")}</label>
-                    <select
-                      id="quality"
-                      value={quality}
-                      disabled={!preview || !qualities.length}
-                      onChange={(event) => setQuality(event.target.value)}
+                    )}
+                    <button
+                      type="submit"
+                      className="button primary"
+                      disabled={loading || !url.trim() || !settings}
                     >
-                      {[...qualities].reverse().map((value) => (
-                        <option key={value} value={value}>
-                          {value}
-                          {parseInt(value) >= 720 ? " · HD" : ""}
-                        </option>
-                      ))}
-                      {!preview && (
-                        <option value="360p">{t("loadQualities")}</option>
+                      {loading ? (
+                        <LoaderCircle size={16} className="spin" />
+                      ) : (
+                        <Search size={16} />
                       )}
-                    </select>
+                      {t(loading ? "loading" : "find")}
+                    </button>
                   </div>
-                )}
-                {folderControl()}
-                {!hasEncoder && requiresFFmpeg && (
-                  <p className="inline-note">{t("encoderNeeded")}</p>
-                )}
-                {preview && !audio && !qualities.length && (
-                  <p className="inline-note">{t("noQualities")}</p>
-                )}
-                <button
-                  className="button primary download-button"
-                  disabled={
-                    !preview ||
-                    !selected.length ||
-                    adding ||
-                    !settings ||
-                    (!hasEncoder && requiresFFmpeg) ||
-                    (!audio && !qualities.length)
-                  }
-                  onClick={addDownloads}
-                >
-                  {adding ? (
-                    <LoaderCircle size={17} className="spin" />
-                  ) : (
-                    <Download size={17} />
+                  <span className="shortcut">{t("shortcut")}</span>
+                </form>
+              )}
+              {preview && (
+                <div className="options-section">
+                  {preview && (
+                    <div
+                      className="source-preview"
+                      data-testid="source-preview"
+                    >
+                      <button
+                        className="icon-button preview-close"
+                        aria-label={t("closePreview")}
+                        onClick={() => {
+                          setPreview(undefined);
+                          requestAnimationFrame(() =>
+                            urlInput.current?.focus(),
+                          );
+                        }}
+                      >
+                        <X size={18} />
+                      </button>
+                      <div className="thumbnail">
+                        {image ? (
+                          <img
+                            src={image}
+                            alt=""
+                            onError={(event) => {
+                              event.currentTarget.hidden = true;
+                            }}
+                          />
+                        ) : preview.type === "playlist" ? (
+                          <Layers size={25} />
+                        ) : (
+                          <Play size={25} />
+                        )}
+                      </div>
+                      <div>
+                        <span>
+                          {t(
+                            preview.type === "playlist"
+                              ? "playlistPreview"
+                              : "videoPreview",
+                            { count: preview.items?.length || 0 },
+                          )}
+                        </span>
+                        <h3 dir="auto">{preview.title}</h3>
+                        {preview.author && <p dir="auto">{preview.author}</p>}
+                      </div>
+                    </div>
                   )}
-                  {t(
-                    adding
-                      ? "adding"
-                      : !preview
-                        ? "start"
-                        : preview.type === "playlist"
-                          ? audio
-                            ? "downloadTracks"
-                            : "downloadVideos"
-                          : audio
-                            ? "downloadAudio"
-                            : "downloadVideo",
-                    { count: selected.length },
+                  <h2>{t("options")}</h2>
+                  <div className="format-options">
+                    <button
+                      aria-pressed={!audio}
+                      onClick={() => setAudio(false)}
+                      className={`format-choice ${!audio ? "chosen" : ""}`}
+                    >
+                      <Film size={20} />
+                      <div>
+                        <strong>{t("video")}</strong>
+                        <span>{t("videoDescription")}</span>
+                      </div>
+                      {!audio && <Check size={16} />}
+                    </button>
+                    <button
+                      aria-pressed={audio}
+                      onClick={() => setAudio(true)}
+                      className={`format-choice ${audio ? "chosen" : ""}`}
+                    >
+                      <AudioLines size={20} />
+                      <div>
+                        <strong>{t("audio")}</strong>
+                        <span>{t("audioDescription")}</span>
+                      </div>
+                      {audio && <Check size={16} />}
+                    </button>
+                  </div>
+                  {preview?.type === "playlist" && !preview.items?.length && (
+                    <p className="inline-note">{t("noPlaylist")}</p>
                   )}
-                </button>
-                <p className="format-footnote">
-                  {t(audio ? "conversionNote" : "qualityNote")}
-                </p>
-              </div>
+                  {preview?.type === "playlist" && (
+                    <div className="playlist-picker">
+                      <div className="playlist-heading">
+                        <strong>
+                          {t("selected", { count: selected.length })}
+                        </strong>
+                        <button
+                          className="text-button"
+                          onClick={() =>
+                            setSelected(
+                              selected.length === preview.items!.length
+                                ? []
+                                : preview.items!.map((_, index) => index),
+                            )
+                          }
+                        >
+                          {t(
+                            selected.length === preview.items!.length
+                              ? "deselectAll"
+                              : "selectAll",
+                          )}
+                        </button>
+                      </div>
+                      <div className="playlist-list">
+                        {preview.items!.map((item, index) => (
+                          <label key={`${item.id}-${index}`}>
+                            <input
+                              type="checkbox"
+                              checked={selected.includes(index)}
+                              onChange={(event) =>
+                                setSelected((old) =>
+                                  event.target.checked
+                                    ? [...old, index].sort((a, b) => a - b)
+                                    : old.filter((value) => value !== index),
+                                )
+                              }
+                            />
+                            <Thumbnail videoId={item.id} />
+                            <span className="playlist-index">{index + 1}</span>
+                            <span dir="auto">{item.title}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {!audio && (
+                    <div className="quality-row">
+                      <label htmlFor="quality">{t("quality")}</label>
+                      <select
+                        id="quality"
+                        value={quality}
+                        disabled={!preview || !qualities.length}
+                        onChange={(event) => setQuality(event.target.value)}
+                      >
+                        {[...qualities].reverse().map((value) => (
+                          <option key={value} value={value}>
+                            {value}
+                            {parseInt(value) >= 720 ? " · HD" : ""}
+                          </option>
+                        ))}
+                        {!preview && (
+                          <option value="360p">{t("loadQualities")}</option>
+                        )}
+                      </select>
+                    </div>
+                  )}
+                  {folderControl()}
+                  {!hasEncoder && requiresFFmpeg && (
+                    <p className="inline-note">{t("encoderNeeded")}</p>
+                  )}
+                  {preview && !audio && !qualities.length && (
+                    <p className="inline-note">{t("noQualities")}</p>
+                  )}
+                  <button
+                    className="button primary download-button"
+                    disabled={
+                      !preview ||
+                      !selected.length ||
+                      adding ||
+                      !settings ||
+                      (!hasEncoder && requiresFFmpeg) ||
+                      (!audio && !qualities.length)
+                    }
+                    onClick={addDownloads}
+                  >
+                    {adding ? (
+                      <LoaderCircle size={17} className="spin" />
+                    ) : (
+                      <Download size={17} />
+                    )}
+                    {t(
+                      adding
+                        ? "adding"
+                        : !preview
+                          ? "start"
+                          : preview.type === "playlist"
+                            ? audio
+                              ? "downloadTracks"
+                              : "downloadVideos"
+                            : audio
+                              ? "downloadAudio"
+                              : "downloadVideo",
+                      { count: selected.length },
+                    )}
+                  </button>
+                  <p className="format-footnote">
+                    {t(audio ? "conversionNote" : "qualityNote")}
+                  </p>
+                </div>
+              )}
             </section>
-            {jobs.length > 0 && queuePanel(false)}
+            {!preview && queuePanel(false)}
           </>
         )}
         {screen === "queue" && queuePanel(true)}
+        {screen === "library" && (
+          <section className="library-panel">
+            <div className="library-toolbar">
+              <div
+                className="queue-filters"
+                role="group"
+                aria-label={t("library")}
+              >
+                {(["files", "playlists"] as const).map((value) => (
+                  <button
+                    key={value}
+                    aria-pressed={libraryMode === value}
+                    onClick={() => {
+                      setLibraryMode(value);
+                      setPlaylist(undefined);
+                      setQuery("");
+                    }}
+                  >
+                    {t(value)}
+                  </button>
+                ))}
+              </div>
+              <label className="queue-search">
+                <Search size={17} />
+                <input
+                  aria-label={t("search")}
+                  placeholder={t("search")}
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+              </label>
+            </div>
+            {playlist && (
+              <button
+                className="text-button back-to-playlists"
+                onClick={() => {
+                  setPlaylist(undefined);
+                  setQuery("");
+                }}
+              >
+                {t("allPlaylists")}
+              </button>
+            )}
+            {libraryMode === "playlists" && !playlist ? (
+              <div className="playlist-grid">
+                {playlistNames.map((name) => {
+                  const items = saved.filter(
+                    (job) => job.playlistTitle === name,
+                  );
+                  return (
+                    <button
+                      className="playlist-folder"
+                      key={name}
+                      onClick={() => {
+                        setPlaylist(name);
+                        setQuery("");
+                      }}
+                    >
+                      <Thumbnail videoId={items[0].videoId} />
+                      <span>
+                        <strong dir="auto">{name}</strong>
+                        <small>
+                          {t("completedCount", { count: items.length })}
+                        </small>
+                      </span>
+                      <ArrowRight size={18} />
+                    </button>
+                  );
+                })}
+                {!playlistNames.length && (
+                  <div className="empty-queue">
+                    <Layers size={30} />
+                    <h3>{t(query ? "noMatches" : "noPlaylists")}</h3>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="library-list">
+                {[...libraryFiles].reverse().map((job) => (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    action={action}
+                    language={language}
+                  />
+                ))}
+                {!libraryFiles.length && (
+                  <div className="empty-queue">
+                    <Library size={30} />
+                    <h3>{t(query ? "noMatches" : "libraryEmpty")}</h3>
+                    <p>{t(query ? "trySearch" : "libraryEmptyDescription")}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
         {screen === "settings" && (
           <section className="card settings-card">
             <div className="settings-section">
               <h2>{t("appearance")}</h2>
-              <div className="preference-row">
-                <label htmlFor="theme">{t("theme")}</label>
-                <select
-                  id="theme"
-                  value={theme}
-                  disabled={!settings || saving}
-                  onChange={(event) =>
-                    void updatePreferences({
-                      theme: event.target.value as Preferences["theme"],
-                    })
-                  }
-                >
-                  {(["system", "light", "dark"] as const).map((value) => (
-                    <option key={value} value={value}>
-                      {t(value)}
-                    </option>
-                  ))}
-                </select>
+              <div
+                className="theme-choices"
+                role="radiogroup"
+                aria-label={t("theme")}
+              >
+                {(["system", "light", "dark"] as const).map((value) => {
+                  const Icon =
+                    value === "system"
+                      ? Monitor
+                      : value === "light"
+                        ? Sun
+                        : Moon;
+                  return (
+                    <button
+                      key={value}
+                      role="radio"
+                      aria-checked={theme === value}
+                      disabled={!settings || saving}
+                      onClick={() => void updatePreferences({ theme: value })}
+                    >
+                      <Icon size={24} />
+                      <span>{t(value)}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <div className="preference-row">
-                <label htmlFor="language">{t("language")}</label>
-                <select
-                  id="language"
-                  value={language}
-                  disabled={!settings || saving}
-                  onChange={(event) =>
-                    void updatePreferences({
-                      language: event.target.value as Preferences["language"],
-                    })
-                  }
-                >
-                  {languages.map((item) => (
-                    <option key={item.code} value={item.code} lang={item.code}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+              <h2 className="language-heading">{t("language")}</h2>
+              <div
+                className="language-choices"
+                role="radiogroup"
+                aria-label={t("language")}
+              >
+                {languages.map((item) => (
+                  <button
+                    key={item.code}
+                    role="radio"
+                    aria-checked={language === item.code}
+                    lang={item.code}
+                    disabled={!settings || saving}
+                    onClick={() =>
+                      void updatePreferences({ language: item.code })
+                    }
+                  >
+                    {item.name}
+                  </button>
+                ))}
               </div>
               <p>{t("preferencesHint")}</p>
             </div>
@@ -739,6 +927,24 @@ export default function App() {
           </span>
         </footer>
       </main>
+      <nav aria-label={t("navigation")}>
+        {navigation.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            aria-current={screen === id ? "page" : undefined}
+            onClick={() => {
+              setScreen(id);
+              setQuery("");
+            }}
+          >
+            <Icon size={17} />
+            {label}
+            {id === "queue" && pending > 0 && (
+              <span className="count">{pending}</span>
+            )}
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
