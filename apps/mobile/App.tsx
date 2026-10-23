@@ -336,15 +336,11 @@ function Screen() {
       ]}
     >
       {icon && (
-        <Icon
-          name={icon}
-          size={18}
-          color={primary ? (dark ? "#25130E" : "white") : c.text}
-        />
+        <Icon name={icon} size={18} color={primary ? c.onAccent : c.text} />
       )}
       <Text
         style={{
-          color: primary ? (dark ? "#25130E" : "white") : c.text,
+          color: primary ? c.onAccent : c.text,
           fontSize: 14,
           fontWeight: "700",
         }}
@@ -1104,11 +1100,7 @@ function Screen() {
                           ]}
                         >
                           {selection.has(item.id) && (
-                            <Icon
-                              name="check"
-                              size={13}
-                              color={dark ? "#25130E" : "white"}
-                            />
+                            <Icon name="check" size={13} color={c.onAccent} />
                           )}
                         </View>
                       </Pressable>
@@ -1457,7 +1449,7 @@ function Screen() {
                     <Text
                       style={{
                         fontSize: 9,
-                        color: dark ? "#25130E" : "white",
+                        color: c.onAccent,
                         fontWeight: "700",
                       }}
                     >
