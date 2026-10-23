@@ -10,6 +10,7 @@ import {
   Alert,
   BackHandler,
   Keyboard,
+  Image,
   AppState,
   DeviceEventEmitter,
   Modal,
@@ -759,9 +760,11 @@ function Screen() {
           </View>
         ) : (
           <View style={s.brandRow}>
-            <View style={[s.brandMark, { backgroundColor: c.blue }]}>
-              <Icon name="download" color={c.onAccent} size={21} />
-            </View>
+            <Image
+              source={require("./src/ui/assets/logo.png")}
+              style={s.brandMark}
+              accessible={false}
+            />
             <Text style={[s.brand, { color: c.text }]}>uTube</Text>
           </View>
         )}
