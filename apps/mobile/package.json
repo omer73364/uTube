@@ -1,6 +1,6 @@
 {
   "name": "@utube/mobile",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -9,7 +9,8 @@
     "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output build/index.android.bundle --assets-dest build",
     "test": "node --experimental-strip-types --test test/*.test.mjs",
     "test:bundle": "node scripts/check-bundle.cjs",
-    "build:android": "cd android && ./gradlew assemblePrototype && node ../scripts/check-bundle.cjs"
+    "build:android": "cd android && ./gradlew assemblePrototype && node ../scripts/check-bundle.cjs",
+    "build:release": "node scripts/build-release.cjs"
   },
   "dependencies": {
     "@ungap/structured-clone": "^1.4.0",
@@ -36,6 +37,7 @@
   "engines": {
     "node": ">= 22.11.0"
   },
-  "description": "Android download prototype for uTube",
-  "license": "MIT"
+  "description": "YouTube videos, playlists and audio for Android",
+  "license": "MIT",
+  "androidVersionCode": 2
 }

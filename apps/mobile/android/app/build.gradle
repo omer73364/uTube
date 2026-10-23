@@ -82,6 +82,8 @@ if (releaseKeys.any { System.getenv(it) } && !hasReleaseKeys) {
     throw new GradleException('Provide all four UTUBE_ANDROID signing variables, or leave all unset for an unsigned local build.')
 }
 
+def mobilePackage = new groovy.json.JsonSlurper().parse(file("../../package.json"))
+
 android {
     testBuildType "prototype"
     ndkVersion rootProject.ext.ndkVersion
@@ -94,8 +96,8 @@ android {
         applicationId "io.github.omer73364.utube.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "0.1.0"
+        versionCode mobilePackage.androidVersionCode
+        versionName mobilePackage.version
         manifestPlaceholders = [usesCleartextTraffic: "false"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

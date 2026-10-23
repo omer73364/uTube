@@ -18,3 +18,8 @@ node_modules
 /apps/mobile/android/app/.cxx/
 /apps/mobile/android/local.properties
 /apps/mobile/node_modules/
+
+# Permanent Android signing identity (never commit)
+/.private/
+*.jks
+*.p12
