@@ -350,9 +350,11 @@ export default function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="brand">
-          <span className="brand-mark">
-            <Play size={16} fill="currentColor" />
-          </span>
+          <img
+            className="brand-mark"
+            src={new URL("../../assets/icon.svg", import.meta.url).href}
+            alt=""
+          />
           uTube
         </div>
         <nav aria-label={t("navigation")}>
