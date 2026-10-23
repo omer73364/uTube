@@ -11,16 +11,17 @@ export const light = {
   error: "#B72D27",
   success: "#278568",
 };
+// Warm charcoal surfaces keep the red accents cohesive without a black backdrop.
 export const dark = {
-  bg: "#131315",
-  surface: "#1F1F23",
-  text: "#F5F1EE",
-  muted: "#A3A0A7",
-  line: "#323034",
-  blue: "#FF8065",
-  onAccent: "#25130E",
-  tint: "#39251F",
-  soft: "#29272B",
+  bg: "#211A1B",
+  surface: "#2D2325",
+  text: "#FFF2ED",
+  muted: "#C6ADA8",
+  line: "#49373B",
+  blue: "#FF8B76",
+  onAccent: "#351713",
+  tint: "#4B292A",
+  soft: "#382B2E",
   error: "#FFABA4",
-  success: "#77C9A7",
+  success: "#88D0AF",
 };
