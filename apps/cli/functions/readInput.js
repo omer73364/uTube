@@ -1,4 +1,4 @@
-import inquirer from "inquirer";
+import inquirer from "./prompts.js";
 import { welcome } from "./welcome.js";
 import { muted, details, success, interactive, promptOptions } from "./ui.js";
 import { version } from "../../../version.js";

@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 import { getYouTubeClient } from "./functions/service.js";
-import inquirer from "inquirer";
+import inquirer from "./functions/prompts.js";
 import { initializeInternetVariables } from "./functions/intialize.js";
 import { readArgs, home, askForURL } from "./functions/readInput.js";
 import { download } from "./functions/download.js";
