@@ -10,6 +10,7 @@ import {
   Alert,
   BackHandler,
   Keyboard,
+  Image,
   AppState,
   DeviceEventEmitter,
   Modal,
@@ -84,9 +85,11 @@ function Screen() {
   const rtl = language === "ar";
   const dark = theme === "dark" || (theme === "system" && system === "dark");
   const c = dark ? darkPalette : light;
+  // Let native text follow the inherited paragraph direction. Explicit right/left
+  // is mirrored again by Android inside an RTL layout.
   const text = {
     color: c.text,
-    textAlign: rtl ? "right" : "left",
+    textAlign: "auto",
     writingDirection: rtl ? "rtl" : "ltr",
   } as const;
   const active = jobs.filter((job) => activeStates.has(job.status));
@@ -522,10 +525,7 @@ function Screen() {
               </Text>
               <Text
                 numberOfLines={1}
-                style={[
-                  s.metadata,
-                  { color: c.muted, textAlign: rtl ? "right" : "left" },
-                ]}
+                style={[s.metadata, { color: c.muted, textAlign: "auto" }]}
               >
                 {meta(job)}
               </Text>
@@ -548,7 +548,7 @@ function Screen() {
               fontSize: 11,
               fontWeight: "600",
               flex: 1,
-              textAlign: rtl ? "right" : "left",
+              textAlign: "auto",
             }}
           >
             {t[job.status]}
@@ -586,12 +586,7 @@ function Screen() {
           </View>
         )}
         {job.downgraded && (
-          <Text
-            style={[
-              s.cardNote,
-              { color: c.muted, textAlign: rtl ? "right" : "left" },
-            ]}
-          >
+          <Text style={[s.cardNote, { color: c.muted, textAlign: "auto" }]}>
             {t.fallback
               .replace("{actual}", job.quality)
               .replace("{requested}", job.requestedQuality)}
@@ -605,7 +600,7 @@ function Screen() {
       <View style={[s.emptyIcon, { backgroundColor: c.tint }]}>
         <Icon name={icon} color={c.blue} size={28} />
       </View>
-      <Text style={[s.emptyTitle, text]}>{title}</Text>
+      <Text style={[s.emptyTitle, text, { textAlign: "center" }]}>{title}</Text>
       <Text style={[s.emptyDetail, { color: c.muted, textAlign: "center" }]}>
         {detail}
       </Text>
@@ -662,7 +657,7 @@ function Screen() {
               color: c.muted,
               fontSize: 12,
               lineHeight: 18,
-              textAlign: rtl ? "right" : "left",
+              textAlign: "auto",
             }}
           >
             {detail}
@@ -769,13 +764,11 @@ function Screen() {
           </View>
         ) : (
           <View style={s.brandRow}>
-            <View style={[s.brandMark, { backgroundColor: c.blue }]}>
-              <Icon
-                name="download"
-                color={dark ? "#25130E" : "white"}
-                size={21}
-              />
-            </View>
+            <Image
+              source={require("./src/ui/assets/logo.png")}
+              style={s.brandMark}
+              accessible={false}
+            />
             <Text style={[s.brand, { color: c.text }]}>uTube</Text>
           </View>
         )}
@@ -833,10 +826,7 @@ function Screen() {
               <>
                 <Text style={[s.heading, text]}>{t.title}</Text>
                 <Text
-                  style={[
-                    s.description,
-                    { color: c.muted, textAlign: rtl ? "right" : "left" },
-                  ]}
+                  style={[s.description, { color: c.muted, textAlign: "auto" }]}
                 >
                   {t.intro}
                 </Text>
@@ -943,7 +933,7 @@ function Screen() {
                 <Text
                   style={[
                     s.descriptionSmall,
-                    { color: c.muted, textAlign: rtl ? "right" : "left" },
+                    { color: c.muted, textAlign: "auto" },
                   ]}
                 >
                   {preview.kind === "video"
@@ -1007,7 +997,7 @@ function Screen() {
                       s.cardNote,
                       {
                         color: c.muted,
-                        textAlign: rtl ? "right" : "left",
+                        textAlign: "auto",
                         marginVertical: 14,
                       },
                     ]}
@@ -1094,7 +1084,7 @@ function Screen() {
                             style={{
                               color: c.muted,
                               fontSize: 10,
-                              textAlign: rtl ? "right" : "left",
+                              textAlign: "auto",
                             }}
                           >
                             {item.index}
@@ -1306,7 +1296,7 @@ function Screen() {
                               s.metadata,
                               {
                                 color: c.muted,
-                                textAlign: rtl ? "right" : "left",
+                                textAlign: "auto",
                               },
                             ]}
                           >
@@ -1334,10 +1324,7 @@ function Screen() {
         {tab === "settings" && (
           <>
             <Text
-              style={[
-                s.settingsLabel,
-                { color: c.muted, textAlign: rtl ? "right" : "left" },
-              ]}
+              style={[s.settingsLabel, { color: c.muted, textAlign: "auto" }]}
             >
               {t.languageLabel}
             </Text>
@@ -1356,10 +1343,7 @@ function Screen() {
               </View>
             </View>
             <Text
-              style={[
-                s.settingsLabel,
-                { color: c.muted, textAlign: rtl ? "right" : "left" },
-              ]}
+              style={[s.settingsLabel, { color: c.muted, textAlign: "auto" }]}
             >
               {t.theme}
             </Text>
@@ -1404,10 +1388,7 @@ function Screen() {
               </View>
             </View>
             <Text
-              style={[
-                s.settingsLabel,
-                { color: c.muted, textAlign: rtl ? "right" : "left" },
-              ]}
+              style={[s.settingsLabel, { color: c.muted, textAlign: "auto" }]}
             >
               {t.storage}
             </Text>
@@ -1455,14 +1436,17 @@ function Screen() {
               onPress={() => navigate(item.key)}
               style={s.navItem}
             >
-              <View
-                style={[
-                  s.navIcon,
-                  {
-                    backgroundColor: tab === item.key ? c.tint : "transparent",
-                  },
-                ]}
-              >
+              <View style={s.navIcon}>
+                <View
+                  pointerEvents="none"
+                  style={[
+                    s.navHighlight,
+                    {
+                      backgroundColor:
+                        tab === item.key ? c.tint : "transparent",
+                    },
+                  ]}
+                />
                 <Icon
                   name={item.icon}
                   color={tab === item.key ? c.blue : c.muted}
@@ -1583,7 +1567,7 @@ function Screen() {
                   {
                     color: c.muted,
                     marginBottom: 14,
-                    textAlign: rtl ? "right" : "left",
+                    textAlign: "auto",
                   },
                 ]}
               >
@@ -1885,10 +1869,14 @@ const s = StyleSheet.create({
   },
   navIcon: {
     width: 50,
-    height: 29,
-    borderRadius: 16,
+    height: 30,
     alignItems: "center",
     justifyContent: "center",
+  },
+  navHighlight: {
+    ...StyleSheet.absoluteFill,
+    borderRadius: 999,
+    overflow: "hidden",
   },
   navBadge: {
     position: "absolute",
