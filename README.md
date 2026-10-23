@@ -6,57 +6,212 @@
 
 ### Your YouTube library, offline. In one command or one click.
 
-Download videos and whole playlists as **MP4** or **MP3** from a slick desktop app or a friendly terminal.
+Download videos and whole playlists as **MP4** or **MP3** from a slick desktop app,
+a friendly terminal, or the Android app.
 
 <br>
 
-[![npm](https://img.shields.io/npm/v/utube-cli?style=for-the-badge&logo=npm&color=3769d6&labelColor=1e2327)](https://www.npmjs.com/package/utube-cli)
-[![Desktop](https://img.shields.io/badge/desktop-preview-3769d6?style=for-the-badge&logo=electron&logoColor=white&labelColor=1e2327)](#-desktop-app)
-[![License](https://img.shields.io/badge/license-MIT-64748b?style=for-the-badge&labelColor=1e2327)](LICENSE)
+[![npm](https://img.shields.io/npm/v/utube-cli?style=for-the-badge&logo=npm&color=dd3b20&labelColor=292225)](https://www.npmjs.com/package/utube-cli)
+[![Desktop](https://img.shields.io/badge/desktop-preview-dd3b20?style=for-the-badge&logo=electron&logoColor=white&labelColor=292225)](#-desktop-app)
+[![Android](https://img.shields.io/badge/Android-1.0.0-dd3b20?style=for-the-badge&logo=android&logoColor=white&labelColor=292225)](#-android-app)
+[![License](https://img.shields.io/badge/license-MIT-dd3b20?style=for-the-badge&labelColor=292225)](LICENSE)
 
-[🌐 Website](https://omer73364.github.io/uTube/) · [⚡ Quick start](#-quick-start) · [💻 CLI](#-cli) · [🖥️ Desktop](#-desktop-app) · [🛟 Help](#-troubleshooting)
+[🌐 Website](https://omer73364.github.io/uTube/) · [⚡ Quick start](#-quick-start) · [💻 CLI](#-cli) · [🖥️ Desktop](#-desktop-app) · [📱 Android](#-android-app) · [🛟 Help](#-troubleshooting)
 
 <br>
 
-<img src="docs/images/desktop-light.png" alt="uTube Desktop" width="760">
+<img src="docs/images/desktop-light.png" alt="uTube Desktop library with thumbnail cards and floating navigation" width="820">
+
+<sub>Desktop development preview with sample downloads.</sub>
 
 </div>
 
 <br>
 
+## 🎬 Choose your way to download
+
+**🖥️ Desktop** gives you a visual library, playlist groups, and a download manager
+for Linux, Windows, and macOS. Start with the [desktop downloads](#-desktop-app).
+
+**📱 Android** brings the same red theme and library to your phone, with background
+downloads and Android sharing. Install it from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0).
+
+**💻 CLI** takes you from a link to a saved file through an interactive menu or a
+single command. Install it with [npm](#-cli).
+
+> [!NOTE]
+> This README describes the current repository. The recent UI redesign and CLI
+> improvements have not been published in a new release. Existing npm packages
+> and desktop installers may look different. Android releases are published separately.
+
+<br>
+
 ## ✨ Why uTube?
 
-| 🎞️ **Video or audio**                                            | 📚 **Whole playlists**                                           | 🧠 **Smart quality**                                              |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------- | :---------------------------------------------------------------- |
-| MP4 in your chosen quality, or 192 kbps MP3 with title metadata. | Grab everything or hand-pick. Each playlist gets its own folder. | Can't get 1080p? uTube quietly steps down to the best that works. |
-
-| 🔁 **Never lose progress**                                         | 🌙 **Looks great**            | 🌍 **English & العربية**              |
-| :----------------------------------------------------------------- | :---------------------------- | :------------------------------------ |
-| Desktop remembers your downloads, with search and one-click retry. | Light, dark, or system theme. | Full right-to-left layout for Arabic. |
+- 🎞️ **Video or audio.** Download MP4 with sound, or convert audio to 192 kbps MP3.
+- 🎯 **Quality first.** Try the requested resolution across available streams;
+  if it cannot be saved, fall back to the best working lower resolution.
+- 📚 **Whole playlists.** Select everything or just the videos you want,
+  with each playlist saved in its own folder.
+- 🔄 **Quiet recovery.** Stream retries stay out of the way, and displayed transfer
+  progress does not jump backwards during automatic retries.
+- 🧳 **History that sticks.** Desktop and Android retain download history
+  and preferences after closing, with search, retry, and file-opening actions.
+- 🌍 **English & العربية.** Desktop and Android offer English and العربية, right-to-left
+  layouts, and light, dark, or system appearance.
 
 <br>
 
 ## ⚡ Quick start
 
-You need [Node.js](https://nodejs.org/) **20+** and [FFmpeg](https://ffmpeg.org/download.html) on your `PATH` (for MP3 conversion and merging HD video with audio).
+For the CLI, install [Node.js](https://nodejs.org/) **20+** and
+[FFmpeg](https://ffmpeg.org/download.html) on your `PATH` for MP3 and HD merging:
 
-```bash
+```sh
 npm install -g utube-cli@latest
 utube
 ```
 
-That's it. Paste a link and follow the prompts. ✅
+Paste a link and follow the prompts. ✅
 
 > [!TIP]
-> Prefer clicking over typing? Jump to the [desktop app](#-desktop-app).
+> Prefer clicking over typing? Try the [desktop app](#-desktop-app).
+> Developing on your phone? Start with the [Android app](#-android-app).
+
+<br>
+
+## 🖥️ Desktop app
+
+Home, Library, and Downloads are connected by a floating navigation bar inside
+the app. The desktop now shares mobile's red accents, rounded cards, and warm
+charcoal dark theme.
+
+### 📦 Download
+
+Find installers and archives on **[GitHub Releases](https://github.com/omer73364/uTube/releases)**:
+
+- 🐧 **Linux x64:** Debian `.deb`, `.AppImage`, and `.zip`.
+- 🪟 **Windows x64:** `Setup.exe` and portable `.zip`.
+- 🍎 **macOS:** `.dmg` and `.zip` for Apple Silicon and Intel.
+
+Desktop packages include their runtime, so Node.js is not required. The Debian
+package declares FFmpeg as a dependency; other formats need FFmpeg installed
+separately for HD merging and MP3 conversion. Read the
+[installation guide](docs/distribution.md) for platform instructions and checksums.
+
+Existing previews are unsigned, and macOS previews are not notarized.
+
+### 🪄 How it works
+
+1. 🔗 Open **Home**, paste a YouTube video or playlist link, and choose **Preview link**.
+2. 🎚️ Review the preview, choose MP4 or MP3, pick a quality, and select playlist items.
+3. 📁 Confirm or change the destination, then add your downloads.
+4. 📋 Follow progress in **Downloads**, or open completed files from **Library**.
+
+**Home** shows recent downloads. **Library** contains saved video and audio,
+with Files and Playlists views, playlist groups, and search. **Downloads** shows
+all history with filters for active, completed, and attention-needed items.
+
+Each thumbnail card has a three-dot options menu. Completed items offer
+**Open file** and **Show in folder**; active items can be cancelled, and failed
+or interrupted items can be retried. Format and quality appear below the title.
+Unavailable thumbnails use a simple fallback.
+
+In **Settings**, use visual theme choices, switch language, or choose a download
+folder. The header includes a quick light/dark toggle and a folder shortcut.
+Press **Ctrl+L** or **⌘+L** to return to the link input from any screen.
+
+<details>
+<summary><b>🌙 See it in Arabic · dark mode</b></summary>
+
+<br>
+
+<img src="docs/images/desktop-ar-dark.png" alt="uTube Desktop library in Arabic with the warm dark theme" width="820">
+
+<sub>Development preview with sample downloads.</sub>
+
+</details>
+
+### 🧳 History that sticks
+
+Titles, playlist names, dates, quality, status, and file locations are saved
+locally. Unfinished downloads return as **Interrupted** after closing; Retry
+starts them again from the beginning. They do not restart automatically.
+
+The desktop stores `downloads.json` in its user-data directory. The queue allows
+up to 500 unfinished items; completed history does not consume that limit.
+See the [desktop guide](apps/desktop/README.md) for recovery behavior and development.
+
+<br>
+
+## 📱 Android app
+
+**Download, install, and go.** Get the signed [Android APK](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0) for Android 10 or newer. No computer or Metro server is needed. iOS is not implemented.
+
+Allow your browser or file manager to install the APK when Android asks. If you used a development build, its signing key differs: uninstall it first after saving anything you need from its history. Downloaded files remain in Downloads / uTube.
+
+- 🏠 **Home, Library, and Downloads** with thumbnail cards, rounded navigation,
+  search, status filters, and saved playlist groups.
+- 🎞️ **HD MP4 and MP3**, with Best available or a chosen resolution, quiet candidate
+  retries, and the actual saved quality shown in history.
+- 📚 **Playlist selection**, continuation-page loading, and separate playlist folders.
+- ⏬ **Background transfers and media processing** through a native foreground service.
+- 🧳 **Persistent queue and preferences**, including failures and interrupted work.
+- 🔗 **Android share input:** send a YouTube link to uTube from another app.
+- 📂 **Open and share saved files**, cancel active work, and retry failed downloads.
+- 🗑️ **Remove from list** for individual finished entries, or clear finished history,
+  while keeping the downloaded files on your device.
+- 🌍 **English and Arabic**, mirrored layouts, light/dark/system appearance, and a
+  quick theme toggle. Dark mode uses warm charcoal and coral accents.
+- 🎨 The shared red **uTube logo** in the app header and Android launcher icon.
+
+Files are saved in **Downloads / uTube** through Android's media storage.
+The queue allows up to 1,000 unfinished downloads; a playlist batch can contain
+up to 1,000 videos.
+Android can stop background work after a force-stop, restart, or system limit;
+interrupted downloads remain available to retry. Partial transfers do not resume.
+
+### 🛠️ Run on your phone
+
+Install development dependencies first, as described under [Development](#-development).
+Android also requires JDK 17, Android platform/build tools 37, NDK 27.1.12297006,
+and configured `JAVA_HOME` and `ANDROID_HOME`. Use Android 10 or newer.
+
+From the repository root, start Metro:
+
+```sh
+npm run mobile:start
+```
+
+In another terminal, connect a phone with USB debugging enabled:
+
+```sh
+adb reverse tcp:8081 tcp:8081
+npm run mobile:android
+```
+
+Keep Metro running for the debug app. Repeat `adb reverse` after reconnecting
+the phone. The root's `npm start` runs the CLI, not Metro.
+
+For standalone APK/AAB builds, signing, dependency notices, and device tests,
+see the [mobile guide](apps/mobile/README.md).
 
 <br>
 
 ## 💻 CLI
 
-Run `utube` for the guided menu:
+Requires **Node.js 20+**. Install [FFmpeg](https://ffmpeg.org/download.html) on
+`PATH` for MP3 conversion and merging separate HD video/audio streams.
 
+```sh
+npm install -g utube-cli@latest
+utube
 ```
+
+The guided menu lets you download a video or playlist, save audio, change the
+folder, or exit:
+
+```text
 ◆ What would you like to do?
 ❯ ↓  Download a video or playlist
   ♫  Download audio (MP3)
@@ -64,23 +219,32 @@ Run `utube` for the guided menu:
   ↗  Exit
 ```
 
-Use `↑` `↓` to move, `Enter` to confirm, and `Space` to select playlist items. A summary at the end shows what was saved, skipped, or failed. One bad item never stops the rest. 💪
+Use **↑ / ↓** to navigate, **Enter** to confirm, and **Space** to select playlist
+items. The CLI uses red accents for menus, headings, borders, and progress,
+with distinct success, warning, and error colors.
 
-### Download details
+### 🎨 Clear details, steady progress
 
-Each video gets a compact card with its channel, duration, views, format,
-destination, and watch link when those details are available. A single live
-progress block follows video, audio, and processing stages, with transfer speed,
-ETA, and a layout that adapts to narrow terminals. Automatic stream retries keep
-the displayed progress from jumping backwards.
+Each video gets a text card with its channel, duration, view count, format,
+destination, and watch link when available. One live progress block follows
+video, audio, and merging/conversion stages, showing transferred bytes, recent
+speed, and ETA when the total is known. Unknown sizes show activity and bytes
+without inventing a percentage. Narrow terminals use a compact layout.
+
+Automatic stream retries preserve the displayed progress. Playlist downloads
+continue after an individual failure and finish with saved, skipped, and failed
+counts. The CLI is text-only; thumbnail rendering has been removed.
+
+Set `NO_COLOR=1` to disable colors. Piped output uses plain status lines instead
+of animated progress.
 
 ### 🚀 Or go direct
 
-```bash
+```sh
 # 🎥 Video: pick the quality interactively
 utube -u "https://youtu.be/jNQXAC9IVRw"
 
-# 🎯 Video: exact resolution, no prompts
+# 🎯 Video: request a resolution, with automatic fallback
 utube -u "https://youtu.be/jNQXAC9IVRw" -q 720p
 
 # 🎵 Audio: save as MP3
@@ -89,8 +253,8 @@ utube --audio -u "https://youtu.be/jNQXAC9IVRw"
 # 📚 Playlist: choose all or specific items
 utube -u "https://www.youtube.com/playlist?list=YOUR_PLAYLIST_ID"
 
-# 📁 Set a default download folder
-utube --set-download-folder "~/Downloads"
+# 📁 Remember a folder (quote paths with spaces)
+utube --set-download-folder "~/Downloads/My videos"
 ```
 
 <details>
@@ -98,120 +262,34 @@ utube --set-download-folder "~/Downloads"
 
 <br>
 
-| Option                         | What it does                              |
-| :----------------------------- | :---------------------------------------- |
-| `-u <url>`                     | Video or playlist URL                     |
-| `-q <quality>`                 | Resolution, e.g. `480p`, `720p`, `1080p`  |
-| `-a`, `--audio`                | Download as MP3 (don't combine with `-q`) |
-| `--set-download-folder <path>` | Save a default destination                |
-| `--get-download-folder`        | Print the current destination             |
-| `-v`, `--version`              | Show the installed version                |
-| `-h`, `--help`                 | Show help                                 |
+| Option                         | Purpose                                         |
+| :----------------------------- | :---------------------------------------------- |
+| `-u <url>`                     | YouTube video or playlist link                  |
+| `-q <quality>`                 | Requested resolution, such as `720p` or `1080p` |
+| `-a`, `--audio`                | Save MP3; do not combine with `-q`              |
+| `--set-download-folder <path>` | Remember a destination                          |
+| `--get-download-folder`        | Print the current destination                   |
+| `-v`, `--version`              | Show the installed version                      |
+| `-h`, `--help`                 | Show help                                       |
 
-- 🤖 **Scripting:** video needs `-u` + `-q`; audio needs `--audio -u` only.
-- 📚 **Playlists** need an interactive terminal (no piping).
-- 📂 No saved folder? Files go to the current directory. Quote paths with spaces.
-- ⚙️ Settings: `$XDG_CONFIG_HOME/utube-cli/settings.json` (or `~/.config/utube-cli/settings.json`).
-- 🎨 `NO_COLOR` turns off colors; piped output uses plain status lines.
-- ✈️ Help, version, and folder settings work offline.
-- 🔄 Update with `npm install -g utube-cli@latest`, then check `utube --version`.
+For non-interactive video downloads, supply `-u` and `-q`. Audio needs `--audio`
+and `-u`. Playlist selection requires an interactive terminal.
 
-</details>
-
-<br>
-
-## 🖥️ Desktop app
-
-A compact download form, a queue you can come back to, and instant access to your files.
-
-> [!NOTE]
-> **v2.2.0 is the first public preview.** Installers are unsigned and macOS builds aren't notarized.
-
-### 📦 Download
-
-Grab your installer from **[GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.2.0)**:
-
-|     | Platform                      | Formats                       |
-| :-: | :---------------------------- | :---------------------------- |
-| 🐧  | Linux (x64)                   | `.deb` · `.AppImage` · `.zip` |
-| 🪟  | Windows (x64)                 | `Setup.exe` · portable `.zip` |
-| 🍎  | macOS (Apple Silicon & Intel) | `.dmg` · `.zip`               |
-
-No Node.js needed. The `.deb` installs FFmpeg for you; with other formats, install [FFmpeg](https://ffmpeg.org/download.html) yourself. Commands and checksums are in the [installation guide](docs/distribution.md).
-
-### 🪄 How it works
-
-1. 🔗 Paste a video or playlist link and hit **Find**
-2. 🎚️ Choose video or audio, a resolution, and playlist items
-3. 📁 Confirm the destination and start
-4. 📋 Open **Queue** to search, filter, cancel, retry, or open finished files
-
-### 💎 Nice touches
-
-- 🧳 **History that sticks.** Titles, playlists, dates, quality, and file locations survive restarts.
-- 🔍 **Find anything.** Search by name, filter by status, then open the file or its folder.
-- 🎨 **Remembers you.** Folder, language, and theme are saved.
-- ⌨️ **`Ctrl+L` / `⌘+L`** jumps to the link box, even on an Arabic keyboard.
-
-<details>
-<summary><b>🌙 See it in Arabic · dark mode</b></summary>
-
-<br>
-
-<img src="docs/images/desktop-ar-dark.png" alt="uTube Desktop in Arabic with the dark theme and RTL layout" width="760">
-
-</details>
-
-<details>
-<summary><b>💤 What happens when I close it?</b></summary>
-
-<br>
-
-Your queue is saved locally in `downloads.json` in the app's user-data directory, and closing waits until the latest history is written. Unfinished downloads come back as **Interrupted**. Press **Retry** to restart them from the beginning. Nothing starts on its own. The queue holds up to 500 unfinished downloads; completed history is kept separately.
-
-More in the [desktop guide](apps/desktop/README.md).
-
-</details>
-
-<details>
-<summary><b>🛠️ Run the desktop app from source</b></summary>
-
-<br>
-
-Requires Node.js **22.13+**, npm **10.9+**, and FFmpeg.
-
-```bash
-git clone https://github.com/omer73364/uTube.git
-cd uTube
-npm ci
-npm run desktop
-```
+Help, version, and folder settings work offline. Settings are stored in
+`$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json`.
+Update published versions with `npm install -g utube-cli@latest`.
 
 </details>
 
 <br>
 
-## 📱 Android prototype
+## 🗂️ Files and quality
 
-The [Android app](apps/mobile/README.md) now includes HD MP4 downloads, MP3
-conversion, playlist selection, and a persistent background queue. Open or share
-saved files, retry interrupted work, and choose Arabic or English with light/dark
-appearance. It remains a local prototype; public mobile builds are not published.
+The CLI defaults to the current directory. Desktop defaults to your
+Downloads folder, and both remember their own destination setting. Android uses
+Downloads / uTube. Playlists get a named subfolder.
 
-## 🧪 How downloads work
-
-**🎯 Quality first.** uTube tries your resolution first, including alternate encodings and clients (a `720p` request can use a `720p60` stream). If that fails, it falls back from the highest lower resolution down, and tells you what it saved. Retries are quiet and the progress bar never jumps back to zero.
-
-**🔊 Sound included.** Separate video and audio streams are merged into MP4 with FFmpeg.
-
-> [!NOTE]
-> uTube can't create a resolution YouTube doesn't offer.
-
-### 🗂️ Where files go
-
-The desktop app defaults to your Downloads folder, the CLI to the current directory, and each remembers its own setting.
-
-```
+```text
 Downloads/
 ├── Video title [VIDEO_ID].mp4
 ├── Video title [VIDEO_ID].mp3
@@ -220,82 +298,126 @@ Downloads/
     └── #2_Second video [VIDEO_ID].mp4
 ```
 
-Names are cleaned up and include the video ID, so same-titled videos never collide. Existing files are **skipped, never overwritten**. To re-download at a new quality, move or rename the old file first.
+The example above shows CLI and desktop filenames. Names are cleaned and include
+the video ID to distinguish identical titles. These apps skip existing files
+instead of overwriting them; move or rename a file before downloading it again
+at another quality.
+
+Android adds a unique download suffix to its filenames and can save another copy.
+Removing an Android history entry keeps the downloaded file.
+
+uTube tries the requested resolution across available streams and clients before
+considering lower resolutions. It reports a downgrade when one is needed.
+It cannot create a resolution YouTube does not offer. Desktop and CLI use system
+FFmpeg; Android includes its own native media-processing libraries.
 
 <br>
 
 ## 🛟 Troubleshooting
 
-| 😕 Problem                | 💡 Try this                                                                   |
-| :------------------------ | :---------------------------------------------------------------------------- |
-| `utube` not found         | Reopen your terminal and make sure npm's global bin folder is on your `PATH`. |
-| MP3 / HD merging fails    | Run `ffmpeg -version`. Install FFmpeg if needed and restart the desktop app.  |
-| Got a lower resolution    | The requested one wasn't available, so the best working quality was used.     |
-| File was skipped          | A file with that name exists. Move or rename it and retry.                    |
-| Playlist needs a terminal | CLI playlists are interactive. Don't pipe it, or use the desktop app.         |
-| Shows **Interrupted**     | Hit **Retry**. It restarts from the beginning.                                |
-| YouTube rejects it        | Retry later, try another quality, and check the video is public.              |
-| File won't open           | Make sure it still exists and your OS has a default app for MP4/MP3.          |
+- 🔎 **Command not found:** reopen the terminal and check npm's global bin directory
+  is on `PATH`.
+- 🔊 **MP3 or HD merging fails on desktop/CLI:** check `ffmpeg -version`, install
+  FFmpeg if necessary, and restart the app.
+- 🎚️ **A lower quality was saved:** the requested resolution was unavailable or its
+  streams failed, so uTube used the best working lower quality.
+- 📁 **An item was skipped:** an existing file has the same name. Move or rename it
+  before retrying at a different quality.
+- 🔁 **Interrupted download:** choose Retry to start again from the beginning.
+- ▶️ **File will not open:** check that it still exists and a media player is installed.
+- 📱 **Android debug bundle will not load:** start `mobile:start`, run
+  `adb reverse tcp:8081 tcp:8081`, and reload. If Metro has stale cached code, restart
+  it with `npm run mobile:start -- --reset-cache`. See the [mobile guide](apps/mobile/README.md#run-locally).
+- 🌐 **YouTube rejects a download:** retry later and check that the video is public
+  and accessible. YouTube changes can affect compatibility.
 
-🐛 **Found a bug?** YouTube changes can break things. [Open an issue](https://github.com/omer73364/uTube/issues) with your OS, CLI or desktop, uTube and Node.js versions, the exact error, and a public example URL.
+🐛 **Found a bug?** [Open an issue](https://github.com/omer73364/uTube/issues) with your platform,
+uTube version, exact error, and a public example URL. Include Node.js for CLI
+or development issues, and the Android version for mobile issues.
 
-> [!WARNING]
-> **Current limits:** Linux is the best-tested platform (Windows and macOS need more testing). No partial-download resume, authenticated downloads, or auto-update. Live-stream recording is unverified.
+Current limits include no partial-download resume, authenticated/private-video
+downloads, or automatic updates. Live-stream recording is unverified. Linux is
+the best-tested desktop platform; Windows, macOS, and Android devices need
+broader testing.
 
 <br>
 
 ## 🧑‍💻 Development
 
-```
-apps/cli/       🖥️  Terminal interface and commands
-apps/desktop/   🪟  Electron + React + TypeScript app
-apps/mobile/    📱  React Native Android prototype
-packages/core/  ⚙️  Shared YouTube & download engine
-website/        🌐  Project site (GitHub Pages)
-```
+Use **Node.js 22.13+**, **npm 10.9+**, and FFmpeg/FFprobe. Android needs the
+additional toolchain above. The published CLI supports Node.js 20+.
 
-Requires Node.js **22.13+**, npm **10.9+**, and FFmpeg. (The published CLI still runs on Node.js 20+.)
-
-```bash
+```sh
+git clone https://github.com/omer73364/uTube.git
+cd uTube
 npm ci
-npm start                  # run the CLI
-npm run desktop            # run the desktop app
-npm start -- -u "https://youtu.be/jNQXAC9IVRw" -q 360p   # CLI with arguments
 
-npm test                   # core, CLI, media, queue & history tests
-npm run desktop:check      # type checking
-npm run desktop:package    # package the desktop app
-npm run desktop:test       # integration tests (needs a graphical session)
-npm run desktop:make       # build local installers → apps/desktop/out/
-npm run site:preview       # preview the website
-npm run site:build         # build the website
+npm start                       # CLI from this checkout
+npm run desktop                 # desktop development app
+npm run mobile:start            # Metro; keep running for Android development
+# In another terminal:
+npm run mobile:android          # install and launch the Android debug app
 ```
 
-<details>
-<summary><b>📝 Testing & packaging notes</b></summary>
+```text
+apps/cli/       Terminal commands and presentation
+apps/desktop/   Electron + React desktop app
+apps/mobile/    React Native + native Android app
+packages/core/  Shared download engine and Node-free helpers
+website/        Project website on GitHub Pages
+```
 
-<br>
+### 🧪 Checks without packaging
 
-- Media tests use FFmpeg and FFprobe on real output, and are skipped if the tools are missing.
-- Desktop integration tests need a graphical session and cover downloads, playlists, recovery, file actions, themes, Arabic/RTL, and history across restarts. Build the desktop first.
-- Debian packaging needs `dpkg` and `fakeroot`. Packaging creates local files and never publishes anything.
-- The website deploys to GitHub Pages automatically when changes reach `main`. See the [website guide](website/README.md).
+```sh
+npm test
+npm run desktop:check
+npm run mobile:check
+npm run mobile:test
+```
 
-</details>
+Media tests require FFmpeg/FFprobe. Desktop renderer checks use a disposable
+window and sample records; they do not require a packaged app or real downloads.
+Follow the [renderer test instructions](apps/desktop/README.md#renderer-checks-without-building).
+Full desktop integration tests require a newly packaged app and a graphical
+session; Android native tests require a build and a connected phone or emulator.
+
+### 📦 Local builds and website
+
+```sh
+npm run desktop:package          # package desktop for integration tests
+npm run desktop:test
+npm run desktop:test:packaged
+npm run desktop:make             # local desktop installers
+npm run mobile:build             # local standalone development APK
+npm run mobile:release           # production APK; requires private signing credentials
+npm run site:preview             # build and serve the project website locally
+npm run site:build
+```
+
+These commands create local output. Website deployment is handled by the Pages
+workflow when the relevant changes reach `main`. Read the
+[website guide](website/README.md), [desktop guide](apps/desktop/README.md), and
+[mobile guide](apps/mobile/README.md) for platform-specific steps.
 
 <br>
 
 ## 🤝 Contributing
 
-Bug reports, fixes, and translations are all welcome! 💙 For bigger changes, please open an issue first. Want to add a language? Follow the [desktop guide](apps/desktop/README.md#adding-a-language). See the [changelog](CHANGELOG.md) for release history.
+Bug reports, fixes, translations, and testing on more devices are welcome! ❤️
+For larger changes, open an issue to discuss the approach first. Language
+registration is documented in the [desktop guide](apps/desktop/README.md#adding-a-language).
+See the [changelog](CHANGELOG.md) for published release history.
 
-## ⚖️ Disclaimer
+<br>
 
-uTube is meant for content you have the right to download. Downloading may violate YouTube's Terms of Service or copyright law where you live, and you're responsible for how you use it.
+## 📄 License and use
 
-## 📄 License
+uTube is intended for content you have permission to download. Respect the
+creator's rights and the platform's terms.
 
-[MIT](LICENSE) © Omer Anwar
+[MIT](LICENSE) © Omer Anwar. Android media-library notices and redistribution
+instructions are in [THIRD_PARTY_NOTICES.md](apps/mobile/THIRD_PARTY_NOTICES.md).
 
 <div align="center">
 
