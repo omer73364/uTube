@@ -1,6 +1,5 @@
+import { useId, useRef, useState } from "react";
 import {
-  AudioLines,
-  Film,
   LoaderCircle,
   CheckCircle2,
   AlertCircle,
@@ -9,7 +8,9 @@ import {
   RotateCcw,
   FolderOpen,
   Play,
+  EllipsisVertical,
 } from "lucide-react";
+import Thumbnail from "./Thumbnail";
 import type { Job, Preferences } from "../shared";
 import { translator, localizeError, type TextKey } from "../locales";
 const stages: Record<string, TextKey> = {
@@ -34,6 +35,15 @@ export default function JobCard({
   language?: Preferences["language"];
 }) {
   const t = translator(language);
+  const menuId = useId();
+  const menu = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const run = (task: () => Promise<unknown>) => {
+    menu.current?.hidePopover();
+    trigger.current?.focus();
+    action(task());
+  };
   const complete = ["saved", "skipped"].includes(job.status);
   const running = job.status === "running";
   const percent = complete
@@ -63,16 +73,20 @@ export default function JobCard({
       className={`job job-${job.status} ${complete ? "job-done" : ""}`}
       data-testid="job"
     >
-      <div className={`job-icon ${job.audio ? "audio" : ""}`}>
-        {job.audio ? <AudioLines size={20} /> : <Film size={20} />}
-      </div>
+      <Thumbnail videoId={job.videoId} />
       <div className="job-body">
         <div className="job-top">
           <h3 dir="auto" title={job.title}>
             {job.title}
           </h3>
+        </div>
+        <div className="job-format">
           <span className="format-tag">
-            {job.audio ? "MP3" : job.actualQuality || job.quality || "MP4"}
+            {job.audio
+              ? "MP3"
+              : ["MP4", job.actualQuality || job.quality]
+                  .filter(Boolean)
+                  .join(" · ")}
           </span>
         </div>
         {(job.playlistTitle || job.createdAt) && (
@@ -146,49 +160,122 @@ export default function JobCard({
         )}
         {job.interrupted && <p className="job-note">{t("retryInterrupted")}</p>}
       </div>
-      <div className="job-action">
-        {isPending(job) && (
-          <button
-            className="icon-button"
-            aria-label={t("cancelJob", { title: job.title })}
-            title={t("cancel")}
-            disabled={job.status === "cancelling"}
-            onClick={() => action(window.utube.cancel(job.id))}
-          >
-            <X size={17} />
-          </button>
-        )}
-        {["failed", "cancelled"].includes(job.status) && (
-          <button
-            className="icon-button"
-            aria-label={t("retryJob", { title: job.title })}
-            title={t("retry")}
-            onClick={() => action(window.utube.retry(job.id))}
-          >
-            <RotateCcw size={17} />
-          </button>
-        )}
-        {complete && (
-          <>
+      <div className="job-options">
+        <button
+          ref={trigger}
+          className="icon-button"
+          popoverTarget={menuId}
+          aria-haspopup="menu"
+          aria-label={t("videoOptions", { title: job.title })}
+          title={t("options")}
+          onClick={(event) => {
+            const bounds = event.currentTarget.getBoundingClientRect();
+            setPosition({
+              top: Math.max(
+                12,
+                Math.min(bounds.bottom + 6, window.innerHeight - 150),
+              ),
+              left: Math.max(
+                12,
+                Math.min(
+                  language === "ar" ? bounds.left : bounds.right - 220,
+                  window.innerWidth - 232,
+                ),
+              ),
+            });
+          }}
+        >
+          <EllipsisVertical size={20} />
+        </button>
+        <div
+          ref={menu}
+          id={menuId}
+          popover="auto"
+          role="menu"
+          aria-label={t("videoOptions", { title: job.title })}
+          className="job-menu"
+          style={position}
+          onToggle={(event) => {
+            if (event.newState === "open") {
+              requestAnimationFrame(() =>
+                menu.current
+                  ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
+                  ?.focus({ preventScroll: true }),
+              );
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Tab") {
+              menu.current?.hidePopover();
+              return;
+            }
+            if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key))
+              return;
+            event.preventDefault();
+            const items = [
+              ...event.currentTarget.querySelectorAll<HTMLButtonElement>(
+                "button:not(:disabled)",
+              ),
+            ];
+            if (!items.length) return;
+            const current = items.indexOf(
+              document.activeElement as HTMLButtonElement,
+            );
+            const next =
+              event.key === "Home"
+                ? 0
+                : event.key === "End"
+                  ? items.length - 1
+                  : (current +
+                      (event.key === "ArrowDown" ? 1 : -1) +
+                      items.length) %
+                    items.length;
+            items[next].focus();
+          }}
+        >
+          {isPending(job) && (
             <button
-              className="button secondary open-file"
-              aria-label={t("openJob", { title: job.title })}
-              title={t("openFile")}
-              onClick={() => action(window.utube.openFile(job.id))}
+              role="menuitem"
+              aria-label={t("cancelJob", { title: job.title })}
+              title={t("cancel")}
+              disabled={job.status === "cancelling"}
+              onClick={() => run(() => window.utube.cancel(job.id))}
             >
-              <Play size={14} />
-              {t("openFile")}
+              <X size={17} /> {t("cancel")}
             </button>
+          )}
+          {["failed", "cancelled"].includes(job.status) && (
             <button
-              className="icon-button"
-              aria-label={t("showJob", { title: job.title })}
-              title={t("showFile")}
-              onClick={() => action(window.utube.openFolder(job.id))}
+              role="menuitem"
+              aria-label={t("retryJob", { title: job.title })}
+              title={t("retry")}
+              onClick={() => run(() => window.utube.retry(job.id))}
             >
-              <FolderOpen size={17} />
+              <RotateCcw size={17} /> {t("retry")}
             </button>
-          </>
-        )}
+          )}
+          {complete && (
+            <>
+              <button
+                role="menuitem"
+                aria-label={t("openJob", { title: job.title })}
+                title={t("openFile")}
+                onClick={() => run(() => window.utube.openFile(job.id))}
+              >
+                <Play size={14} />
+                {t("openFile")}
+              </button>
+              <button
+                role="menuitem"
+                aria-label={t("showJob", { title: job.title })}
+                title={t("showFile")}
+                onClick={() => run(() => window.utube.openFolder(job.id))}
+              >
+                <FolderOpen size={17} /> {t("showFile")}
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </article>
   );

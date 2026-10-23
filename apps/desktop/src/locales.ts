@@ -5,6 +5,21 @@ export const languages = [
 export type Language = (typeof languages)[number]["code"];
 
 export const en = {
+  videoOptions: "Options for {title}",
+  home: "Home",
+  library: "Library",
+  downloads: "Downloads",
+  libraryDescription: "Your saved videos and audio, ready to open.",
+  libraryEmpty: "Nothing saved yet",
+  libraryEmptyDescription: "Completed downloads will appear here.",
+  files: "Files",
+  playlists: "Playlists",
+  allPlaylists: "All playlists",
+  noPlaylists: "No saved playlists yet",
+  linkPlaceholder: "Paste a YouTube link",
+  clearLink: "Clear link",
+  closePreview: "Close preview",
+
   download: "New download",
   queue: "Queue",
   settings: "Settings",
@@ -17,7 +32,7 @@ export const en = {
   settingsDescription: "Choose your appearance, language, and download folder.",
   link: "YouTube URL",
   linkHeading: "YouTube link",
-  find: "Find",
+  find: "Preview link",
   loading: "Loading…",
   shortcut: "Focus link: Ctrl / ⌘ L",
   options: "Download options",
@@ -143,6 +158,21 @@ export const en = {
 };
 
 const ar: Record<keyof typeof en, string> = {
+  videoOptions: "خيارات {title}",
+  home: "الرئيسية",
+  library: "المكتبة",
+  downloads: "التنزيلات",
+  libraryDescription: "فيديوهاتك وملفاتك الصوتية المحفوظة، جاهزة للتشغيل.",
+  libraryEmpty: "لا توجد ملفات محفوظة",
+  libraryEmptyDescription: "ستظهر التنزيلات المكتملة هنا.",
+  files: "الملفات",
+  playlists: "قوائم التشغيل",
+  allPlaylists: "كل قوائم التشغيل",
+  noPlaylists: "لا توجد قوائم تشغيل محفوظة",
+  linkPlaceholder: "ألصق رابط يوتيوب هنا",
+  clearLink: "مسح الرابط",
+  closePreview: "إغلاق المعاينة",
+
   download: "تنزيل جديد",
   queue: "قائمة التنزيلات",
   settings: "الإعدادات",
@@ -155,7 +185,7 @@ const ar: Record<keyof typeof en, string> = {
   settingsDescription: "اختر المظهر واللغة ومجلد التنزيل.",
   link: "رابط يوتيوب",
   linkHeading: "رابط يوتيوب",
-  find: "بحث",
+  find: "عرض الرابط",
   loading: "جارٍ التحميل…",
   shortcut: "الانتقال للرابط: Ctrl / ⌘ L",
   options: "خيارات التنزيل",
