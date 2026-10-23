@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 
 export type IconName =
   | "home"
@@ -17,6 +17,7 @@ export type IconName =
   | "globe"
   | "sun"
   | "moon"
+  | "system"
   | "folder"
   | "share"
   | "retry"
@@ -30,6 +31,24 @@ export function Icon({
   color: string;
   size?: number;
 }) {
+  // Pre-rendered continuous paths avoid seams between rotated native Views.
+  const artwork = {
+    settings: require("./assets/settings.png"),
+    sun: require("./assets/sun.png"),
+    moon: require("./assets/moon.png"),
+    system: require("./assets/system.png"),
+  };
+  if (name in artwork) {
+    return (
+      <Image
+        accessible={false}
+        importantForAccessibility="no-hide-descendants"
+        source={artwork[name as keyof typeof artwork]}
+        style={{ width: size, height: size, tintColor: color }}
+        resizeMode="contain"
+      />
+    );
+  }
   const line = (x: number, y: number, a: number, b: number, key: string) => {
     const length = Math.hypot(a - x, b - y);
     return (
@@ -121,24 +140,6 @@ export function Icon({
         </>
       );
       break;
-    case "settings":
-      shape = (
-        <>
-          {box(5, 5, 14, 14, 7)}
-          {box(9, 9, 6, 6, 3)}
-          {Array.from({ length: 8 }, (_, i) => {
-            const a = (i * Math.PI) / 4;
-            return line(
-              12 + 8 * Math.cos(a),
-              12 + 8 * Math.sin(a),
-              12 + 11 * Math.cos(a),
-              12 + 11 * Math.sin(a),
-              String(i),
-            );
-          })}
-        </>
-      );
-      break;
     case "more":
       shape = (
         <>
@@ -211,41 +212,6 @@ export function Icon({
           {box(8, 3, 8, 18, 4)}
           {lines([[3, 12, 21, 12]])}
         </>
-      );
-      break;
-    case "sun":
-      shape = (
-        <>
-          {box(8, 8, 8, 8, 4)}
-          {Array.from({ length: 8 }, (_, i) => {
-            const a = (i * Math.PI) / 4;
-            return line(
-              12 + 8 * Math.cos(a),
-              12 + 8 * Math.sin(a),
-              12 + 10 * Math.cos(a),
-              12 + 10 * Math.sin(a),
-              String(i),
-            );
-          })}
-        </>
-      );
-      break;
-    case "moon":
-      shape = (
-        <View
-          style={{
-            position: "absolute",
-            left: 5,
-            top: 3,
-            width: 15,
-            height: 18,
-            borderLeftWidth: 2,
-            borderBottomWidth: 2,
-            borderColor: color,
-            borderRadius: 10,
-            transform: [{ rotate: "-30deg" }],
-          }}
-        />
       );
       break;
     case "folder":

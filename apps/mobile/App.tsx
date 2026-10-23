@@ -1385,7 +1385,7 @@ function Screen() {
                           ? "moon"
                           : value === "light"
                             ? "sun"
-                            : "settings"
+                            : "system"
                       }
                       color={theme === value ? c.blue : c.muted}
                       size={23}
