@@ -1,3 +1,4 @@
+const jobAction = require('./job-action.cjs');
 const { _electron: electron } = require('playwright');
 const { expect } = require('@playwright/test');
 const { execFileSync } = require('node:child_process');
@@ -17,26 +18,26 @@ const os = require('node:os');
   try {
     const page = await app.firstWindow();
     await page.getByRole('textbox', {name:'YouTube URL'}).fill('https://youtube.com/playlist?list=PL123');
-    await page.getByRole('button', {name:'Find',exact:true}).click();
+    await page.getByRole('button', {name:'Preview link',exact:true}).click();
     await expect(page.getByText('2 selected')).toBeVisible();
     await page.getByRole('button', {name:'Download 2 videos',exact:true}).click();
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs()).map(job=>job.status)), {timeout:20000}).toEqual(['saved','failed']);
-    await page.getByRole('button', { name: /^Queue/ }).click();
+    await page.getByRole('button', { name: /^Downloads/ }).click();
     await page.getByRole('group', { name: 'Filter downloads' }).getByRole('button', { name: /^Needs attention/ }).click();
     await expect(page.getByTestId('job')).toHaveCount(1);
     await page.screenshot({ path: '/tmp/utube-desktop-attention.png' });
-    await page.getByRole('button', {name:'Retry #2_The second chapter',exact:true}).click();
+    await jobAction(page, 'Retry #2_The second chapter');
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs())[1]?.status), {timeout:20000}).toBe('saved');
     await expect(page.getByText('No matching downloads')).toBeVisible();
-    await page.getByRole('button', { name: 'New download', exact: true }).click();
+    await page.getByRole('button', { name: 'Home', exact: true }).click();
     // Use the actual UI to start another transfer, then cancel it.
     await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/BaW_jenozKc');
-    await page.getByRole('button',{name:'Find',exact:true}).click();
+    await page.getByRole('button',{name:'Preview link',exact:true}).click();
     await page.getByRole('button',{name:'Download video',exact:true}).click();
-    await page.getByRole('button',{name:'Cancel A small moment, worth keeping',exact:true}).click();
+    await jobAction(page, 'Cancel A small moment, worth keeping');
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs())[2]?.status)).toBe('cancelled');
     // Closing with work in progress must wait for cancellation and cleanup.
-    await page.getByRole('button',{name:'Retry A small moment, worth keeping',exact:true}).click();
+    await jobAction(page, 'Retry A small moment, worth keeping');
     await expect.poll(() => page.evaluate(async()=> (await window.utube.jobs())[2]?.stage)).toBe('video');
     // Close immediately: taking a screenshot here can let the short fixture
     // finish on a busy packaging runner, turning this into a completed transfer.
@@ -64,7 +65,7 @@ const os = require('node:os');
     await expect(page.getByText('FFmpeg not found')).toBeVisible();
     await page.getByRole('button',{name:/Audio only/}).click();
     await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/jNQXAC9IVRw');
-    await page.getByRole('button',{name:'Find',exact:true}).click();
+    await page.getByRole('button',{name:'Preview link',exact:true}).click();
     await expect(page.getByRole('button',{name:'Download MP3',exact:true})).toBeDisabled();
     await expect(page.getByText('Install FFmpeg to use MP3 conversion or separate video/audio streams.')).toBeVisible();
     console.log('PASS: missing FFmpeg is visible and MP3 conversion is disabled.');
