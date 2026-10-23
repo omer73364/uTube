@@ -1,0 +1,24 @@
+export const light = {
+  bg: "#FAF8F7",
+  surface: "#FFFFFF",
+  text: "#25252B",
+  muted: "#82818A",
+  line: "#ECE7E5",
+  blue: "#DD3B20",
+  tint: "#FCECE7",
+  soft: "#F3F0EF",
+  error: "#B72D27",
+  success: "#278568",
+};
+export const dark = {
+  bg: "#131315",
+  surface: "#1F1F23",
+  text: "#F5F1EE",
+  muted: "#A3A0A7",
+  line: "#323034",
+  blue: "#FF8065",
+  tint: "#39251F",
+  soft: "#29272B",
+  error: "#FFABA4",
+  success: "#77C9A7",
+};
