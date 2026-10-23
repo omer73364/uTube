@@ -12,9 +12,12 @@ remain local prototypes; there is no public mobile release or download server.
 - Save MP3 audio at 192 kbps, preferring the original audio track.
 - Load playlist pages, choose videos, and save each playlist in its own folder.
 - Send a YouTube link to uTube from Android's share menu.
+- Browse thumbnail cards in Home, Library, and Downloads; group saved files by playlist.
 - Search and filter downloads, cancel work, retry failures, and open or share files.
+- Use each card’s menu to remove an entry without deleting its downloaded file.
 - Keep download history and preferences after closing the app.
-- Use English or Arabic, with right-to-left layout and light, dark, or system appearance.
+- Choose English or Arabic and light, dark, or system appearance in Settings.
+  The header also has a quick light/dark toggle.
 
 Files are saved in **Downloads / uTube**. Clearing finished history keeps the
 files. A playlist batch can contain up to 1,000 videos; the unfinished queue
@@ -108,11 +111,11 @@ cd apps/mobile/android
 
 Twenty-three mobile tests cover adaptive quality order, audio pairing, playlist
 pagination, URL restrictions, cancellation/deadlines, progress, and parser
-compatibility. Seven Android integration tests use real tiny media fixtures to
+compatibility. Eight Android integration tests use real tiny media fixtures to
 verify 1080p muxing with audio, MP3 output, ranged retry without duplicate
-bytes, persistent queue recovery, atomic batches, and isolated player execution.
+bytes, persistent queue recovery, atomic batches, individual removal without deleting files, and isolated player execution.
 
-On October 23, 2026, these seven offline Android checks passed on an Android 15 x86-64
+On October 23, 2026, these eight offline Android checks passed on an Android 15 x86-64
 emulator. All 54 existing project tests passed, along with mobile type checking.
 Live lookup and Android share input were verified using public video links.
 The opt-in live test also saved the supplied `XIdA1AZ4zYI` video at 720p with
