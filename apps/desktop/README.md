@@ -2,9 +2,9 @@
 
 A local desktop preview built with Electron, React, and the shared uTube download engine. Paste a video or playlist URL, choose MP4 or MP3, select playlist items, and follow downloads in the queue. Failed and cancelled jobs can be retried.
 
-The desktop uses a compact download form and neutral colors. In **Settings**, choose light, dark, or system appearance and switch between English and العربية. Arabic mirrors the interface from right to left; links and file paths keep their natural direction. Preferences are saved between launches.
+The desktop shares mobile’s red accents, rounded thumbnail cards, and warm dark theme. **Home** previews a link before showing format options; **Library** contains saved videos and audio, grouped by playlist; **Downloads** shows transfer progress and history. Bottom navigation keeps all three screens within reach. In **Settings**, choose light, dark, or system appearance and switch between English and العربية. Arabic mirrors the interface from right to left; links and file paths keep their natural direction. Preferences are saved between launches.
 
-Search the queue by title or filter it to active, completed, or attention-needed downloads. Press Ctrl+L (Command+L on macOS) to return to the link input from any page. Completed downloads have separate **Open file** and **Show in folder** actions. Files open in your system's default media application; moved or deleted files produce a clear error.
+Search the library by video or playlist name. Search Downloads by title or filter it to active, completed, or attention-needed downloads. Press Ctrl+L (Command+L on macOS) to return to the link input from any page. Each thumbnail card has a three-dot options menu. Completed downloads offer **Open file** and **Show in folder**; active downloads can be cancelled, and failed or cancelled items can be retried. Format and quality appear beneath the title. The content area scrolls without a permanent scrollbar track. Files open in your system's default media application; moved or deleted files produce a clear error.
 
 ## Saved downloads
 
@@ -30,6 +30,28 @@ npm run desktop
 ```
 
 The renderer has no Node.js access. A narrow preload API connects it to the main process; YouTube requests and conversions run in a separate utility process.
+
+## Renderer checks without building
+
+To inspect UI changes without packaging or compiling an Electron app, run the
+renderer development server from `apps/desktop`:
+
+```sh
+npx vite --config vite.renderer.config.mjs --host 127.0.0.1 --port 4184 --strictPort
+```
+
+In another terminal, from the repository root:
+
+```sh
+npm run test:renderer --workspace=@utube/desktop
+```
+
+This opens a disposable Electron window with sample records and a simulated
+preload API. It checks navigation, library search and playlist groups, file-open
+requests, queue progress, preview submission, Arabic, dark mode, keyboard focus,
+and narrow layouts. It does not touch real history or download media. It requires
+a graphical session. Use `UTUBE_RENDERER_URL` to test another development port.
+Full desktop tests below still require a newly packaged app.
 
 ## Checks
 
