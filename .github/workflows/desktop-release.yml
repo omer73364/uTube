@@ -14,11 +14,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { name: linux-x64, os: ubuntu-22.04 }
-          - { name: windows-x64, os: windows-2022 }
-          - { name: macos-x64, os: macos-15-intel }
-          - { name: macos-arm64, os: macos-15 }
+        # Public tags publish Linux only until Windows/macOS signing is configured.
+        # Manual runs still build all native previews without publishing them.
+        include: ${{ fromJSON(github.event_name == 'push' && '[{"name":"linux-x64","os":"ubuntu-22.04"}]' || '[{"name":"linux-x64","os":"ubuntu-22.04"},{"name":"windows-x64","os":"windows-2022"},{"name":"macos-x64","os":"macos-15-intel"},{"name":"macos-arm64","os":"macos-15"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     defaults:
