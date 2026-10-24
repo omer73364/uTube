@@ -50,3 +50,11 @@ Release steps: keep root, desktop, lockfile, and `version.js` versions aligned; 
 ## Project website
 
 The [uTube website](https://omer73364.github.io/uTube/) provides English/Arabic app information, platform-specific desktop downloads, installation requirements, and the CLI install command. Its source lives in `website/` and deploys to GitHub Pages when website changes reach `main`. See the [website guide](../website/README.md) for local previews and browser checks.
+
+## Android
+
+Install the signed APK from the [Android 1.0.0 release](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0) on Android 10+ ARM64 or x86-64 devices. It bundles JavaScript and native media processing, so it does not need Metro, Node.js, or an external FFmpeg installation.
+
+If replacing a development/prototype build, save any needed history and uninstall it first because its signing identity differs. Subsequent production APKs use the permanent production key and can update this release. Android may request permission to install from the browser or file manager.
+
+Android versions and `android-v*` tags are independent from desktop/CLI releases. Run `npm run mobile:release` with private signing credentials to build and verify a production APK. Publish its SHA-256 checksums, media source companion, notices, and verification report beside it. See [the Android guide](../apps/mobile/README.md) and [release checklist](releases/android-1.0.0.md).
