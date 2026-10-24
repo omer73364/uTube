@@ -3,17 +3,24 @@ const arabic = {
   skip: "انتقل إلى المحتوى",
   home: "uTube — الصفحة الرئيسية",
   navigation: "التنقل الرئيسي",
-  navDesktop: "التطبيق",
+  navDesktop: "سطح المكتب",
+  navAndroid: "أندرويد",
+  enlargeDesktop: "تكبير صورة سطح المكتب",
+  enlargeMobile: "تكبير صورة أندرويد",
+  enlargeCli: "تكبير صورة سطر الأوامر",
+  screenshotDialog: "صورة التطبيق",
+  closeScreenshot: "إغلاق الصورة",
   navCli: "سطر الأوامر",
-  release: "الإصدار 2.2.0 · نسخة تجريبية",
+  release: "متاح الآن لأندرويد · 1.0.0",
   heroFirst: "uTube",
   heroSecond: "لتنزيل الفيديو والصوت",
   heroDescription:
-    "نزّل فيديوهات يوتيوب وقوائم التشغيل، أو احفظ الصوت بصيغة MP3. اختر دقة الفيديو ومجلد الحفظ.",
+    "نزّل فيديوهات يوتيوب وقوائم التشغيل، أو احفظ الصوت بصيغة MP3. على هاتفك أو حاسوبك أو من سطر الأوامر. تبقى الملفات محفوظة على جهازك.",
   heroDownload: "تنزيل التطبيق",
   heroCli: "نسخة سطر الأوامر",
-  heroNote: "مجاني ومفتوح المصدر · Windows وmacOS وLinux",
-  previewLabel: "تطبيق سطح المكتب",
+  heroNote: "مجاني ومفتوح المصدر · أندرويد وWindows وmacOS وLinux",
+  previewLabel: "مكتبتك على سطح المكتب",
+  desktopCaption: "واجهة التطوير لسطح المكتب · مكتبة توضيحية",
   featuresTitle: "ميزات التطبيق",
   featureOneTitle: "تنزيل الفيديوهات وقوائم التشغيل",
   featureOneText:
@@ -24,7 +31,7 @@ const arabic = {
   featureThreeTitle: "سجل تنزيلات محفوظ",
   featureThreeText:
     "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
-  downloadTitle: "تنزيل uTube",
+  downloadTitle: "تنزيل uTube لسطح المكتب",
   downloadIntro: "اختر نظام التشغيل وصيغة ملف التثبيت المناسبة لجهازك.",
   versionLine: "الإصدار 2.2.0 · نسخة تجريبية لسطح المكتب",
   releaseNotes: "ملاحظات الإصدار",
@@ -32,7 +39,7 @@ const arabic = {
   unsigned:
     "ملفات التطبيق غير موقّعة رقميًا، ونسخة macOS لم تحصل على توثيق Apple. قد يعرض النظام تنبيهًا عند فتحها.",
   installGuide: "دليل التثبيت والتحقق من سلامة الملفات ↗",
-  cliTitle: "نسخة سطر الأوامر",
+  cliTitle: "من سطر الأوامر أيضًا",
   cliIntro:
     "ثبّت النسخة باستخدام npm، ثم شغّل utube لفتح القائمة التفاعلية. يمكنك أيضًا إدخال رابط الفيديو والدقة المطلوبة مباشرة في الأمر.",
   cliRequirements:
@@ -40,20 +47,21 @@ const arabic = {
   cliDocs: "دليل الأوامر",
   copyLabel: "نسخ أمر التثبيت",
   copy: "نسخ",
-  terminalNote: "قوائم سطر الأوامر متاحة حاليًا بالإنجليزية.",
+  terminalNote:
+    "واجهة التطوير الحالية · تنزيل حقيقي. قوائم سطر الأوامر بالإنجليزية.",
   faqTitle: "المساعدة ومتطلبات التشغيل",
   faqOneTitle: "ماذا لو تعذّر تنزيل الفيديو بالدقة المطلوبة؟",
   faqOneText:
     "يحاول uTube التنزيل بالدقة التي اخترتها أولًا. إذا تعذّر ذلك، ينتقل إلى أفضل دقة متاحة أقل من المطلوبة، ويعرض دقة الملف المحفوظ.",
   faqTwoTitle: "هل أحتاج إلى تثبيت برامج إضافية؟",
   faqTwoText:
-    "لا يحتاج تطبيق سطح المكتب إلى Node.js أو npm. تثبّت حزمة Debian برنامج FFmpeg تلقائيًا عبر apt. في Windows وmacOS ونسخ Linux المحمولة، تحتاج إلى تثبيت FFmpeg بنفسك لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+    "يعمل تطبيق أندرويد مباشرة دون برامج إضافية. لا يحتاج تطبيق سطح المكتب إلى Node.js أو npm. تثبّت حزمة Debian برنامج FFmpeg تلقائيًا عبر apt. في Windows وmacOS ونسخ Linux المحمولة، تحتاج إلى تثبيت FFmpeg بنفسك لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
   faqThreeTitle: "هل تبقى الملفات والسجل بعد إغلاق التطبيق؟",
   faqThreeText:
-    "تبقى الملفات في المجلد الذي اخترته، ويحتفظ تطبيق سطح المكتب بسجل التنزيلات على جهازك. يمكنك إعادة محاولة التنزيلات المتوقفة يدويًا؛ وتبدأ كل محاولة من البداية.",
+    "تبقى الملفات في المجلد الذي اخترته، ويحتفظ تطبيقا سطح المكتب وأندرويد بسجل التنزيلات على جهازك. يمكنك إعادة محاولة التنزيلات المتوقفة يدويًا؛ وتبدأ كل محاولة من البداية.",
   faqFourTitle: "كيف أحدّث التطبيق؟",
   faqFourText:
-    "نزّل الإصدار الجديد من GitHub Releases وثبّته. لتحديث نسخة سطر الأوامر، نفّذ أمر التثبيت مجددًا. لا يدعم تطبيق سطح المكتب التحديث التلقائي حاليًا.",
+    "نزّل ملف تثبيت سطح المكتب أو ملف APK الجديد لأندرويد من GitHub Releases وثبّته. لتحديث نسخة سطر الأوامر، نفّذ أمر التثبيت مجددًا. لا يدعم تطبيق سطح المكتب التحديث التلقائي حاليًا.",
   footerText: "مجاني ومفتوح المصدر · بترخيص MIT",
   reportIssue: "الإبلاغ عن مشكلة",
   windowsDescription: "Windows · معالجات x64",
@@ -77,7 +85,24 @@ const arabic = {
   themeDark: "التبديل إلى الوضع الداكن",
   themeLight: "التبديل إلى الوضع الفاتح",
   downloadFor: "تنزيل لنظام",
-  screenshot: "واجهة تطبيق uTube بالعربية في الوضع الداكن",
+  screenshot:
+    "مكتبة uTube لسطح المكتب بالعربية مع بطاقات الفيديو والثيم الأحمر",
+  cliScreenshot:
+    "جلسة حقيقية في سطر الأوامر تعرض معلومات الفيديو وإطارات حمراء وتنزيلًا مكتملًا",
+  androidEyebrow: "uTube لأندرويد",
+  androidTitle: "uTube الذي تعرفه.<br />على هاتفك أيضًا.",
+  androidIntro:
+    "شارك رابط يوتيوب مع التطبيق، واختر الفيديو أو الصوت، ودع uTube يتولى التنزيل. افتح ملفاتك المحفوظة متى شئت.",
+  androidFeatureOne: "تنزيل في الخلفية ومكتبة تحتفظ بما نزّلته.",
+  androidFeatureTwo: "دقّات متعددة وقوائم تشغيل وصوت بصيغة MP3.",
+  androidFeatureThree:
+    "بالعربية والإنجليزية، مع الوضع الفاتح والداكن مثل تطبيق سطح المكتب.",
+  androidDownload: "تنزيل لأندرويد",
+  androidRequirements: "الإصدار 1.0.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
+  androidNotes: "التثبيت والتحقق من الملفات وملاحظات الإصدار ↗",
+  mobileCaption: "من تطبيق أندرويد الموقّع",
+  mobileScreenshot:
+    "واجهة تطبيق uTube لأندرويد مع معاينة الفيديو واختيار الصيغة والدقة",
 };
 const english = {
   windowsDescription: "Windows · x64 computers",
@@ -102,13 +127,17 @@ const english = {
   themeLight: "Switch to light mode",
   downloadFor: "Download for",
   screenshot:
-    "uTube Desktop showing the video link form, quality choices, and saved download queue",
+    "uTube Desktop library with video cards, playlist groups, and the red app theme",
+  mobileScreenshot:
+    "The signed uTube Android app previewing a real video, with format and quality controls",
 };
 // Preserve the HTML's readable English copy as the default catalog.
 for (const node of document.querySelectorAll("[data-i18n]"))
   english[node.dataset.i18n] = node.innerHTML;
 for (const node of document.querySelectorAll("[data-i18n-aria]"))
   english[node.dataset.i18nAria] = node.getAttribute("aria-label");
+for (const node of document.querySelectorAll("[data-i18n-alt]"))
+  english[node.dataset.i18nAlt] = node.alt;
 const catalog = { en: english, ar: arabic };
 const readPreference = (key) => {
   try {
@@ -129,6 +158,7 @@ const systemDark = matchMedia("(prefers-color-scheme: dark)");
 let selectedTheme = readPreference("utube-site-theme");
 if (!["light", "dark"].includes(selectedTheme)) selectedTheme = null;
 let theme = selectedTheme || (systemDark.matches ? "dark" : "light");
+const androidDevice = /Android/i.test(navigator.userAgent);
 const agent = `${navigator.userAgentData?.platform || navigator.platform || ""} ${navigator.userAgent}`;
 let platform = /Windows/i.test(agent)
   ? "windows"
@@ -200,8 +230,12 @@ function renderTheme() {
       "aria-label",
       t(theme === "dark" ? "themeLight" : "themeDark"),
     );
+  document.querySelector("#theme svg").innerHTML =
+    theme === "dark"
+      ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>'
+      : '<path d="M20.7 13A8.5 8.5 0 0 1 11 3.3 8.5 8.5 0 1 0 20.7 13Z"/>';
   document.querySelector('meta[name="theme-color"]').content =
-    theme === "dark" ? "#10151d" : "#f5f6f8";
+    theme === "dark" ? "#211a1b" : "#faf8f7";
 }
 function renderLanguage() {
   document.documentElement.lang = language;
@@ -210,6 +244,14 @@ function renderLanguage() {
     node.innerHTML = t(node.dataset.i18n);
   for (const node of document.querySelectorAll("[data-i18n-aria]"))
     node.setAttribute("aria-label", t(node.dataset.i18nAria));
+  for (const node of document.querySelectorAll("[data-i18n-alt]"))
+    node.alt = t(node.dataset.i18nAlt);
+  const mobileImage = document.querySelector("#mobile-image");
+  mobileImage.src =
+    language === "ar"
+      ? "./assets/mobile-ar-dark.png"
+      : "./assets/mobile-light.png";
+  mobileImage.alt = t("mobileScreenshot");
   const button = document.querySelector("#language");
   button.textContent = language === "en" ? "العربية" : "English";
   button.lang = language === "en" ? "ar" : "en";
@@ -229,9 +271,13 @@ function renderLanguage() {
       : "uTube — تنزيل الفيديو والصوت";
   document.querySelector('meta[name="description"]').content =
     language === "en"
-      ? "Download YouTube videos, playlists, and MP3 audio with uTube for Windows, macOS, and Linux."
-      : "نزّل فيديوهات يوتيوب وقوائم التشغيل وملفات MP3 باستخدام تطبيق uTube لأنظمة Windows وmacOS وLinux.";
-  if (knownPlatform)
+      ? "Download YouTube videos, playlists, and MP3 audio with uTube for Android, Windows, macOS, Linux, and your terminal."
+      : "نزّل فيديوهات يوتيوب وقوائم التشغيل وملفات MP3 باستخدام تطبيق uTube لأندرويد وWindows وmacOS وLinux وسطر الأوامر.";
+  if (androidDevice) {
+    document.querySelector("#hero-download").href = "#android";
+    document.querySelector("#hero-download [data-i18n]").textContent =
+      t("androidDownload");
+  } else if (knownPlatform)
     document.querySelector("#hero-download [data-i18n]").textContent =
       `${t("downloadFor")} ${platform === "windows" ? "Windows" : platform === "macos" ? "macOS" : "Linux"}`;
   document.querySelector("#copy-status").textContent = "";
@@ -295,3 +341,17 @@ document.querySelector("#copy-command").addEventListener("click", async () => {
   }
 });
 renderLanguage();
+
+const screenshotDialog = document.querySelector("#screenshot-dialog");
+for (const button of document.querySelectorAll("[data-image]")) {
+  button.addEventListener("click", () => {
+    const source = document.getElementById(button.dataset.image);
+    const enlarged = document.querySelector("#enlarged-image");
+    enlarged.src = source.src;
+    enlarged.alt = source.alt;
+    screenshotDialog.showModal();
+  });
+}
+screenshotDialog.addEventListener("click", (event) => {
+  if (event.target === screenshotDialog) screenshotDialog.close();
+});

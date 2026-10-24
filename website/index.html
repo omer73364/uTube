@@ -6,13 +6,13 @@
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Download YouTube videos, playlists, and MP3 audio with uTube for Windows, macOS, and Linux."
+      content="Download YouTube videos, playlists, and MP3 audio with uTube for Android, Windows, macOS, Linux, and your terminal."
     />
-    <meta name="theme-color" content="#f5f6f8" />
+    <meta name="theme-color" content="#faf8f7" />
     <meta property="og:title" content="uTube — Video & audio downloader" />
     <meta
       property="og:description"
-      content="Download YouTube videos, playlists, and MP3 audio on your computer."
+      content="Download YouTube videos, playlists, and MP3 audio on your phone or computer."
     />
     <meta property="og:type" content="website" />
     <title>uTube — Video & audio downloader</title>
@@ -30,6 +30,7 @@
       >
       <nav aria-label="Main navigation" data-i18n-aria="navigation">
         <a href="#desktop" data-i18n="navDesktop">Desktop</a>
+        <a href="#android" data-i18n="navAndroid">Android</a>
         <a href="#cli" data-i18n="navCli">CLI</a>
         <a href="https://github.com/omer73364/uTube" class="source-link"
           >GitHub <span aria-hidden="true">↗</span></a
@@ -49,7 +50,19 @@
           id="theme"
           aria-label="Switch to dark mode"
         >
-          <span aria-hidden="true">◐</span>
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20.7 13A8.5 8.5 0 0 1 11 3.3 8.5 8.5 0 1 0 20.7 13Z" />
+          </svg>
         </button>
       </div>
     </header>
@@ -59,9 +72,9 @@
         <div class="hero-copy">
           <a
             class="release-label"
-            href="https://github.com/omer73364/uTube/releases/tag/v2.2.0"
+            href="https://github.com/omer73364/uTube/releases/tag/android-v1.0.0"
             ><span class="status-dot"></span
-            ><span data-i18n="release">Version 2.2.0 · Desktop preview</span
+            ><span data-i18n="release">Now on Android · 1.0.0</span
             ><span aria-hidden="true">↗</span></a
           >
           <h1>
@@ -72,8 +85,8 @@
             >
           </h1>
           <p class="hero-description" data-i18n="heroDescription">
-            Download YouTube videos and playlists, or save the audio as MP3.
-            Choose the video quality and where to save your files.
+            Download YouTube videos and playlists, or save the audio as MP3. On
+            your phone, desktop, or terminal. Your files stay on your device.
           </p>
           <div class="hero-actions">
             <a class="button primary" id="hero-download" href="#downloads"
@@ -85,23 +98,35 @@
             >
           </div>
           <p class="hero-note" data-i18n="heroNote">
-            Free and open source · Windows, macOS, Linux
+            Free and open source · Android, Windows, macOS, Linux
           </p>
         </div>
         <div class="hero-art" id="desktop">
           <div class="preview-caption">
-            <span class="mini-label" data-i18n="previewLabel">Desktop app</span>
+            <span class="mini-label" data-i18n="previewLabel"
+              >Your library, on desktop</span
+            ><span class="window-dots" aria-hidden="true"
+              ><i></i><i></i><i></i
+            ></span>
           </div>
-          <div class="app-preview">
+          <button
+            class="app-preview screenshot-button"
+            data-image="desktop-image"
+            aria-label="Enlarge desktop screenshot"
+            data-i18n-aria="enlargeDesktop"
+          >
             <img
               id="desktop-image"
               src="./assets/desktop-light.png"
-              width="1100"
-              height="780"
-              alt="uTube Desktop showing the video link form, quality choices, and saved download queue"
+              width="2360"
+              height="1524"
+              alt="uTube Desktop library with video cards, playlist groups, and the red app theme"
               fetchpriority="high"
             />
-          </div>
+          </button>
+          <p class="screenshot-note" data-i18n="desktopCaption">
+            Desktop development preview · example library
+          </p>
         </div>
       </section>
 
@@ -113,7 +138,7 @@
         <div class="wrap download-layout">
           <div class="download-intro">
             <h2 id="download-title" data-i18n="downloadTitle">
-              Download uTube
+              Get uTube for desktop
             </h2>
             <p data-i18n="downloadIntro">
               Choose your operating system and download format.
@@ -194,6 +219,73 @@
         </div>
       </section>
 
+      <section
+        class="mobile-section wrap"
+        id="android"
+        aria-labelledby="android-title"
+      >
+        <div class="phone-stage">
+          <button
+            class="phone-frame screenshot-button"
+            data-image="mobile-image"
+            aria-label="Enlarge Android screenshot"
+            data-i18n-aria="enlargeMobile"
+          >
+            <img
+              id="mobile-image"
+              src="./assets/mobile-light.png"
+              width="720"
+              height="1280"
+              loading="lazy"
+              alt="The signed uTube Android app previewing a real video, with format and quality controls"
+            />
+          </button>
+          <span class="phone-label" data-i18n="mobileCaption"
+            >From the signed Android app</span
+          >
+        </div>
+        <div class="mobile-copy">
+          <span class="eyebrow" data-i18n="androidEyebrow"
+            >uTube for Android</span
+          >
+          <h2 id="android-title" data-i18n="androidTitle">
+            The same uTube.<br />Now in your pocket.
+          </h2>
+          <p data-i18n="androidIntro">
+            Share a YouTube link, choose video or audio, and let uTube handle
+            the download. Open your saved files whenever you want.
+          </p>
+          <ul class="app-highlights">
+            <li data-i18n="androidFeatureOne">
+              Background downloads and a library that stays saved.
+            </li>
+            <li data-i18n="androidFeatureTwo">
+              Video quality choices, playlists, and MP3 audio.
+            </li>
+            <li data-i18n="androidFeatureThree">
+              English and Arabic. Light and dark, just like the desktop.
+            </li>
+          </ul>
+          <a
+            class="button primary"
+            id="android-download"
+            href="https://github.com/omer73364/uTube/releases/download/android-v1.0.0/uTube-android-1.0.0.apk"
+            ><span aria-hidden="true">↓</span
+            ><span data-i18n="androidDownload">Download for Android</span
+            ><small>APK</small></a
+          >
+          <p class="install-note" data-i18n="androidRequirements">
+            Version 1.0.0 · Android 10+ · ARM64 &amp; x86-64
+          </p>
+          <a
+            class="small-link"
+            href="https://github.com/omer73364/uTube/releases/tag/android-v1.0.0"
+            data-i18n="androidNotes"
+            >Installation, checksums &amp; release notes ↗</a
+          >
+        </div>
+      </section>
+
       <section class="features wrap" aria-labelledby="features-title">
         <div class="section-intro">
           <h2 id="features-title" data-i18n="featuresTitle">App features</h2>
@@ -231,7 +323,7 @@
 
       <section class="cli-section wrap" id="cli" aria-labelledby="cli-title">
         <div>
-          <h2 id="cli-title" data-i18n="cliTitle">Command-line version</h2>
+          <h2 id="cli-title" data-i18n="cliTitle">At home in your terminal</h2>
           <p data-i18n="cliIntro">
             Install with npm, then run utube to open the interactive menu. You
             can also pass a video link and quality directly.
@@ -239,7 +331,7 @@
           <p class="requirements" data-i18n="cliRequirements">
             Requires Node.js 20+ and FFmpeg for MP3 conversion and HD merging.
           </p>
-          <a class="text-link" href="https://github.com/omer73364/uTube#cli"
+          <a class="text-link" href="https://github.com/omer73364/uTube#-cli"
             ><span data-i18n="cliDocs">Command reference</span
             ><span aria-hidden="true">↗</span></a
           >
@@ -261,18 +353,26 @@
                 <span data-i18n="copy">Copy</span>
               </button>
             </div>
-            <p><span class="terminal-muted">$</span> utube</p>
-            <div class="terminal-menu">
-              <p>
-                <span class="terminal-blue">◆</span> What would you like to do?
-              </p>
-              <p class="terminal-selection">❯ ↓ Download a video or playlist</p>
-              <p>　♫ Download audio (MP3)</p>
-              <p>　▣ Change download folder</p>
-            </div>
           </div>
+          <button
+            class="cli-image-button screenshot-button"
+            data-image="cli-image"
+            aria-label="Enlarge CLI screenshot"
+            data-i18n-aria="enlargeCli"
+          >
+            <img
+              id="cli-image"
+              class="cli-screenshot"
+              src="./assets/cli-download.png"
+              width="1100"
+              height="690"
+              loading="lazy"
+              alt="A real uTube terminal session showing video details, red bordered panels, and a completed download"
+              data-i18n-alt="cliScreenshot"
+            />
+          </button>
           <p class="terminal-footnote" data-i18n="terminalNote">
-            CLI menus are currently in English.
+            Current development UI · a real download. CLI menus are in English.
           </p>
         </div>
         <p
@@ -303,10 +403,10 @@
               Do I need to install anything else?
             </summary>
             <p data-i18n="faqTwoText">
-              The desktop app does not need Node.js or npm. The Debian package
-              installs FFmpeg through apt. Windows, macOS, and portable Linux
-              downloads need FFmpeg installed separately for MP3 conversion and
-              HD merging.
+              Android works without additional tools. The desktop app does not
+              need Node.js or npm. The Debian package installs FFmpeg through
+              apt. Windows, macOS, and portable Linux downloads need FFmpeg
+              installed separately for MP3 conversion and HD merging.
             </p>
           </details>
           <details>
@@ -314,7 +414,7 @@
               Are files and history saved after closing?
             </summary>
             <p data-i18n="faqThreeText">
-              Files stay in your chosen folder. The desktop also saves your
+              Files stay on your device. Desktop and Android also save your
               download history. Retry interrupted downloads manually; each retry
               starts from the beginning.
             </p>
@@ -322,9 +422,10 @@
           <details>
             <summary data-i18n="faqFourTitle">How do updates work?</summary>
             <p data-i18n="faqFourText">
-              Download a newer desktop version from GitHub Releases when you
-              want to update. For the CLI, run the installation command again.
-              Automatic desktop updates are not included yet.
+              Download a newer desktop installer or signed Android APK from
+              GitHub Releases when you want to update. For the CLI, run the
+              installation command again. Automatic desktop updates are not
+              included yet.
             </p>
           </details>
         </div>
@@ -346,6 +447,18 @@
         ><a href="https://github.com/omer73364/uTube">GitHub ↗</a>
       </div>
     </footer>
+    <dialog
+      id="screenshot-dialog"
+      aria-label="App screenshot"
+      data-i18n-aria="screenshotDialog"
+    >
+      <form method="dialog">
+        <button aria-label="Close screenshot" data-i18n-aria="closeScreenshot">
+          ×
+        </button>
+      </form>
+      <img id="enlarged-image" alt="" />
+    </dialog>
     <noscript
       ><p class="wrap">
         Download uTube 2.2.0 for Linux, Windows, or macOS from
