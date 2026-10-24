@@ -63,9 +63,9 @@ const os = require('node:os');
   try {
     const page=await second.firstWindow();
     await expect(page.getByText('FFmpeg not found')).toBeVisible();
-    await page.getByRole('button',{name:/Audio only/}).click();
     await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/jNQXAC9IVRw');
     await page.getByRole('button',{name:'Preview link',exact:true}).click();
+    await page.getByRole('button',{name:/Audio only/}).click();
     await expect(page.getByRole('button',{name:'Download MP3',exact:true})).toBeDisabled();
     await expect(page.getByText('Install FFmpeg to use MP3 conversion or separate video/audio streams.')).toBeVisible();
     console.log('PASS: missing FFmpeg is visible and MP3 conversion is disabled.');
