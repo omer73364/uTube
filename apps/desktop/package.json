@@ -1,7 +1,7 @@
 {
   "name": "@utube/desktop",
   "productName": "uTube Desktop",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Videos, playlists and audio in a desktop app",
   "private": true,
   "main": ".vite/build/main.cjs",

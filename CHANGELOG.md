@@ -1,6 +1,14 @@
 # Changelog
 
-## Unreleased
+## 2.3.0 — 2026-10-24
+
+- Bring the red uTube identity to the CLI, desktop, website, and Android app.
+- Refresh the desktop with Home, Library, Downloads, thumbnail cards, playlist groups, a floating navigation bar, and per-video action menus.
+- Improve desktop layout widths, folder controls, quality labels, Arabic alignment, and warm dark colors.
+- Show richer video details in the CLI and keep download, audio, and merge stages in one steady progress display. CLI thumbnails are intentionally removed.
+- Update the English/Arabic website with matching light/dark themes, real app screenshots, full-size image previews, and signed Android download links.
+- Publish Linux x64 DEB, AppImage, and ZIP packages. Windows/macOS remain at 2.2.0 until trusted signing is configured; public release checks remain enforced.
+- Android 1.0.0 is available as a separate signed APK release with checksums, a verification report, and media-library sources.
 
 - Block future public Windows/macOS releases unless the packaged app and Windows installer pass native signature checks; macOS must also pass Gatekeeper and have a stapled notarization ticket. Signing accounts and provider integration are still required.
 
