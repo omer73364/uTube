@@ -40,9 +40,9 @@ downloads and Android sharing. Install it from [GitHub Releases](https://github.
 single command. Install it with [npm](#-cli).
 
 > [!NOTE]
-> This README describes the current repository. The recent UI redesign and CLI
-> improvements have not been published in a new release. Existing npm packages
-> and desktop installers may look different. Android releases are published separately.
+> CLI and Linux desktop releases are at **2.3.0**. Windows/macOS **2.2.0**
+> previews may look different; new installers require trusted signing.
+> Android uses its separate signed **1.0.0** release.
 
 <br>
 

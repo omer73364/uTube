@@ -47,9 +47,7 @@ copy, RTL layout, theme preferences, and keyboard controls remain supported.
 
 All three app versions have real screenshots. Click a screenshot to enlarge it;
 press Escape or use the close button to return. Source captures and provenance
-are documented in [the image guide](../docs/images/README.md). Desktop and CLI
-screenshots show current development interfaces; the published 2.2.0 packages
-may look different. The mobile images come from the signed 1.0.0 release.
+are documented in [the image guide](../docs/images/README.md). Desktop and CLI screenshots show the interface released in 2.3.0; Windows and macOS retain their older 2.2.0 previews until trusted signing is configured. The mobile images come from the signed 1.0.0 release.
 
 Set `UTUBE_SITE_SCREENSHOTS=1` when running `npm run site:test` to save English,
 Arabic/dark, and narrow-phone browser captures under ignored `website/test-results/`.

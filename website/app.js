@@ -1,4 +1,4 @@
-const release = "https://github.com/omer73364/uTube/releases/download/v2.2.0/";
+const desktopVersions = { linux: "2.3.0", windows: "2.2.0", macos: "2.2.0" };
 const arabic = {
   skip: "انتقل إلى المحتوى",
   home: "uTube — الصفحة الرئيسية",
@@ -33,7 +33,7 @@ const arabic = {
     "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
   downloadTitle: "تنزيل uTube لسطح المكتب",
   downloadIntro: "اختر نظام التشغيل وصيغة ملف التثبيت المناسبة لجهازك.",
-  versionLine: "الإصدار 2.2.0 · نسخة تجريبية لسطح المكتب",
+  versionLine: "الإصدار 2.3.0 · سطح المكتب",
   releaseNotes: "ملاحظات الإصدار",
   osLabel: "نظام التشغيل",
   unsigned:
@@ -171,7 +171,7 @@ const knownPlatform = platform !== "unknown";
 if (!knownPlatform) platform = "linux";
 const t = (key) => catalog[language][key] || english[key] || key;
 const filename = (system, architecture, extension) =>
-  `uTube-Desktop-2.2.0-${system}-${architecture}${extension}`;
+  `uTube-Desktop-${desktopVersions[system]}-${system}-${architecture}${extension}`;
 const formats = {
   linux: [
     ["deb", "x64", ".deb", "DEB"],
@@ -190,12 +190,19 @@ const formats = {
   ],
 };
 function renderDownloads() {
+  document.querySelector('[data-i18n="versionLine"]').textContent = t(
+    "versionLine",
+  ).replace("2.3.0", desktopVersions[platform]);
+  document.querySelector("#desktop-release-notes").href =
+    `https://github.com/omer73364/uTube/releases/tag/v${desktopVersions[platform]}`;
   const links = document.querySelector("#download-links");
   links.replaceChildren();
   for (const [label, architecture, extension, type] of formats[platform]) {
     const link = document.createElement("a");
     link.className = "download-link";
-    link.href = release + filename(platform, architecture, extension);
+    link.href =
+      `https://github.com/omer73364/uTube/releases/download/v${desktopVersions[platform]}/` +
+      filename(platform, architecture, extension);
     const title = document.createElement("strong");
     title.textContent = t(label);
     const format = document.createElement("small");

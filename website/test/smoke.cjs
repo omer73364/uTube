@@ -71,8 +71,24 @@ const os = require("node:os");
     await capture("english-light");
     await page.getByRole("tab", { name: "Linux", exact: true }).click();
     assert.equal(await page.locator("#download-links a").count(), 3);
+    assert.match(
+      await page.locator("#download-links a").first().getAttribute("href"),
+      /v2\.3\.0\/uTube-Desktop-2\.3\.0-linux/,
+    );
+    assert.match(
+      await page.locator("#desktop-release-notes").getAttribute("href"),
+      /v2\.3\.0$/,
+    );
     await page.getByRole("tab", { name: "Windows", exact: true }).click();
     assert.equal(await page.locator("#download-links a").count(), 2);
+    assert.match(
+      await page.locator("#download-links a").first().getAttribute("href"),
+      /v2\.2\.0\/uTube-Desktop-2\.2\.0-windows/,
+    );
+    assert.match(
+      await page.locator('[data-i18n="versionLine"]').innerText(),
+      /2\.2\.0/,
+    );
     assert.match(
       await page.locator("#download-links a").first().getAttribute("href"),
       /windows-x64-Setup\.exe$/,

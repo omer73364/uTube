@@ -58,3 +58,7 @@ Install the signed APK from the [Android 1.0.0 release](https://github.com/omer7
 If replacing a development/prototype build, save any needed history and uninstall it first because its signing identity differs. Subsequent production APKs use the permanent production key and can update this release. Android may request permission to install from the browser or file manager.
 
 Android versions and `android-v*` tags are independent from desktop/CLI releases. Run `npm run mobile:release` with private signing credentials to build and verify a production APK. Publish its SHA-256 checksums, media source companion, notices, and verification report beside it. See [the Android guide](../apps/mobile/README.md) and [release checklist](releases/android-1.0.0.md).
+
+## Release 2.3.0 platform availability
+
+CLI and Linux x64 are updated to 2.3.0. Windows and macOS stay on their existing unsigned 2.2.0 previews until trusted signing is configured. Public `v*` tag builds currently publish Linux only; manual Desktop release runs still build all native previews without publishing them. Windows/macOS signature checks remain in place for future public builds. Android remains separately versioned at 1.0.0.
