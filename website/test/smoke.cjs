@@ -36,6 +36,19 @@ const os = require("node:os");
       env,
     });
     const page = await app.firstWindow();
+    const capture = async (name) => {
+      if (!process.env.UTUBE_SITE_SCREENSHOTS) return;
+      await fs.mkdir("website/test-results", { recursive: true });
+      await page.locator("img[src]").evaluateAll(async (images) => {
+        for (const image of images) image.loading = "eager";
+        await Promise.all(images.map((image) => image.decode()));
+      });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({
+        path: `website/test-results/${name}.png`,
+        fullPage: true,
+      });
+    };
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.waitForLoadState("networkidle");
@@ -55,6 +68,7 @@ const os = require("node:os");
     await page
       .getByRole("heading", { name: "uTube Video & audio downloader" })
       .waitFor();
+    await capture("english-light");
     await page.getByRole("tab", { name: "Linux", exact: true }).click();
     assert.equal(await page.locator("#download-links a").count(), 3);
     await page.getByRole("tab", { name: "Windows", exact: true }).click();
@@ -99,11 +113,11 @@ const os = require("node:os");
     );
     assert.equal(
       (await page.locator("#download-title").innerText()).trim(),
-      "تنزيل uTube",
+      "تنزيل uTube لسطح المكتب",
     );
     assert.equal(
       await page.locator("#cli-title").innerText(),
-      "نسخة سطر الأوامر",
+      "من سطر الأوامر أيضًا",
     );
     await page
       .getByRole("button", { name: "التبديل إلى الوضع الداكن", exact: true })
@@ -111,6 +125,7 @@ const os = require("node:os");
     await page.reload();
     assert.equal(await page.locator("html").getAttribute("lang"), "ar");
     assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
+    await capture("arabic-dark");
     await page.setViewportSize({ width: 390, height: 844 });
     await page.evaluate(() => window.scrollTo(0, 0));
     for (const lang of ["ar", "en"]) {
@@ -128,10 +143,62 @@ const os = require("node:os");
         );
       }
     }
+    assert.match(
+      await page.locator("#android-download").getAttribute("href"),
+      /android-v1\.0\.0\/uTube-android-1\.0\.0\.apk$/,
+    );
+    for (const id of ["desktop-image", "mobile-image", "cli-image"]) {
+      await page.locator(`[data-image="${id}"]`).click();
+      assert.equal(
+        await page
+          .locator("#screenshot-dialog")
+          .evaluate((dialog) => dialog.open),
+        true,
+      );
+      assert.equal(
+        await page.locator("#enlarged-image").getAttribute("src"),
+        await page.locator(`#${id}`).evaluate((image) => image.src),
+      );
+      await page.keyboard.press("Escape");
+      assert.equal(
+        await page
+          .locator("#screenshot-dialog")
+          .evaluate((dialog) => dialog.open),
+        false,
+      );
+    }
+    assert.equal(
+      await page
+        .locator("img")
+        .evaluateAll((images) =>
+          images.every((image) => image.complete && image.naturalWidth > 0),
+        ),
+      true,
+    );
     assert.equal(await page.locator('a[href*="undefined"]').count(), 0);
+    await page.setViewportSize({ width: 375, height: 844 });
+    await capture("phone-english");
+    const androidWindow = app.waitForEvent("window");
+    await app.evaluate(({ BrowserWindow }) => {
+      const window = new BrowserWindow({
+        width: 390,
+        height: 844,
+        webPreferences: { contextIsolation: true, sandbox: true },
+      });
+      window.webContents.setUserAgent("Mozilla/5.0 (Linux; Android 15)");
+      window.loadURL(process.env.UTUBE_SITE_TEST_URL);
+    });
+    const androidPage = await androidWindow;
+    androidPage.on("pageerror", (error) => errors.push(error.message));
+    await androidPage.waitForLoadState("networkidle");
+    assert.equal(
+      await androidPage.locator("#hero-download").getAttribute("href"),
+      "#android",
+    );
+    await androidPage.close();
     assert.deepEqual(errors, []);
     console.log(
-      "PASS: platform downloads, tab keyboard controls, command copy, theme/language persistence, Arabic RTL, and responsive widths 320–1440.",
+      "PASS: desktop and Android downloads, all three screenshots and keyboard zoom, command copy, saved themes/languages, Arabic RTL, and responsive widths 320–1440.",
     );
   } finally {
     await app?.close();

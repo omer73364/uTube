@@ -37,3 +37,19 @@ Repository Pages settings use **GitHub Actions** as the publishing source. The `
 Update the versioned release links and download filename builder in `index.html` and `app.js` together. Verify every target against the assets on that GitHub Release. Keep platform architecture labels, FFmpeg requirements, and signing status accurate. Do not show a platform as available until its files have been published and tested.
 
 The build copies screenshots from `docs/images/` and the existing desktop SVG icon. English text is readable in the HTML source; `app.js` contains the Arabic catalog and dynamic download labels. Add any new translated key to both catalogs and preserve the terminal's left-to-right direction.
+
+## App theme and screenshots
+
+The website uses uTube's warm red/coral palette, rounded controls, and warm dark
+surfaces. It offers separate desktop and signed Android downloads, with the
+Android action selected automatically on Android browsers. English and Arabic
+copy, RTL layout, theme preferences, and keyboard controls remain supported.
+
+All three app versions have real screenshots. Click a screenshot to enlarge it;
+press Escape or use the close button to return. Source captures and provenance
+are documented in [the image guide](../docs/images/README.md). Desktop and CLI
+screenshots show current development interfaces; the published 2.2.0 packages
+may look different. The mobile images come from the signed 1.0.0 release.
+
+Set `UTUBE_SITE_SCREENSHOTS=1` when running `npm run site:test` to save English,
+Arabic/dark, and narrow-phone browser captures under ignored `website/test-results/`.
