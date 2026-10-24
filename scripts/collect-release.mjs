@@ -18,6 +18,9 @@ async function visit(folder) {
     const source = path.join(folder, entry.name);
     if (entry.isDirectory()) { await visit(source); continue; }
     if (!/\.(deb|exe|dmg|zip|AppImage)$/.test(entry.name)) continue;
+    // Forge keeps previous make outputs. Never rename an old installer as this release.
+    const builtVersion = entry.name.match(/(?:^|[-_])(\d+\.\d+\.\d+)(?=[-_.]|$)/)?.[1];
+    if (builtVersion && builtVersion !== version) continue;
     const extension = path.extname(entry.name);
     const kind = extension === '.exe' ? '-Setup' : '';
     const filename = `uTube-Desktop-${version}-${platform}-${process.arch}${kind}${extension}`;

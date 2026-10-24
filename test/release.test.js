@@ -21,6 +21,7 @@ const run = (cwd, env = {}) => execFileSync(process.execPath, [script], { cwd, e
 test('release collection requires every format and hashes each installer', async (t) => {
   const cwd = await fixture(t);
   for (const extension of extensions) await fs.writeFile(path.join(cwd, 'apps/desktop/out/make', `test.${extension}`), 'installer');
+  await fs.writeFile(path.join(cwd, 'apps/desktop/out/make', `old-2.1.0.${extensions[0]}`), 'obsolete installer');
   run(cwd);
   const output = path.join(cwd, 'release-artifacts');
   const manifest = await fs.readFile(path.join(output, `SHA256SUMS-${platform}-${process.arch}.txt`), 'utf8');
