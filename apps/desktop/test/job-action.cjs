@@ -7,11 +7,19 @@ module.exports = async function jobAction(page, label) {
       "",
     )
     .replace(/(?: في المجلد| in folder)$/, "");
-  await page
-    .getByRole("button", {
-      name: arabic ? `خيارات ${title}` : `Options for ${title}`,
-      exact: true,
-    })
-    .click();
+  const trigger = page.getByRole("button", {
+    name: arabic ? `خيارات ${title}` : `Options for ${title}`,
+    exact: true,
+  });
+  // The app closes action menus on scroll. Finish bringing an offscreen card
+  // into view before opening its menu, just as a user scrolling to it would.
+  await trigger.scrollIntoViewIfNeeded();
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+  await trigger.click();
   await page.getByRole("menuitem", { name: label, exact: true }).click();
 };
