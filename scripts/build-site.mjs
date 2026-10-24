@@ -6,7 +6,13 @@ const output = path.join(root, "website/dist");
 await fs.mkdir(path.join(output, "assets"), { recursive: true });
 for (const file of ["index.html", "style.css", "app.js"])
   await fs.copyFile(path.join(root, "website", file), path.join(output, file));
-for (const file of ["desktop-light.png", "desktop-ar-dark.png"])
+for (const file of [
+  "desktop-light.png",
+  "desktop-ar-dark.png",
+  "mobile-light.png",
+  "mobile-ar-dark.png",
+  "cli-download.png",
+])
   await fs.copyFile(
     path.join(root, "docs/images", file),
     path.join(output, "assets", file),
