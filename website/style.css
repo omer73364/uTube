@@ -867,7 +867,7 @@ footer > div {
   max-height: 94dvh;
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 44px 12px 12px;
+  padding: 12px 12px 12px;
   background: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow);
@@ -982,7 +982,9 @@ html:lang(ar) body {
   background: #211a1b;
   color: #fff2ed;
   box-shadow: 0 12px 28px #35171320;
-  font: 10px/1.8 ui-monospace, monospace;
+  font:
+    10px/1.8 ui-monospace,
+    monospace;
 }
 .hero-terminal-title {
   display: flex;
@@ -1010,4 +1012,20 @@ html:lang(ar) body {
     font-size: 7px;
     margin-bottom: 4px;
   }
+}
+
+.android-download-note {
+  margin-top: 14px;
+  max-width: 360px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.85;
+}
+.android-download-note a {
+  color: var(--accent);
+  display: inline-block;
+}
+.android-download-note a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }

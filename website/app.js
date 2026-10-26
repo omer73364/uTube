@@ -27,12 +27,12 @@ const arabic = {
     "نزّل فيديو واحدًا، أو قائمة تشغيل كاملة، أو مقاطع تختارها منها. تُحفظ ملفات كل قائمة في مجلد خاص بها.",
   featureTwoTitle: "فيديو MP4 أو صوت MP3",
   featureTwoText:
-    "اختر دقة الفيديو، أو نزّل الصوت بصيغة MP3 بمعدل 192 كيلوبت في الثانية.",
+    "احفظ الفيديو بالدقة التي تختارها، أو نزّل الصوت فقط للاستماع إليه لاحقًا.",
   featureThreeTitle: "سجل تنزيلات محفوظ",
   featureThreeText:
     "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
   downloadTitle: "تنزيل uTube لسطح المكتب",
-  downloadIntro: "اختر نظام التشغيل وصيغة ملف التثبيت المناسبة لجهازك.",
+  downloadIntro: "اختر نظام جهازك، ثم نزّل ملف التثبيت المناسب.",
   versionLine: "الإصدار 2.3.0 · سطح المكتب",
   releaseNotes: "ملاحظات الإصدار",
   osLabel: "نظام التشغيل",
@@ -61,7 +61,7 @@ const arabic = {
     "تبقى الملفات في المجلد الذي اخترته، ويحتفظ تطبيقا سطح المكتب وأندرويد بسجل التنزيلات على جهازك. يمكنك إعادة محاولة التنزيلات المتوقفة يدويًا؛ وتبدأ كل محاولة من البداية.",
   faqFourTitle: "كيف أحدّث التطبيق؟",
   faqFourText:
-    "نزّل ملف تثبيت سطح المكتب أو ملف APK الجديد لأندرويد من GitHub Releases وثبّته. لتحديث نسخة سطر الأوامر، نفّذ أمر التثبيت مجددًا. لا يدعم تطبيق سطح المكتب التحديث التلقائي حاليًا.",
+    "للتحديث، نزّل الإصدار الأحدث لجهازك أو هاتف أندرويد من صفحة إصدارات المشروع على GitHub وثبّته. لتحديث نسخة سطر الأوامر، نفّذ أمر التثبيت مجددًا. لا يدعم تطبيق سطح المكتب التحديث التلقائي حاليًا.",
   footerText: "مجاني ومفتوح المصدر · بترخيص MIT",
   reportIssue: "الإبلاغ عن مشكلة",
   windowsDescription: "Windows · معالجات x64",
@@ -74,11 +74,11 @@ const arabic = {
   apple: "معالجات Apple Silicon",
   intel: "معالجات Intel",
   windowsDependency:
-    "تحتاج إلى تثبيت FFmpeg وإضافته إلى PATH لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+    "لحفظ الصوت بصيغة MP3 وتنزيل الفيديو بدقة عالية، ثبّت البرنامج المجاني FFmpeg. يوضح دليل التثبيت طريقة إعداده.",
   linuxDependency:
-    "تثبّت حزمة DEB برنامج FFmpeg تلقائيًا عبر apt. عند استخدام AppImage أو ZIP، تحتاج إلى تثبيته بنفسك.",
+    "يثبّت ملف Debian / Ubuntu برنامج FFmpeg تلقائيًا. عند استخدام AppImage أو ZIP، ثبّت FFmpeg بشكل منفصل لحفظ MP3 وتنزيل الفيديو بدقة عالية.",
   macosDependency:
-    "اختر arm64 لأجهزة Apple Silicon، أو x64 لأجهزة Intel. تحتاج إلى تثبيت FFmpeg لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+    "اختر Apple Silicon لأجهزة Mac بمعالج من سلسلة M، أو Intel للأجهزة بمعالج Intel. ثبّت البرنامج المجاني FFmpeg لحفظ MP3 وتنزيل الفيديو بدقة عالية.",
   copied: "تم النسخ",
   copyFailed: "تعذّر النسخ. حدّد الأمر وانسخه يدويًا.",
   copySuccess: "تم نسخ أمر التثبيت.",
@@ -98,6 +98,8 @@ const arabic = {
   androidFeatureThree:
     "بالعربية والإنجليزية، مع الوضع الفاتح والداكن مثل تطبيق سطح المكتب.",
   androidDownload: "تنزيل لأندرويد",
+  androidUniversal: "نسخة لجميع الأجهزة المدعومة. تريد ملفًا أصغر؟",
+  androidOtherVersions: "عرض النسخ الأخرى ←",
   androidRequirements: "الإصدار 1.0.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
   androidNotes: "التثبيت والتحقق من الملفات وملاحظات الإصدار ↗",
   mobileCaption: "لقطة من هاتف أندرويد",
@@ -115,11 +117,11 @@ const english = {
   apple: "Apple Silicon",
   intel: "Intel",
   windowsDependency:
-    "Install FFmpeg separately and add it to PATH for MP3 conversion and HD video merging.",
+    "To save MP3 audio and higher-quality videos, install the free FFmpeg tool. Follow the installation guide to set it up.",
   linuxDependency:
-    "The DEB installs FFmpeg automatically through apt. AppImage and ZIP downloads require a separate FFmpeg installation.",
+    "The Debian / Ubuntu installer also installs FFmpeg. For AppImage or ZIP, install FFmpeg separately to save MP3 audio and higher-quality videos.",
   macosDependency:
-    "Choose arm64 for Apple Silicon or x64 for Intel. Install FFmpeg separately for MP3 conversion and HD video merging.",
+    "Choose Apple Silicon for Macs with an M-series chip, or Intel for Intel-based Macs. Install the free FFmpeg tool for MP3 audio and higher-quality videos.",
   copied: "Copied!",
   copyFailed: "Could not copy. Select the command and copy it manually.",
   copySuccess: "Installation command copied.",
@@ -254,7 +256,10 @@ function renderLanguage() {
   for (const node of document.querySelectorAll("[data-i18n-alt]"))
     node.alt = t(node.dataset.i18nAlt);
   const mobileImage = document.querySelector("#mobile-image");
-  mobileImage.src = language === "ar" ? "./assets/mobile-device-ar.jpg" : "./assets/mobile-device.jpg";
+  mobileImage.src =
+    language === "ar"
+      ? "./assets/mobile-device-ar.jpg"
+      : "./assets/mobile-device.jpg";
   mobileImage.alt = t("mobileScreenshot");
   const heroMobile = document.querySelector("#hero-mobile-image");
   heroMobile.src = mobileImage.src;
@@ -267,7 +272,10 @@ function renderLanguage() {
     language === "en" ? "Switch to Arabic" : "التبديل إلى الإنجليزية",
   );
   const image = document.querySelector("#desktop-image");
-  image.src = language === "ar" ? "./assets/desktop-ar-light.png" : "./assets/desktop-light.png";
+  image.src =
+    language === "ar"
+      ? "./assets/desktop-ar-light.png"
+      : "./assets/desktop-light.png";
   image.alt = t("screenshot");
   document.title =
     language === "en"

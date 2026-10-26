@@ -19,7 +19,10 @@
     <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;650;700;750;800&amp;family=Noto+Sans+Arabic:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;650;700;750;800&amp;family=Noto+Sans+Arabic:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./style.css" />
     <script src="./app.js" defer></script>
   </head>
@@ -106,27 +109,48 @@
         </div>
         <div class="hero-art" id="desktop">
           <div class="preview-composition">
-          <button
-            class="app-preview hero-desktop screenshot-button"
-            data-image="desktop-image"
-            aria-label="Enlarge desktop screenshot"
-            data-i18n-aria="enlargeDesktop"
-          >
-            <img
-              id="desktop-image"
-              src="./assets/desktop-light.png"
-              width="2360"
-              height="1524"
-              alt="uTube Desktop library with video cards, playlist groups, and the red app theme"
-              fetchpriority="high"
-            />
-          </button>
-            <button class="hero-phone screenshot-button" data-image="hero-mobile-image" aria-label="Enlarge Android screenshot" data-i18n-aria="enlargeMobile">
-              <img id="hero-mobile-image" src="./assets/mobile-device.jpg" width="1280" height="2800" alt="uTube on an Android phone" />
+            <button
+              class="app-preview hero-desktop screenshot-button"
+              data-image="desktop-image"
+              aria-label="Enlarge desktop screenshot"
+              data-i18n-aria="enlargeDesktop"
+            >
+              <img
+                id="desktop-image"
+                src="./assets/desktop-light.png"
+                width="2360"
+                height="1524"
+                alt="uTube Desktop library with video cards, playlist groups, and the red app theme"
+                fetchpriority="high"
+              />
             </button>
-            <a class="hero-terminal" href="#cli" dir="ltr" aria-label="Explore the command-line app">
-              <span class="hero-terminal-title"><span aria-hidden="true">● ● ●</span> uTube / CLI</span>
-              <code><span aria-hidden="true">$ </span>npm install -g utube-cli</code>
+            <button
+              class="hero-phone screenshot-button"
+              data-image="hero-mobile-image"
+              aria-label="Enlarge Android screenshot"
+              data-i18n-aria="enlargeMobile"
+            >
+              <img
+                id="hero-mobile-image"
+                src="./assets/mobile-device.jpg"
+                width="1280"
+                height="2800"
+                alt="uTube on an Android phone"
+              />
+            </button>
+            <a
+              class="hero-terminal"
+              href="#cli"
+              dir="ltr"
+              aria-label="Explore the command-line app"
+            >
+              <span class="hero-terminal-title"
+                ><span aria-hidden="true">● ● ●</span> uTube / CLI</span
+              >
+              <code
+                ><span aria-hidden="true">$ </span>npm install -g
+                utube-cli</code
+              >
               <code><span aria-hidden="true">$ </span>utube</code>
             </a>
           </div>
@@ -147,7 +171,7 @@
               Get uTube for desktop
             </h2>
             <p data-i18n="downloadIntro">
-              Choose your operating system and download format.
+              Choose your computer’s operating system, then download the app.
             </p>
             <div class="version-line">
               <span class="status-dot"></span
@@ -218,7 +242,7 @@
               class="small-link"
               href="https://github.com/omer73364/uTube/blob/main/docs/distribution.md"
               data-i18n="installGuide"
-              >Installation guide & checksum verification ↗</a
+              >Installation help & file verification ↗</a
             >
           </div>
         </div>
@@ -279,15 +303,11 @@
             ><span data-i18n="androidDownload">Download for Android</span
             ><small>APK</small></a
           >
-          <p class="install-note" data-i18n="androidRequirements">
-            Version 1.0.0 · Android 10+ · ARM64 &amp; x86-64
+          <p class="android-download-note">
+            <span data-i18n="androidUniversal">Includes all supported devices. Prefer a smaller download?</span>
+            <a href="https://github.com/omer73364/uTube/releases" data-i18n="androidOtherVersions">See other versions →</a>
           </p>
-          <a
-            class="small-link"
-            href="https://github.com/omer73364/uTube/releases/tag/android-v1.0.0"
-            data-i18n="androidNotes"
-            >Installation, checksums &amp; release notes ↗</a
-          >
+
         </div>
       </section>
 
@@ -309,8 +329,8 @@
             <div>
               <h3 data-i18n="featureTwoTitle">MP4 video or MP3 audio</h3>
               <p data-i18n="featureTwoText">
-                Choose the video resolution, or download audio as a 192 kbps
-                MP3.
+                Save the video in your chosen quality, or download just the
+                audio to listen later.
               </p>
             </div>
           </article>
@@ -412,9 +432,10 @@
             </summary>
             <p data-i18n="faqTwoText">
               Android works without additional tools. The desktop app does not
-              need Node.js or npm. The Debian package installs FFmpeg through
-              apt. Windows, macOS, and portable Linux downloads need FFmpeg
-              installed separately for MP3 conversion and HD merging.
+              need Node.js or npm. The Debian / Ubuntu installer also installs
+              FFmpeg. Windows, macOS, and portable Linux downloads need the free
+              FFmpeg tool installed separately to save MP3 audio and
+              higher-quality videos.
             </p>
           </details>
           <details>
@@ -430,10 +451,10 @@
           <details>
             <summary data-i18n="faqFourTitle">How do updates work?</summary>
             <p data-i18n="faqFourText">
-              Download a newer desktop installer or signed Android APK from
-              GitHub Releases when you want to update. For the CLI, run the
-              installation command again. Automatic desktop updates are not
-              included yet.
+              To update, download and install the newer version for your
+              computer or Android phone from our GitHub releases page. For the
+              CLI, run the installation command again. Automatic desktop updates
+              are not included yet.
             </p>
           </details>
         </div>
@@ -460,11 +481,6 @@
       aria-label="App screenshot"
       data-i18n-aria="screenshotDialog"
     >
-      <form method="dialog">
-        <button aria-label="Close screenshot" data-i18n-aria="closeScreenshot">
-          ×
-        </button>
-      </form>
       <img id="enlarged-image" alt="" />
     </dialog>
     <noscript
