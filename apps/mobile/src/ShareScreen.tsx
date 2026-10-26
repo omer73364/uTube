@@ -489,7 +489,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  note: { fontSize: 12, lineHeight: 18 },
+  note: { fontSize: 12, lineHeight: 18, textAlign: "center" },
   selector: {
     borderWidth: 1,
     borderRadius: 12,
