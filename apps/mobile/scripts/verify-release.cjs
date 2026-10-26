@@ -9,7 +9,7 @@ assert(sdk, "Set ANDROID_HOME to verify the APK");
 const tools = path.join(sdk, "build-tools/37.0.0");
 const apk =
   process.argv[2] ||
-  path.join(app, "android/app/build/outputs/apk/release/app-release.apk");
+  path.join(app, "android/app/build/outputs/apk/release/app-universal-release.apk");
 function run(name, args) {
   return execFileSync(path.join(tools, name), args, { encoding: "utf8" });
 }
@@ -40,9 +40,12 @@ assert(
   !badging.includes("application-debuggable"),
   "Release APK must not be debuggable",
 );
+const expectedABI = process.argv[3];
 assert(
-  badging.includes("native-code: 'arm64-v8a' 'x86_64'"),
-  "Release must support ARM64 phones and x86-64 devices",
+  expectedABI
+    ? ["arm64-v8a", "x86_64"].includes(expectedABI) && badging.includes(`native-code: '${expectedABI}'`) && !badging.includes("native-code: 'arm64-v8a' 'x86_64'")
+    : badging.includes("native-code: 'arm64-v8a' 'x86_64'"),
+  "Release must contain exactly the intended supported architectures",
 );
 run("zipalign", ["-c", "-P", "16", "-v", "4", apk]);
 const files = execFileSync("unzip", ["-Z1", apk], { encoding: "utf8" })
@@ -74,6 +77,6 @@ for (const file of files.filter((name) => /^lib\/.*\.so$/.test(name))) {
   libraries++;
 }
 console.log(
-  `Verified uTube Android ${pkg.version}: production signature, bundled JS, non-debuggable manifest, both architectures, and 16 KB alignment for ${libraries} native libraries.`,
+  `Verified uTube Android ${pkg.version}: production signature, bundled JS, non-debuggable manifest, ${expectedABI || "both architectures"}, and 16 KB alignment for ${libraries} native libraries.`,
 );
 console.log("Signing certificate SHA-256: " + certificate.fingerprint256);
