@@ -1120,6 +1120,9 @@ function Screen() {
                     )}
                   </>
                 )}
+                {preview.kind === "playlist" ? (
+                  <View style={{ height: 12 }} />
+                ) : undefined}
                 {button(
                   busy === "queue"
                     ? t.starting
