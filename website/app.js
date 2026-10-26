@@ -97,8 +97,7 @@ const arabic = {
   androidFeatureTwo: "دقّات متعددة وقوائم تشغيل وصوت بصيغة MP3.",
   androidFeatureThree:
     "بالعربية والإنجليزية، مع الوضع الفاتح والداكن مثل تطبيق سطح المكتب.",
-  androidShareFeature:
-    "شارك من يوتيوب لاختيار الدقة وفيديوهات القائمة من نافذة تنزيل مصغّرة.",
+  androidShareFeature: "نزّل من يوتيوب دون مغادرته: شارك، اختر، وابدأ.",
   androidDownload: "تنزيل لأندرويد",
   androidUniversal: "نسخة لجميع الأجهزة المدعومة. تريد ملفًا أصغر؟",
   androidOtherVersions: "عرض النسخ الأخرى ←",
