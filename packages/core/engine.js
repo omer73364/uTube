@@ -9,7 +9,7 @@ import { getPlaylist } from "./playlist.js";
 
 const ffmpeg = (args, executable = "ffmpeg", signal) => new Promise((resolve, reject) => {
   try { checkAbort(signal); } catch (error) { reject(error); return; }
-  const child = spawn(executable, args, { stdio: ["ignore", "ignore", "pipe"] });
+  const child = spawn(executable, args, { stdio: ["ignore", "ignore", "pipe"], windowsHide: true });
   let killTimer;
   const cancel = () => {
     child.kill('SIGTERM');
