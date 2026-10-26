@@ -1,3 +1,4 @@
+import { installFFmpeg, mediaTools, offerFFmpegAtStartup } from "./ffmpeg.js";
 import inquirer from "./prompts.js";
 import { welcome } from "./welcome.js";
 import { muted, details, success, interactive, promptOptions } from "./ui.js";
@@ -23,9 +24,15 @@ export const home = async () => {
         { name: "↓  Download a video or playlist", value: "download" },
         { name: "♫  Download audio (MP3)", value: "audio" },
         { name: "▣  Change download folder", value: "folder" },
+        ...(!await mediaTools.resolve() ? [{ name: "↓  Download FFmpeg (MP3 & HD video)", value: "ffmpeg" }] : []),
         { name: "↗  Exit", value: "exit" },
       ],
     }]);
+    if (action === "ffmpeg") {
+      if (await mediaTools.resolve()) success("FFmpeg is already available.");
+      else await installFFmpeg();
+      continue;
+    }
     if (action !== "folder") return action;
     const { folder } = await inquirer.prompt([{
       ...promptOptions, name: "folder", message: "Download folder",
@@ -48,7 +55,7 @@ export const askForURL = async () => {
 export const readArgs = async () => {
   const args = process.argv.slice(2);
   const values = {};
-  const flags = new Set(["-v", "--version", "-h", "--help", "--get-download-folder", "-a", "--audio"]);
+  const flags = new Set(["-v", "--version", "-h", "--help", "--get-download-folder", "-a", "--audio", "--install-ffmpeg"]);
   const valued = new Set(["-u", "-q", "--set-download-folder"]);
   for (let i = 0; i < args.length; i++) {
     const key = args[i];
@@ -67,6 +74,7 @@ Run utube without arguments to open the interactive menu.
   -u <url>                     Video or playlist URL
   -q <quality>                 Quality, for example 720p
   -a, --audio                  Download audio as MP3 (requires FFmpeg)
+  --install-ffmpeg             Download FFmpeg for uTube (MP3 and HD video)
   -v, --version                Show version
   --set-download-folder <path> Remember a download folder
   --get-download-folder        Show download folder
@@ -75,6 +83,7 @@ Run utube without arguments to open the interactive menu.
 Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
     return null;
   }
+  if (values["--install-ffmpeg"]) { await installFFmpeg(); return null; }
   if (values["--set-download-folder"]) {
     setDownloadFolder(values["--set-download-folder"]);
     console.log(`Download folder: ${getSetting("downloadFolder")}`);
@@ -85,7 +94,7 @@ Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
   let audio = Boolean(values["-a"] || values["--audio"]);
   if (audio && values["-q"]) throw new Error("-q selects video resolution. Omit it when using --audio.");
   const session = args.length === 0 && interactive();
-  if (interactive()) welcome();
+  if (interactive()) { welcome(); await offerFFmpegAtStartup(); }
   if (session) {
     const action = await home();
     if (action === "exit") return null;

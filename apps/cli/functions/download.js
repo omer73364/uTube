@@ -1,3 +1,4 @@
+import { ensureFFmpeg } from "./ffmpeg.js";
 import path from "node:path";
 import inquirer from "./prompts.js";
 import {
@@ -44,6 +45,7 @@ export const downloadVideo = async (
   audio = false,
   { showInfo = true } = {},
 ) => {
+  await ensureFFmpeg(audio || parseInt(quality) > 360);
   let display;
   let started = false;
   let formatWarning;
