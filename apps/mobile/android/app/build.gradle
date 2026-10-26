@@ -119,7 +119,7 @@ android {
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig hasReleaseKeys ? signingConfigs.production : signingConfigs.debug
             manifestPlaceholders = [usesCleartextTraffic: "true"]
         }
         release {

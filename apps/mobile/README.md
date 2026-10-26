@@ -203,3 +203,18 @@ The release builds `uTube-android-2.4.0.apk`, `uTube-android-2.4.0-arm64-v8a.apk
 for smaller downloads. The universal APK remains the website's main download.
 Android, CLI, and desktop now share the same version and GitHub release tag.
 Verify split APKs with `node scripts/verify-release.cjs APK_PATH ABI`.
+
+### Switching between official and development builds
+
+`npm run android` keeps the official app ID and uses your local release-signing
+identity, loaded from the ignored `.private/android/signing.json` file or the four
+`UTUBE_ANDROID_*` signing environment variables used by `build:release`. Passwords
+are passed through the child environment and are never printed or added to Git.
+With this identity available, development and official builds can replace each
+other without uninstalling or clearing app data (Android version downgrade rules
+still apply). The command stops if the signing identity is missing instead of
+silently installing an incompatible debug-signed app.
+
+Prototype APKs still use the public development key. They cannot replace official
+builds. Keep the private release identity local; do not distribute debug builds
+signed with it as public releases.
