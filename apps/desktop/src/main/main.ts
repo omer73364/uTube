@@ -14,7 +14,8 @@ declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
 app.setName('uTube');
 // Keep existing settings and download history when updating the app name.
-app.setPath('userData', path.join(app.getPath('appData'), 'uTube Desktop'));
+const requestedProfile = app.commandLine.getSwitchValue('user-data-dir');
+app.setPath('userData', requestedProfile ? path.resolve(requestedProfile) : path.join(app.getPath('appData'), 'uTube Desktop'));
 if (!app.isPackaged && process.env.UTUBE_TEST_USER_DATA) app.setPath('userData', process.env.UTUBE_TEST_USER_DATA);
 const mediaTools = createFFmpegManager({ directory: app.getPath('userData') });
 let toolInstall: AbortController | undefined;
