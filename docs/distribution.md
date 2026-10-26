@@ -2,7 +2,7 @@
 
 Download the files for your system from [GitHub Releases](https://github.com/omer73364/uTube/releases). The desktop includes its runtime; you do not need Node.js, npm, or a compiler.
 
-This is the first desktop preview. Builds are unsigned and macOS builds are not notarized. Linux has desktop integration coverage; Windows and macOS installers are built on native runners, with broader interactive testing still needed.
+Desktop downloads are preview builds. Builds are unsigned and macOS builds are not notarized. Linux has desktop integration coverage; Windows and macOS installers are built on native runners, with broader interactive testing still needed.
 
 ## Debian and Ubuntu
 
@@ -61,4 +61,4 @@ Starting with 2.4.0, Android shares the desktop/CLI version and `v*` release tag
 
 ## Release 2.4.0 platform availability
 
-CLI, Linux x64, and signed Android downloads are aligned at 2.4.0. Public `v*` tag builds publish Linux only; manual Desktop release runs build all native previews without publishing them. Windows/macOS signature checks remain in place; publishing unsigned previews requires explicit approval and accurate release notices.
+CLI, desktop, and signed Android downloads are aligned at 2.4.0. Windows x64 and macOS Intel/Apple Silicon previews were explicitly approved for publication with unsigned/not-notarized notices. Public `v*` tag builds publish Linux only; manual Desktop release runs build all native previews without publishing them. Windows/macOS signature checks remain in place; publishing unsigned previews requires explicit approval and accurate release notices.

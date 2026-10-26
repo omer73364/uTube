@@ -8,7 +8,7 @@
 - Use uTube as the installed app name and align Android, desktop, and CLI versions.
 - Publish signed Android APKs for ARM64, x86-64, and a universal download, with matching source archives and verification information.
 - Improve English and Arabic wording, website typography, app screenshots, and the combined desktop/mobile/CLI header preview.
-- Keep Windows/macOS signing checks enabled. Native unsigned previews are built separately and require explicit publication approval.
+- Keep Windows/macOS signing checks enabled. Publish explicitly approved Windows/macOS unsigned previews with security-prompt and notarization notices; future publication still requires approval.
 
 ## 2.3.0 — 2026-10-24
 

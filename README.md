@@ -40,9 +40,9 @@ downloads and Android sharing. Install it from [GitHub Releases](https://github.
 single command. Install it with [npm](#-cli).
 
 > [!NOTE]
-> CLI, Linux desktop, and signed Android downloads are at **2.4.0**.
-> Android now shares the same version and release tag. Windows/macOS unsigned
-> preview builds are prepared separately; check the release page for availability.
+> CLI, desktop, and signed Android downloads are at **2.4.0**, under one release tag.
+> Windows and macOS downloads are unsigned previews and may show security
+> warnings. macOS previews are not notarized.
 
 <br>
 
