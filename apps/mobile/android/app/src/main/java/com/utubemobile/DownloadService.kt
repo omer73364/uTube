@@ -66,6 +66,71 @@ class DownloadService : Service() {
   private fun arabic() =
     getSharedPreferences("utube-mobile", MODE_PRIVATE).getString("language", "en") == "ar"
 
+  private fun playlistJobs(job: JSONObject): List<JSONObject> {
+    val batch = job.optString("batchId")
+    val title = job.optString("playlistTitle")
+    if (batch.isBlank() || title.isBlank()) return emptyList()
+    return store.all().filter {
+      it.optString("batchId") == batch && it.optString("playlistTitle") == title
+    }
+  }
+
+  private fun playlistSummary(jobs: List<JSONObject>, arabic: Boolean): String {
+    val saved = jobs.count { it.optString("status") == "saved" }
+    val remaining = jobs.count { it.optString("status") in JobStore.activeStates }
+    val failed = jobs.count { it.optString("status") in setOf("failed", "interrupted") }
+    val cancelled = jobs.count { it.optString("status") == "cancelled" }
+    return buildList {
+        add(if (arabic) "تم تنزيل $saved من ${jobs.size}" else "$saved of ${jobs.size} downloaded")
+        if (failed > 0) add(if (arabic) "تعذّر تنزيل $failed" else "$failed failed")
+        if (cancelled > 0) add(if (arabic) "أُلغي $cancelled" else "$cancelled cancelled")
+      }
+      .joinToString(" · ")
+  }
+
+  private fun finishedNotification(job: JSONObject) {
+    val arabic = arabic()
+    val playlist = playlistJobs(job)
+    if (playlist.any { it.optString("status") in JobStore.activeStates }) return
+    val success =
+      if (playlist.isEmpty()) job.optString("status") == "saved"
+      else playlist.all { it.optString("status") == "saved" }
+    val heading =
+      if (success) {
+        if (arabic) "اكتمل التنزيل" else "Download complete"
+      } else if (job.optString("status") == "cancelled" && playlist.isEmpty()) {
+        if (arabic) "أُلغي التنزيل" else "Download cancelled"
+      } else {
+        if (arabic) "انتهى التنزيل مع وجود ملفات لم تُنزّل" else "Some downloads did not finish"
+      }
+    val title = if (playlist.isEmpty()) job.getString("title") else job.getString("playlistTitle")
+    val text = if (playlist.isEmpty()) heading else playlistSummary(playlist, arabic)
+    val pending =
+      PendingIntent.getActivity(
+        this,
+        0,
+        Intent(this, MainActivity::class.java),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+      )
+    val value =
+      Notification.Builder(this, "downloads")
+        .setSmallIcon(R.drawable.ic_utube)
+        .setContentTitle(title.take(120))
+        .setContentText(text)
+        .setStyle(
+          Notification.BigTextStyle().bigText(if (playlist.isEmpty()) text else "$heading\n$text")
+        )
+        .setContentIntent(pending)
+        .setOnlyAlertOnce(true)
+        .setAutoCancel(true)
+        .setOngoing(false)
+        .build()
+    val tag =
+      if (playlist.isEmpty()) job.getString("id")
+      else "${job.getString("batchId")}:${job.getString("playlistTitle")}"
+    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).notify(tag, 42, value)
+  }
+
   private fun notification(
     title: String,
     stage: String,
@@ -105,6 +170,15 @@ class DownloadService : Service() {
         .setOngoing(true)
         .setOnlyAlertOnce(true)
     activeId?.let { id ->
+      val job = store.get(id)
+      val playlist = playlistJobs(job)
+      if (playlist.isNotEmpty()) {
+        val summary = playlistSummary(playlist, arabic)
+        builder
+          .setContentText("$text · $summary")
+          .setSubText(job.optString("playlistTitle"))
+          .setStyle(Notification.BigTextStyle().bigText("$text\n$summary"))
+      }
       val cancel =
         PendingIntent.getService(
           this,
@@ -357,6 +431,10 @@ class DownloadService : Service() {
         store.terminal(id, status, if (status == "failed") safeError(e) else status.uppercase())
       }
     } finally {
+      runCatching { finishedNotification(store.get(id)) }
+        .onFailure {
+          android.util.Log.w("uTubeDownload", "Could not update completion notification")
+        }
       temp.deleteRecursively()
       connection = null
       activeId = null
