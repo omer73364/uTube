@@ -62,12 +62,13 @@ const os = require('node:os');
   const second=await electron.launch({executablePath:require('electron'),args,env:env2});
   try {
     const page=await second.firstWindow();
+    await page.getByRole('button', { name: 'Not now', exact: true }).click();
     await expect(page.getByText('FFmpeg not found')).toBeVisible();
     await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/jNQXAC9IVRw');
     await page.getByRole('button',{name:'Preview link',exact:true}).click();
     await page.getByRole('button',{name:/Audio only/}).click();
     await expect(page.getByRole('button',{name:'Download MP3',exact:true})).toBeDisabled();
-    await expect(page.getByText('Install FFmpeg to save MP3 audio and download higher-quality videos.')).toBeVisible();
+    await expect(page.getByText('FFmpeg is needed to save MP3 audio and higher-quality videos.')).toBeVisible();
     console.log('PASS: missing FFmpeg is visible and MP3 conversion is disabled.');
   } finally {await second.close();await fs.rm(secondRoot,{recursive:true,force:true,maxRetries:5,retryDelay:200});}
 })().catch(error=>{console.error(error);process.exitCode=1});

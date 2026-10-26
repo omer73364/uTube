@@ -20,7 +20,7 @@ const assert = require('node:assert/strict');
   const app = await electron.launch({ executablePath: require('electron'), args, env });
   try {
     const page = await app.firstWindow();
-    await page.waitForLoadState('domcontentloaded');
+    await expect(page.getByRole('heading', { name: 'Download from YouTube' })).toBeVisible();
     const isolated = await page.evaluate(() => ({ require: typeof window.require, process: typeof window.process }));
     assert.deepEqual(isolated, { require: 'undefined', process: 'undefined' });
     const preview = await page.evaluate(() => window.utube.inspect('https://youtu.be/jNQXAC9IVRw'));
