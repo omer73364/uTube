@@ -36,6 +36,9 @@ function Sheet({ url }: { url: string }) {
     theme: "system" as "system" | "light" | "dark",
   });
   const [preview, setPreview] = useState<Preview | PlaylistPreview>();
+  const [selection, setSelection] = useState(new Set<number>());
+  const [choosing, setChoosing] = useState(false);
+  const [visible, setVisible] = useState(50);
   const [mode, setMode] = useState<MediaMode>("video");
   const [quality, setQuality] = useState("best");
   const [busy, setBusy] = useState(false);
@@ -69,6 +72,15 @@ function Sheet({ url }: { url: string }) {
         if (!controller.signal.aborted) {
           setPreview(value);
           setQuality("best");
+          setSelection(
+            new Set(
+              value.kind === "playlist"
+                ? value.items.slice(0, 1000).map((item) => item.index)
+                : [],
+            ),
+          );
+          setChoosing(false);
+          setVisible(50);
         }
       })
       .catch(() => {
@@ -85,7 +97,8 @@ function Sheet({ url }: { url: string }) {
   }, [url, attempt]);
 
   async function start() {
-    if (!preview || busy) return;
+    if (!preview || busy || (preview.kind === "playlist" && !selection.size))
+      return;
     setBusy(true);
     setError(false);
     try {
@@ -100,7 +113,7 @@ function Sheet({ url }: { url: string }) {
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
         );
       }
-      const requests = shareRequests(preview, mode, quality);
+      const requests = shareRequests(preview, mode, quality, selection);
       await downloads.enqueue(requests);
       downloads.closeShare();
     } catch {
@@ -237,13 +250,150 @@ function Sheet({ url }: { url: string }) {
                   </View>
                 </>
               )}
+              {preview.kind === "playlist" && (
+                <View style={{ gap: 10 }}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: choosing }}
+                    disabled={busy}
+                    onPress={() => setChoosing((value) => !value)}
+                    style={[s.selector, row, { borderColor: p.line }]}
+                  >
+                    <Text
+                      style={[
+                        text,
+                        { flex: 1, fontWeight: "600", fontSize: 13 },
+                      ]}
+                    >
+                      {rtl
+                        ? `اختر الفيديوهات · تم تحديد ${selection.size}`
+                        : `Choose videos · ${selection.size} selected`}
+                    </Text>
+                    <Text style={{ color: p.blue }}>
+                      {choosing ? "−" : "+"}
+                    </Text>
+                  </Pressable>
+                  {choosing && (
+                    <>
+                      <View style={[s.options, row]}>
+                        {button(
+                          rtl ? "تحديد الكل" : "Select all",
+                          () =>
+                            setSelection(
+                              new Set(
+                                preview.items
+                                  .slice(0, 1000)
+                                  .map((item) => item.index),
+                              ),
+                            ),
+                          false,
+                          busy,
+                        )}
+                        {button(
+                          rtl ? "إلغاء التحديد" : "Clear selection",
+                          () => setSelection(new Set()),
+                          false,
+                          busy,
+                        )}
+                      </View>
+                      {preview.items
+                        .slice(0, Math.min(visible, 1000))
+                        .map((item) => {
+                          const checked = selection.has(item.index);
+                          return (
+                            <Pressable
+                              key={item.index}
+                              accessibilityRole="checkbox"
+                              accessibilityLabel={item.title}
+                              accessibilityState={{ checked, disabled: busy }}
+                              disabled={busy}
+                              onPress={() =>
+                                setSelection((current) => {
+                                  const next = new Set(current);
+                                  if (next.has(item.index))
+                                    next.delete(item.index);
+                                  else next.add(item.index);
+                                  return next;
+                                })
+                              }
+                              style={[
+                                s.playlistItem,
+                                row,
+                                {
+                                  borderColor: checked ? p.blue : p.line,
+                                  backgroundColor: checked ? p.tint : p.surface,
+                                },
+                              ]}
+                            >
+                              <View
+                                style={[
+                                  s.checkbox,
+                                  {
+                                    borderColor: checked ? p.blue : p.muted,
+                                    backgroundColor: checked
+                                      ? p.blue
+                                      : "transparent",
+                                  },
+                                ]}
+                              >
+                                {checked && (
+                                  <Icon
+                                    name="check"
+                                    size={14}
+                                    color={p.onAccent}
+                                  />
+                                )}
+                              </View>
+                              <Thumbnail
+                                videoId={item.id}
+                                tint={p.soft}
+                                accent={p.blue}
+                                style={s.itemThumb}
+                              />
+                              <Text
+                                numberOfLines={2}
+                                style={[text, { flex: 1, fontSize: 13 }]}
+                              >
+                                {item.title}
+                              </Text>
+                            </Pressable>
+                          );
+                        })}
+                      {visible < Math.min(preview.items.length, 1000) &&
+                        button(
+                          rtl ? "عرض المزيد" : "Show more",
+                          () => setVisible((value) => value + 50),
+                          false,
+                          busy,
+                        )}
+                      {preview.items.length > 1000 && (
+                        <Text style={[text, s.note, { color: p.muted }]}>
+                          {t.batchLimit}
+                        </Text>
+                      )}
+                    </>
+                  )}
+                </View>
+              )}
               <Pressable
                 accessibilityRole="button"
-                disabled={busy}
+                disabled={
+                  busy || (preview.kind === "playlist" && !selection.size)
+                }
+                accessibilityState={{
+                  disabled:
+                    busy || (preview.kind === "playlist" && !selection.size),
+                }}
                 onPress={() => void start()}
                 style={[
                   s.download,
-                  { backgroundColor: p.blue, opacity: busy ? 0.6 : 1 },
+                  {
+                    backgroundColor: p.blue,
+                    opacity:
+                      busy || (preview.kind === "playlist" && !selection.size)
+                        ? 0.5
+                        : 1,
+                  },
                 ]}
               >
                 {busy ? (
@@ -256,7 +406,11 @@ function Sheet({ url }: { url: string }) {
                       fontSize: 15,
                     }}
                   >
-                    {t.download}
+                    {preview.kind === "playlist"
+                      ? rtl
+                        ? `تنزيل المحدد (${selection.size})`
+                        : `Download selected (${selection.size})`
+                      : t.download}
                   </Text>
                 )}
               </Pressable>
@@ -336,4 +490,29 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   note: { fontSize: 12, lineHeight: 18 },
+  selector: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    minHeight: 44,
+    alignItems: "center",
+    gap: 8,
+  },
+  playlistItem: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 8,
+    gap: 10,
+    alignItems: "center",
+    minHeight: 60,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  itemThumb: { width: 64, height: 42, borderRadius: 6 },
 });

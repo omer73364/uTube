@@ -40,3 +40,35 @@ test("sharing a playlist keeps its order and folder and bounds the queue", () =>
     /EMPTY_PLAYLIST/,
   );
 });
+
+test("playlist selection keeps original numbering and supports repeated videos", () => {
+  const playlist = {
+    kind: "playlist",
+    title: "Mix",
+    id: "PL",
+    items: [1, 2, 3].map((index) => ({
+      id: video.id,
+      title: `Track ${index}`,
+      index,
+    })),
+  };
+  const requests = shareRequests(
+    playlist,
+    "video",
+    "720p",
+    new Set([1, 3, 999]),
+  );
+  assert.deepEqual(
+    requests.map((r) => r.playlistIndex),
+    [1, 3],
+  );
+  assert.deepEqual(
+    requests.map((r) => r.title),
+    ["Track 1", "Track 3"],
+  );
+  assert.throws(
+    () => shareRequests(playlist, "video", "best", new Set()),
+    /EMPTY_PLAYLIST/,
+  );
+  assert.equal(shareRequests(video, "video", "best", new Set()).length, 1);
+});
