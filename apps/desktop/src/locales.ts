@@ -70,7 +70,7 @@ export const en = {
   qualityNote:
     "If your chosen quality cannot be downloaded, uTube saves the best available lower quality.",
   encoderNeeded:
-    "Install FFmpeg to save MP3 audio and download higher-quality videos.",
+    "FFmpeg is needed to save MP3 audio and higher-quality videos.",
   recent: "Recent downloads",
   viewAll: "View all",
   all: "All",
@@ -102,7 +102,25 @@ export const en = {
   encoderAvailable: "FFmpeg is available",
   encoderPathMissing: "uTube cannot find FFmpeg on this computer.",
   encoderHelp:
-    "FFmpeg is a free tool uTube needs to save MP3 audio and higher-quality videos. Install it on your computer, then restart uTube.",
+    "FFmpeg is a free tool uTube needs to save MP3 audio and higher-quality videos. Use Download FFmpeg below, or install it yourself and restart uTube.",
+  ffmpegInSettings: "Download in Settings",
+  ffmpegStartupTitle: "Enable MP3 and HD downloads?",
+  ffmpegStartupDescription:
+    "Download FFmpeg to save MP3 audio and HD videos. You can also do this later in Settings.",
+  ffmpegLater: "Not now",
+  ffmpegReadyHelp:
+    "MP3 audio and higher-quality video downloads are ready to use.",
+  ffmpegDownload: "Download FFmpeg",
+  ffmpegDownloading: "Downloading FFmpeg…",
+  ffmpegInstalling: "Setting up FFmpeg…",
+  ffmpegCancel: "Cancel setup",
+  ffmpegDownloadNote:
+    "About 20–30 MB. Downloaded once and saved for uTube only.",
+  ffmpegSource: "Download source & licenses ↗",
+  ffmpegSetupFailed:
+    "FFmpeg setup did not finish. Check your connection and free space, then try again. You can also install FFmpeg yourself.",
+  ffmpegUnsupported:
+    "Automatic setup is not available for this device. Install FFmpeg yourself, then restart uTube.",
   about: "About",
   aboutApp: "About uTube",
   versionLabel: "Version",
@@ -232,7 +250,7 @@ const ar: Record<keyof typeof en, string> = {
   conversionNote: "يُحفظ الصوت بصيغة MP3 على جهازك.",
   qualityNote:
     "إذا تعذّر تنزيل الدقة التي اخترتها، يُحفظ الفيديو بأفضل دقة أقل منها.",
-  encoderNeeded: "ثبّت FFmpeg لتحويل MP3 أو دمج الفيديو والصوت.",
+  encoderNeeded: "يلزم FFmpeg لحفظ MP3 والفيديو بدقة عالية.",
   recent: "التنزيلات الأخيرة",
   viewAll: "عرض الكل",
   all: "الكل",
@@ -264,7 +282,24 @@ const ar: Record<keyof typeof en, string> = {
   encoderAvailable: "FFmpeg متوفر",
   encoderPathMissing: "لم يتمكّن uTube من العثور على FFmpeg على جهازك.",
   encoderHelp:
-    "FFmpeg برنامج مجاني يحتاجه uTube لحفظ الصوت بصيغة MP3 وتنزيل الفيديو بدقة عالية. ثبّته على جهازك ثم أعد تشغيل uTube.",
+    "FFmpeg برنامج مجاني يحتاجه uTube لحفظ الصوت بصيغة MP3 وتنزيل الفيديو بدقة عالية. استخدم زر تنزيل FFmpeg أدناه، أو ثبّته بنفسك ثم أعد تشغيل uTube.",
+  ffmpegInSettings: "التنزيل من الإعدادات",
+  ffmpegStartupTitle: "تفعيل تنزيل MP3 والفيديو بدقة عالية؟",
+  ffmpegStartupDescription:
+    "نزّل FFmpeg لحفظ الصوت بصيغة MP3 والفيديو بدقة عالية. يمكنك تنزيله لاحقًا من الإعدادات.",
+  ffmpegLater: "ليس الآن",
+  ffmpegReadyHelp: "يمكنك الآن تنزيل الصوت بصيغة MP3 والفيديو بدقة عالية.",
+  ffmpegDownload: "تنزيل FFmpeg",
+  ffmpegDownloading: "جارٍ تنزيل FFmpeg…",
+  ffmpegInstalling: "جارٍ إعداد FFmpeg…",
+  ffmpegCancel: "إلغاء الإعداد",
+  ffmpegDownloadNote:
+    "حجمه نحو ٢٠–٣٠ ميغابايت. يُنزّل مرة واحدة ويُحفظ لاستخدام uTube فقط.",
+  ffmpegSource: "مصدر التنزيل والتراخيص ↗",
+  ffmpegSetupFailed:
+    "لم يكتمل إعداد FFmpeg. تحقّق من الاتصال والمساحة المتاحة ثم حاول مجددًا. يمكنك أيضًا تثبيته بنفسك.",
+  ffmpegUnsupported:
+    "الإعداد التلقائي غير متاح لهذا الجهاز. ثبّت FFmpeg بنفسك ثم أعد تشغيل uTube.",
   about: "حول التطبيق",
   aboutApp: "عن uTube",
   versionLabel: "الإصدار",

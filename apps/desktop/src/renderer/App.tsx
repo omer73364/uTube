@@ -59,6 +59,9 @@ export default function App() {
   const [quality, setQuality] = useState("360p");
   const [loading, setLoading] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [installingFFmpeg, setInstallingFFmpeg] = useState(false);
+  const [ffmpegProgress, setFFmpegProgress] = useState(0);
+  const [ffmpegSetupError, setFFmpegSetupError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<unknown>();
   const [notice, setNotice] = useState<number>();
@@ -69,6 +72,14 @@ export default function App() {
   );
   const [playlist, setPlaylist] = useState<string>();
   const aboutDialog = useRef<HTMLDialogElement>(null);
+  const ffmpegPrompt = useRef<HTMLDialogElement>(null);
+  const ffmpegPromptShown = useRef(false);
+  const ffmpegSection = useRef<HTMLHeadingElement>(null);
+  const [ffmpegFocus, setFFmpegFocus] = useState(0);
+  const openFFmpegSettings = () => {
+    setScreen("settings");
+    setFFmpegFocus((value) => value + 1);
+  };
   const urlInput = useRef<HTMLInputElement>(null);
   const pageContent = useRef<HTMLElement>(null);
   const language = settings?.language || "en";
@@ -87,6 +98,23 @@ export default function App() {
   useEffect(() => {
     pageContent.current?.scrollTo(0, 0);
   }, [screen]);
+  useEffect(() => {
+    if (screen === "settings" && ffmpegFocus) {
+      ffmpegSection.current?.scrollIntoView({ block: "start" });
+      ffmpegSection.current?.focus({ preventScroll: true });
+    }
+  }, [screen, ffmpegFocus]);
+  useEffect(() => {
+    if (settings && !ffmpegPromptShown.current) {
+      ffmpegPromptShown.current = true;
+      if (
+        !settings.ffmpeg &&
+        !settings.ffmpegInstalling &&
+        settings.ffmpegSetupSupported !== false
+      )
+        ffmpegPrompt.current?.showModal();
+    }
+  }, [settings]);
   useEffect(() => {
     const closeMenus = () =>
       document
@@ -141,6 +169,14 @@ export default function App() {
       .then(([prefs, queue]) => {
         if (mounted) {
           setSettings(prefs);
+          setInstallingFFmpeg(Boolean(prefs.ffmpegInstalling));
+          if (prefs.ffmpegProgress?.total)
+            setFFmpegProgress(
+              Math.floor(
+                (prefs.ffmpegProgress.loaded / prefs.ffmpegProgress.total) *
+                  100,
+              ),
+            );
           setJobs(queue);
           if (prefs.historyError) setError(prefs.historyError);
         }
@@ -155,6 +191,45 @@ export default function App() {
       unsubscribeHistory();
     };
   }, []);
+  useEffect(
+    () =>
+      window.utube?.onFFmpegProgress?.(
+        ({ loaded, total, done, ffmpeg, failed }) => {
+          if (done) {
+            setInstallingFFmpeg(false);
+            setFFmpegSetupError(Boolean(failed));
+            if (ffmpeg) setScreen("download");
+            setSettings((current) =>
+              current ? { ...current, ffmpeg: Boolean(ffmpeg) } : current,
+            );
+            return;
+          }
+          setFFmpegProgress(total ? Math.floor((loaded / total) * 100) : 0);
+        },
+      ),
+    [],
+  );
+  const installFFmpeg = async () => {
+    setInstallingFFmpeg(true);
+    setFFmpegProgress(0);
+    setFFmpegSetupError(false);
+    try {
+      const result = await window.utube.installFFmpeg();
+      if (result.ffmpeg) setScreen("download");
+      setSettings((current) =>
+        current ? { ...current, ffmpeg: result.ffmpeg } : current,
+      );
+    } catch (error) {
+      if (
+        !/abort|cancel/i.test(
+          error instanceof Error ? error.message : String(error),
+        )
+      )
+        setFFmpegSetupError(true);
+    } finally {
+      setInstallingFFmpeg(false);
+    }
+  };
   const action = (task: Promise<unknown>) => {
     setError(undefined);
     void task.catch(setError);
@@ -684,7 +759,15 @@ export default function App() {
                   )}
                   {folderControl()}
                   {!hasEncoder && requiresFFmpeg && (
-                    <p className="inline-note">{t("encoderNeeded")}</p>
+                    <p className="inline-note">
+                      {t("encoderNeeded")}{" "}
+                      <button
+                        className="text-button"
+                        onClick={openFFmpegSettings}
+                      >
+                        {t("ffmpegInSettings")}
+                      </button>
+                    </p>
                   )}
                   {preview && !audio && !qualities.length && (
                     <p className="inline-note">{t("noQualities")}</p>
@@ -887,7 +970,13 @@ export default function App() {
               {folderControl(true)}
             </div>
             <div className="settings-section">
-              <h2>{t("processing")}</h2>
+              <h2
+                ref={ffmpegSection}
+                tabIndex={-1}
+                className="ffmpeg-section-title"
+              >
+                {t("processing")}
+              </h2>
               <div
                 className={`encoder-status ${settings?.ffmpeg ? "success" : "danger"}`}
               >
@@ -900,7 +989,62 @@ export default function App() {
                   settings?.ffmpeg ? "encoderAvailable" : "encoderPathMissing",
                 )}
               </div>
-              <p>{t("encoderHelp")}</p>
+              <p>{t(settings?.ffmpeg ? "ffmpegReadyHelp" : "encoderHelp")}</p>
+              <button
+                className="text-button"
+                onClick={() => action(window.utube.openFFmpegSource())}
+              >
+                {t("ffmpegSource")}
+              </button>
+              {!settings?.ffmpeg && (
+                <div className="ffmpeg-setup">
+                  <p>{t("ffmpegDownloadNote")}</p>
+                  <div className="ffmpeg-setup-actions">
+                    <button
+                      className="primary"
+                      disabled={
+                        installingFFmpeg ||
+                        settings?.ffmpegSetupSupported === false
+                      }
+                      onClick={() => void installFFmpeg()}
+                    >
+                      <Download size={16} />{" "}
+                      {t(
+                        installingFFmpeg
+                          ? "ffmpegInstalling"
+                          : "ffmpegDownload",
+                      )}
+                    </button>
+                    {installingFFmpeg && (
+                      <button
+                        className="secondary"
+                        onClick={() => action(window.utube.cancelFFmpeg())}
+                      >
+                        {t("ffmpegCancel")}
+                      </button>
+                    )}
+                  </div>
+                  {installingFFmpeg && (
+                    <div className="ffmpeg-download-progress">
+                      <div className="ffmpeg-progress-heading">
+                        <span><LoaderCircle size={15} className="spin" aria-hidden="true" />{t(ffmpegProgress >= 100 ? "ffmpegInstalling" : "ffmpegDownloading")}</span>
+                        <strong>{new Intl.NumberFormat(language, { style: "percent" }).format(ffmpegProgress / 100)}</strong>
+                      </div>
+                      <progress
+                        aria-label={t("ffmpegInstalling")}
+                        max={100}
+                        value={ffmpegProgress}
+                      />
+                    </div>
+                  )}
+                  {ffmpegSetupError && (
+                    <p role="alert">{t("ffmpegSetupFailed")}</p>
+                  )}
+                  {settings?.ffmpegSetupSupported === false && (
+                    <p>{t("ffmpegUnsupported")}</p>
+                  )}
+                </div>
+              )}
             </div>
             <div className="settings-section">
               <h2>{t("about")}</h2>
@@ -929,20 +1073,55 @@ export default function App() {
           <span
             className={`status-dot ${settings?.ffmpeg === false ? "amber" : ""}`}
           />
-          <span>
-            {t(
-              !settings
-                ? "preparing"
-                : settings.ffmpeg
-                  ? "ready"
-                  : "encoderMissing",
-            )}
-          </span>
+          {settings?.ffmpeg === false ? (
+            <button className="ffmpeg-status-link" onClick={openFFmpegSettings}>
+              {t("encoderMissing")}
+            </button>
+          ) : (
+            <span>{t(!settings ? "preparing" : "ready")}</span>
+          )}
           <span className="footer-version">
             <bdi>v{settings?.version || "0.1.0"}</bdi> · {t("preview")}
           </span>
         </footer>
       </main>
+      <dialog
+        ref={ffmpegPrompt}
+        className="about-dialog ffmpeg-startup-dialog"
+        aria-labelledby="ffmpeg-startup-title"
+      >
+        <div className="about-dialog-header">
+          <h2 id="ffmpeg-startup-title">{t("ffmpegStartupTitle")}</h2>
+          <button
+            className="icon-button"
+            aria-label={t("close")}
+            onClick={() => ffmpegPrompt.current?.close()}
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <p>{t("ffmpegStartupDescription")}</p>
+        <p>{t("ffmpegDownloadNote")}</p>
+        <div className="ffmpeg-setup-actions">
+          <button
+            className="primary"
+            onClick={() => {
+              ffmpegPrompt.current?.close();
+              openFFmpegSettings();
+              void installFFmpeg();
+            }}
+          >
+            <Download size={16} />
+            {t("ffmpegDownload")}
+          </button>
+          <button
+            className="secondary"
+            onClick={() => ffmpegPrompt.current?.close()}
+          >
+            {t("ffmpegLater")}
+          </button>
+        </div>
+      </dialog>
       <dialog
         ref={aboutDialog}
         className="about-dialog"

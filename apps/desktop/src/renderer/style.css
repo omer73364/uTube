@@ -1395,3 +1395,97 @@ select:disabled {
   border-radius: 12px;
   padding: 16px;
 }
+
+.ffmpeg-setup {
+  margin-top: 18px;
+  padding: 18px;
+  background: var(--soft);
+  border-radius: 14px;
+}
+.ffmpeg-setup-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-block: 14px;
+}
+.ffmpeg-download-progress {
+  padding: 16px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.ffmpeg-progress-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.ffmpeg-progress-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.ffmpeg-progress-heading strong {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.ffmpeg-download-progress progress {
+  display: block;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--soft);
+}
+.ffmpeg-download-progress progress::-webkit-progress-bar {
+  background: var(--soft);
+  border-radius: 999px;
+}
+.ffmpeg-download-progress progress::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover, var(--accent)));
+  border-radius: 999px;
+  transition: width 180ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ffmpeg-download-progress progress::-webkit-progress-value { transition: none; }
+}
+.ffmpeg-setup-actions > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.ffmpeg-status-link {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font: inherit;
+}
+.ffmpeg-status-link:hover {
+  color: var(--accent);
+}
+.ffmpeg-section-title {
+  scroll-margin-top: 24px;
+}
+.ffmpeg-startup-dialog > p {
+  margin-top: 16px;
+}
+.ffmpeg-startup-dialog .ffmpeg-setup-actions {
+  margin-bottom: 0;
+}
