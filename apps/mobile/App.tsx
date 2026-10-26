@@ -14,6 +14,7 @@ import {
   AppState,
   DeviceEventEmitter,
   Modal,
+  Linking,
   PermissionsAndroid,
   Platform,
   Pressable,
@@ -39,6 +40,8 @@ import { en, ar } from "./src/locales";
 import { Icon, type IconName } from "./src/ui/Icon";
 import { Thumbnail } from "./src/ui/Thumbnail";
 import { light, dark as darkPalette } from "./src/ui/theme";
+
+const appVersion: string = require("./package.json").version;
 
 const activeStates = new Set([
   "queued",
@@ -78,6 +81,7 @@ function Screen() {
   const [menu, setMenu] = useState<Job>();
   const [qualityOpen, setQualityOpen] = useState(false);
   const previousTab = useRef<typeof tab>("download");
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [license, setLicense] = useState<string>();
   const lookup = useRef<AbortController | null>(null);
   const generation = useRef(0);
@@ -1392,11 +1396,8 @@ function Screen() {
               {settingsRow(
                 "library",
                 t.about,
-                "uTube Mobile",
-                () =>
-                  void action(async () =>
-                    setLicense(await downloads.licenses()),
-                  ),
+                `${t.version} ${appVersion}`,
+                () => setAboutOpen(true),
               )}
             </View>
             <Text style={[s.local, { color: c.muted, textAlign: "center" }]}>
@@ -1576,27 +1577,88 @@ function Screen() {
         ),
       )}
       <Modal
-        visible={license !== undefined}
-        onRequestClose={() => setLicense(undefined)}
+        visible={aboutOpen}
+        onRequestClose={() =>
+          license !== undefined ? setLicense(undefined) : setAboutOpen(false)
+        }
         animationType="slide"
       >
         <SafeAreaView style={{ flex: 1, backgroundColor: c.bg, padding: 20 }}>
           <View style={s.sheetHeader}>
-            <Text style={[s.sectionTitle, text, { flex: 1 }]}>{t.about}</Text>
-            {iconButton("close", t.close, () => setLicense(undefined))}
-          </View>
-          <ScrollView>
-            <Text
-              selectable
-              style={{
-                color: c.text,
-                fontSize: 12,
-                lineHeight: 19,
-                marginTop: 16,
-              }}
-            >
-              {license}
+            <Text style={[s.sectionTitle, text, { flex: 1 }]}>
+              {license !== undefined ? t.licenses : t.about}
             </Text>
+            {license !== undefined
+              ? iconButton("chevron", t.back, () => setLicense(undefined))
+              : iconButton("close", t.close, () => setAboutOpen(false))}
+          </View>
+          <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+            {license === undefined ? (
+              <>
+                <View
+                  style={{ alignItems: "center", paddingVertical: 28, gap: 12 }}
+                >
+                  <Image
+                    source={require("./src/ui/assets/logo.png")}
+                    style={{ width: 72, height: 72 }}
+                  />
+                  <Text style={[s.sectionTitle, text]}>uTube</Text>
+                  <Text style={{ color: c.muted }}>
+                    {t.version} {appVersion}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    text,
+                    {
+                      color: c.muted,
+                      fontSize: 15,
+                      lineHeight: 25,
+                      marginBottom: 24,
+                    },
+                  ]}
+                >
+                  {t.aboutDescription}
+                </Text>
+                <View style={[s.settingsCard, card]}>
+                  {settingsRow(
+                    "github",
+                    t.repository,
+                    "github.com/omer73364/uTube",
+                    () =>
+                      void action(() =>
+                        Linking.openURL("https://github.com/omer73364/uTube"),
+                      ),
+                  )}
+                  {settingsRow(
+                    "library",
+                    t.licenses,
+                    t.licensesDetail,
+                    () =>
+                      void action(async () =>
+                        setLicense(await downloads.licenses()),
+                      ),
+                  )}
+                </View>
+                <Text
+                  style={[s.local, { color: c.muted, textAlign: "center" }]}
+                >
+                  {t.aboutCredit}
+                </Text>
+              </>
+            ) : (
+              <Text
+                selectable
+                style={{
+                  color: c.text,
+                  fontSize: 12,
+                  lineHeight: 19,
+                  marginTop: 16,
+                }}
+              >
+                {license}
+              </Text>
+            )}
           </ScrollView>
         </SafeAreaView>
       </Modal>

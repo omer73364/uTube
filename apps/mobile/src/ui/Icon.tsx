@@ -2,6 +2,7 @@ import React from "react";
 import { Image, View } from "react-native";
 
 export type IconName =
+  | "github"
   | "home"
   | "library"
   | "download"
@@ -33,6 +34,7 @@ export function Icon({
 }) {
   // Pre-rendered continuous paths avoid seams between rotated native Views.
   const artwork = {
+    github: require("./assets/github.png"),
     settings: require("./assets/settings.png"),
     sun: require("./assets/sun.png"),
     moon: require("./assets/moon.png"),
