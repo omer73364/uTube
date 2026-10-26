@@ -20,9 +20,9 @@ a friendly terminal, or the Android app.
 
 <br>
 
-<img src="docs/images/desktop-light.png" alt="uTube Desktop library with thumbnail cards and floating navigation" width="820">
+<img src="docs/images/utube-apps-preview.png" alt="uTube desktop and Android apps in English, alongside CLI install and run commands" width="1000">
 
-<sub>Desktop development preview with sample downloads.</sub>
+<sub>🖥️ Desktop · 📱 Android · 💻 CLI</sub>
 
 </div>
 

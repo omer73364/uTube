@@ -3,6 +3,7 @@
 These images show the current source checkout, not necessarily the older
 published CLI/desktop 2.2.0 packages.
 
+- `utube-apps-preview.png`: README composition of the English desktop and phone screenshots, with CLI install and run commands.
 - `desktop-light.png`, `desktop-ar-light.png`, and `desktop-ar-dark.png`: the real desktop renderer with
   an explicitly illustrative saved library, captured using its renderer test
   harness. No private download history is included.
