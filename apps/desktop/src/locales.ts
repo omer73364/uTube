@@ -105,7 +105,7 @@ export const en = {
   versionLabel: "Version",
   appSummary:
     "Keep your favorite YouTube videos and music close. Save a video or a whole playlist, then watch or listen whenever you want—even offline.",
-  appCredit: "Free and open source · Created by OMER ANWAR",
+  appCredit: "Free and open source",
   freeOpenSource: "Free and open source",
   repository: "uTube on GitHub",
   openSourceLicenses: "Open-source licenses",
@@ -266,7 +266,7 @@ const ar: Record<keyof typeof en, string> = {
   versionLabel: "الإصدار",
   appSummary:
     "احتفظ بفيديوهاتك وموسيقاك المفضلة من يوتيوب. نزّل فيديو أو قائمة تشغيل كاملة، وشاهد أو استمع وقتما تحب، حتى بدون إنترنت.",
-  appCredit: "مجاني ومفتوح المصدر · تطوير OMER ANWAR",
+  appCredit: "مجاني ومفتوح المصدر",
   freeOpenSource: "مجاني ومفتوح المصدر",
   repository: "uTube على GitHub",
   openSourceLicenses: "تراخيص المصادر المفتوحة",
