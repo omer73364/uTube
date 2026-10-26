@@ -51,8 +51,29 @@ class DownloadService : Service() {
     super.onCreate()
     current = this
     store = JobStore(this)
-    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
-      NotificationChannel("downloads", "uTube downloads", NotificationManager.IMPORTANCE_LOW)
+    (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannels(
+      listOf(
+        NotificationChannel("downloads", "uTube downloads", NotificationManager.IMPORTANCE_LOW),
+        NotificationChannel(
+            "download_results",
+            if (arabic()) "نتائج التنزيل" else "Download results",
+            NotificationManager.IMPORTANCE_DEFAULT,
+          )
+          .apply {
+            description =
+              if (arabic()) "تنبيه عند انتهاء تنزيل فيديو أو قائمة تشغيل"
+              else "Alerts when a video or playlist finishes downloading"
+            setSound(
+              android.media.RingtoneManager.getDefaultUri(
+                android.media.RingtoneManager.TYPE_NOTIFICATION
+              ),
+              android.media.AudioAttributes.Builder()
+                .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build(),
+            )
+          },
+      )
     )
     wake =
       (getSystemService(POWER_SERVICE) as PowerManager)
@@ -113,7 +134,7 @@ class DownloadService : Service() {
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
       )
     val value =
-      Notification.Builder(this, "downloads")
+      Notification.Builder(this, "download_results")
         .setSmallIcon(R.drawable.ic_utube)
         .setContentTitle(title.take(120))
         .setContentText(text)
@@ -121,7 +142,7 @@ class DownloadService : Service() {
           Notification.BigTextStyle().bigText(if (playlist.isEmpty()) text else "$heading\n$text")
         )
         .setContentIntent(pending)
-        .setOnlyAlertOnce(true)
+        .setOnlyAlertOnce(false)
         .setAutoCancel(true)
         .setOngoing(false)
         .build()
