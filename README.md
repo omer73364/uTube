@@ -159,7 +159,7 @@ Allow your browser or file manager to install the APK when Android asks. If you 
 - 📚 **Playlist selection**, continuation-page loading, and separate playlist folders.
 - ⏬ **Background transfers and media processing** through a native foreground service.
 - 🧳 **Persistent queue and preferences**, including failures and interrupted work.
-- 🔗 **Android share input:** send a YouTube link to uTube from another app.
+- 🔗 **Download from YouTube’s share menu:** choose quality and select playlist videos in a compact sheet, with background downloads.
 - 📂 **Open and share saved files**, cancel active work, and retry failed downloads.
 - 🗑️ **Remove from list** for individual finished entries, or clear finished history,
   while keeping the downloaded files on your device.
