@@ -83,11 +83,11 @@ const os = require("node:os");
     assert.equal(await page.locator("#download-links a").count(), 2);
     assert.match(
       await page.locator("#download-links a").first().getAttribute("href"),
-      /v2\.2\.0\/uTube-Desktop-2\.2\.0-windows/,
+      /v2\.4\.0\/uTube-Desktop-2\.4\.0-windows/,
     );
     assert.match(
       await page.locator('[data-i18n="versionLine"]').innerText(),
-      /2\.2\.0/,
+      /2\.4\.0/,
     );
     assert.match(
       await page.locator("#download-links a").first().getAttribute("href"),

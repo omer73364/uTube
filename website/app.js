@@ -1,4 +1,4 @@
-const desktopVersions = { linux: "2.4.0", windows: "2.2.0", macos: "2.2.0" };
+const desktopVersions = { linux: "2.4.0", windows: "2.4.0", macos: "2.4.0" };
 const arabic = {
   skip: "انتقل إلى المحتوى",
   home: "uTube — الصفحة الرئيسية",
@@ -74,11 +74,11 @@ const arabic = {
   apple: "معالجات Apple Silicon",
   intel: "معالجات Intel",
   windowsDependency:
-    "لحفظ الصوت بصيغة MP3 وتنزيل الفيديو بدقة عالية، ثبّت البرنامج المجاني FFmpeg. يوضح دليل التثبيت طريقة إعداده.",
+    "لحفظ الصوت بصيغة MP3 والفيديو بدقة عالية، اختر تنزيل FFmpeg من إعدادات التطبيق.",
   linuxDependency:
     "يثبّت ملف Debian / Ubuntu برنامج FFmpeg تلقائيًا. عند استخدام AppImage أو ZIP، اختر تنزيل FFmpeg من الإعدادات لحفظ MP3 والفيديو بدقة عالية.",
   macosDependency:
-    "اختر Apple Silicon لأجهزة Mac بمعالج من سلسلة M، أو Intel للأجهزة بمعالج Intel. ثبّت البرنامج المجاني FFmpeg لحفظ MP3 وتنزيل الفيديو بدقة عالية.",
+    "اختر Apple Silicon لأجهزة Mac بمعالج من سلسلة M، أو Intel للأجهزة بمعالج Intel. لحفظ MP3 والفيديو بدقة عالية، اختر تنزيل FFmpeg من إعدادات التطبيق.",
   copied: "تم النسخ",
   copyFailed: "تعذّر النسخ. حدّد الأمر وانسخه يدويًا.",
   copySuccess: "تم نسخ أمر التثبيت.",
@@ -117,11 +117,11 @@ const english = {
   apple: "Apple Silicon",
   intel: "Intel",
   windowsDependency:
-    "To save MP3 audio and higher-quality videos, install the free FFmpeg tool. Follow the installation guide to set it up.",
+    "For MP3 audio and higher-quality videos, choose Download FFmpeg in the app’s Settings.",
   linuxDependency:
     "The Debian / Ubuntu installer also installs FFmpeg. In AppImage or ZIP, use Download FFmpeg in Settings for MP3 audio and HD video.",
   macosDependency:
-    "Choose Apple Silicon for Macs with an M-series chip, or Intel for Intel-based Macs. Install the free FFmpeg tool for MP3 audio and higher-quality videos.",
+    "Choose Apple Silicon for Macs with an M-series chip, or Intel for Intel-based Macs. For MP3 audio and higher-quality videos, choose Download FFmpeg in the app’s Settings.",
   copied: "Copied!",
   copyFailed: "Could not copy. Select the command and copy it manually.",
   copySuccess: "Installation command copied.",
