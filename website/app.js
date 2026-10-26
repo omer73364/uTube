@@ -256,6 +256,9 @@ function renderLanguage() {
   const mobileImage = document.querySelector("#mobile-image");
   mobileImage.src = language === "ar" ? "./assets/mobile-device-ar.jpg" : "./assets/mobile-device.jpg";
   mobileImage.alt = t("mobileScreenshot");
+  const heroMobile = document.querySelector("#hero-mobile-image");
+  heroMobile.src = mobileImage.src;
+  heroMobile.alt = mobileImage.alt;
   const button = document.querySelector("#language");
   button.textContent = language === "en" ? "العربية" : "English";
   button.lang = language === "en" ? "ar" : "en";

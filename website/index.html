@@ -105,15 +105,9 @@
           </p>
         </div>
         <div class="hero-art" id="desktop">
-          <div class="preview-caption">
-            <span class="mini-label" data-i18n="previewLabel"
-              >Your library, on desktop</span
-            ><span class="window-dots" aria-hidden="true"
-              ><i></i><i></i><i></i
-            ></span>
-          </div>
+          <div class="preview-composition">
           <button
-            class="app-preview screenshot-button"
+            class="app-preview hero-desktop screenshot-button"
             data-image="desktop-image"
             aria-label="Enlarge desktop screenshot"
             data-i18n-aria="enlargeDesktop"
@@ -127,6 +121,15 @@
               fetchpriority="high"
             />
           </button>
+            <button class="hero-phone screenshot-button" data-image="hero-mobile-image" aria-label="Enlarge Android screenshot" data-i18n-aria="enlargeMobile">
+              <img id="hero-mobile-image" src="./assets/mobile-device.jpg" width="1280" height="2800" alt="uTube on an Android phone" />
+            </button>
+            <a class="hero-terminal" href="#cli" dir="ltr" aria-label="Explore the command-line app">
+              <span class="hero-terminal-title"><span aria-hidden="true">● ● ●</span> uTube / CLI</span>
+              <code><span aria-hidden="true">$ </span>npm install -g utube-cli</code>
+              <code><span aria-hidden="true">$ </span>utube</code>
+            </a>
+          </div>
           <p class="screenshot-note" data-i18n="desktopCaption">
             Desktop development preview · example library
           </p>
