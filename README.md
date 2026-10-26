@@ -13,7 +13,7 @@ a friendly terminal, or the Android app.
 
 [![npm](https://img.shields.io/npm/v/utube-cli?style=for-the-badge&logo=npm&color=dd3b20&labelColor=292225)](https://www.npmjs.com/package/utube-cli)
 [![Desktop](https://img.shields.io/badge/desktop-preview-dd3b20?style=for-the-badge&logo=electron&logoColor=white&labelColor=292225)](#-desktop-app)
-[![Android](https://img.shields.io/badge/Android-1.0.0-dd3b20?style=for-the-badge&logo=android&logoColor=white&labelColor=292225)](#-android-app)
+[![Android](https://img.shields.io/badge/Android-2.4.0-dd3b20?style=for-the-badge&logo=android&logoColor=white&labelColor=292225)](#-android-app)
 [![License](https://img.shields.io/badge/license-MIT-dd3b20?style=for-the-badge&labelColor=292225)](LICENSE)
 
 [🌐 Website](https://omer73364.github.io/uTube/) · [⚡ Quick start](#-quick-start) · [💻 CLI](#-cli) · [🖥️ Desktop](#-desktop-app) · [📱 Android](#-android-app) · [🛟 Help](#-troubleshooting)
@@ -34,15 +34,15 @@ a friendly terminal, or the Android app.
 for Linux, Windows, and macOS. Start with the [desktop downloads](#-desktop-app).
 
 **📱 Android** brings the same red theme and library to your phone, with background
-downloads and Android sharing. Install it from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0).
+downloads and Android sharing. Install it from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.4.0).
 
 **💻 CLI** takes you from a link to a saved file through an interactive menu or a
 single command. Install it with [npm](#-cli).
 
 > [!NOTE]
-> CLI and Linux desktop releases are at **2.3.0**. Windows/macOS **2.2.0**
-> previews may look different; new installers require trusted signing.
-> Android uses its separate signed **1.0.0** release.
+> CLI, Linux desktop, and signed Android downloads are at **2.4.0**.
+> Android now shares the same version and release tag. Windows/macOS unsigned
+> preview builds are prepared separately; check the release page for availability.
 
 <br>
 
@@ -64,8 +64,8 @@ single command. Install it with [npm](#-cli).
 
 ## ⚡ Quick start
 
-For the CLI, install [Node.js](https://nodejs.org/) **20+** and
-[FFmpeg](https://ffmpeg.org/download.html) on your `PATH` for MP3 and HD merging:
+For the CLI, install [Node.js](https://nodejs.org/) **20+**. uTube offers to
+download FFmpeg when needed for MP3 audio and HD video:
 
 ```sh
 npm install -g utube-cli@latest
@@ -95,8 +95,9 @@ Find installers and archives on **[GitHub Releases](https://github.com/omer73364
 - 🍎 **macOS:** `.dmg` and `.zip` for Apple Silicon and Intel.
 
 Desktop packages include their runtime, so Node.js is not required. The Debian
-package declares FFmpeg as a dependency; other formats need FFmpeg installed
-separately for HD merging and MP3 conversion. Read the
+package installs FFmpeg as a dependency. Desktop 2.4.0 also offers
+**Download FFmpeg** in Settings, with progress and cancellation. It saves the
+verified tool for uTube only, without administrator access. Read the
 [installation guide](docs/distribution.md) for platform instructions and checksums.
 
 Existing previews are unsigned, and macOS previews are not notarized.
@@ -146,7 +147,8 @@ See the [desktop guide](apps/desktop/README.md) for recovery behavior and develo
 
 ## 📱 Android app
 
-**Download, install, and go.** Get the signed [Android APK](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0) for Android 10 or newer. No computer or Metro server is needed. iOS is not implemented.
+**Download, install, and go.** Get the signed [Android APK](https://github.com/omer73364/uTube/releases/tag/v2.4.0) for Android 10 or newer. The main APK supports both ARM64 and x86-64; smaller
+CPU-specific APKs are available on the same release page. No computer or Metro server is needed. iOS is not implemented.
 
 Allow your browser or file manager to install the APK when Android asks. If you used a development build, its signing key differs: uninstall it first after saving anything you need from its history. Downloaded files remain in Downloads / uTube.
 
@@ -200,8 +202,9 @@ see the [mobile guide](apps/mobile/README.md).
 
 ## 💻 CLI
 
-Requires **Node.js 20+**. Install [FFmpeg](https://ffmpeg.org/download.html) on
-`PATH` for MP3 conversion and merging separate HD video/audio streams.
+Requires **Node.js 20+**. If FFmpeg is missing, the interactive menu offers to
+download it for MP3 audio and HD video. You can also run `utube --install-ffmpeg`.
+An existing system FFmpeg is used automatically.
 
 ```sh
 npm install -g utube-cli@latest
@@ -308,8 +311,9 @@ Removing an Android history entry keeps the downloaded file.
 
 uTube tries the requested resolution across available streams and clients before
 considering lower resolutions. It reports a downgrade when one is needed.
-It cannot create a resolution YouTube does not offer. Desktop and CLI use system
-FFmpeg; Android includes its own native media-processing libraries.
+It cannot create a resolution YouTube does not offer. Desktop and CLI prefer
+system FFmpeg or use the optional verified per-user download. Android includes
+its own native media-processing libraries.
 
 <br>
 
@@ -317,8 +321,9 @@ FFmpeg; Android includes its own native media-processing libraries.
 
 - 🔎 **Command not found:** reopen the terminal and check npm's global bin directory
   is on `PATH`.
-- 🔊 **MP3 or HD merging fails on desktop/CLI:** check `ffmpeg -version`, install
-  FFmpeg if necessary, and restart the app.
+- 🔊 **MP3 or HD downloads need FFmpeg:** use **Download FFmpeg** in desktop
+  Settings, or run `utube --install-ffmpeg`. Successful desktop setup returns Home
+  and works without restarting. Manual FFmpeg installation is also supported.
 - 🎚️ **A lower quality was saved:** the requested resolution was unavailable or its
   streams failed, so uTube used the best working lower quality.
 - 📁 **An item was skipped:** an existing file has the same name. Move or rename it
@@ -427,10 +432,10 @@ instructions are in [THIRD_PARTY_NOTICES.md](apps/mobile/THIRD_PARTY_NOTICES.md)
 
 </div>
 
-### 🧰 Optional FFmpeg setup (next release)
+### 🧰 Optional FFmpeg setup
 
-Desktop source builds offer **Settings → Audio & video processing → Download FFmpeg**.
+Desktop 2.4.0 offers **Settings → Audio & video processing → Download FFmpeg**.
 For the CLI, run `utube --install-ffmpeg`; interactive MP3 and HD downloads also
 offer setup when it is missing. Downloads are verified and saved for uTube only,
-without administrator access or system changes. Existing public installers do
-not include this option yet. See the [setup guide](docs/ffmpeg-setup.md).
+without administrator access or system changes. See the
+[setup guide](docs/ffmpeg-setup.md).

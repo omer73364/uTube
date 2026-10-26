@@ -23,7 +23,7 @@ chmod +x uTube-Desktop-2.2.0-linux-x64.AppImage
 ./uTube-Desktop-2.2.0-linux-x64.AppImage
 ```
 
-AppImage requires FUSE support on your distribution. On systems without it, try the AppImage runtime's `--appimage-extract-and-run` option. For ZIP, extract the entire archive and run `utube-desktop` inside the extracted directory. Install FFmpeg through your distribution's package manager for MP3 conversion and HD merging.
+AppImage requires FUSE support on your distribution. On systems without it, try the AppImage runtime's `--appimage-extract-and-run` option. For ZIP, extract the entire archive and run `utube-desktop` inside the extracted directory. In desktop 2.4.0, use **Download FFmpeg** in Settings for MP3 audio and HD video, or install it through your distribution's package manager.
 
 ## Windows
 
@@ -53,12 +53,12 @@ The [uTube website](https://omer73364.github.io/uTube/) provides English/Arabic 
 
 ## Android
 
-Install the signed APK from the [Android 1.0.0 release](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0) on Android 10+ ARM64 or x86-64 devices. It bundles JavaScript and native media processing, so it does not need Metro, Node.js, or an external FFmpeg installation.
+Install the signed APK from the [Android 2.4.0 release](https://github.com/omer73364/uTube/releases/tag/v2.4.0) on Android 10+ ARM64 or x86-64 devices. It bundles JavaScript and native media processing, so it does not need Metro, Node.js, or an external FFmpeg installation.
 
 If replacing a development/prototype build, save any needed history and uninstall it first because its signing identity differs. Subsequent production APKs use the permanent production key and can update this release. Android may request permission to install from the browser or file manager.
 
-Android versions and `android-v*` tags are independent from desktop/CLI releases. Run `npm run mobile:release` with private signing credentials to build and verify a production APK. Publish its SHA-256 checksums, media source companion, notices, and verification report beside it. See [the Android guide](../apps/mobile/README.md) and [release checklist](releases/android-1.0.0.md).
+Starting with 2.4.0, Android shares the desktop/CLI version and `v*` release tag. The website defaults to a universal APK; smaller ARM64 and x86-64 APKs are also included. Run `npm run mobile:release` with private signing credentials to build and verify a production APK. Publish its SHA-256 checksums, media source companion, notices, and verification report beside it. See [the Android guide](../apps/mobile/README.md) and [release checklist](releases/android-1.0.0.md).
 
 ## Release 2.3.0 platform availability
 
-CLI and Linux x64 are updated to 2.3.0. Windows and macOS stay on their existing unsigned 2.2.0 previews until trusted signing is configured. Public `v*` tag builds currently publish Linux only; manual Desktop release runs still build all native previews without publishing them. Windows/macOS signature checks remain in place for future public builds. Android remains separately versioned at 1.0.0.
+CLI, Linux x64, and signed Android downloads are aligned at 2.4.0. Public `v*` tag builds publish Linux only; manual Desktop release runs build all native previews without publishing them. Windows/macOS signature checks remain in place; publishing unsigned previews requires explicit approval and accurate release notices.

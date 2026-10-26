@@ -7,7 +7,7 @@ This app is developed alongside uTube's CLI and desktop app.
 
 ## Install Android
 
-Download the signed **uTube 1.0.0 APK** from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/android-v1.0.0). It supports Android 10+ on ARM64 phones and x86-64 devices. The app bundles its JavaScript and media tools; Metro and a computer are only needed for development.
+Download the signed **uTube 2.4.0 APK** from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.4.0). It supports Android 10+ on ARM64 phones and x86-64 devices. The app bundles its JavaScript and media tools; Metro and a computer are only needed for development.
 
 Android may ask you to allow installation from your browser or file manager. If replacing a development/prototype build, uninstall that build first because it uses a different signing key. Save any history you need before uninstalling; downloaded media stays in Downloads / uTube. Updates from the same production signing identity can be installed over this release.
 
@@ -81,7 +81,7 @@ For a standalone APK with JavaScript bundled:
 
 ```sh
 npm run mobile:build
-adb install -r apps/mobile/android/app/build/outputs/apk/prototype/app-prototype.apk
+adb install -r apps/mobile/android/app/build/outputs/apk/prototype/app-universal-prototype.apk
 ```
 
 The prototype uses the public development key and does not need Metro.
@@ -114,7 +114,7 @@ The prototype always uses its development identity.
 
 ## Signed production APK
 
-Run `npm run mobile:release` from the repository root. The build requires all four signing variables listed above, or the ignored local `.private/android/signing.json` file created for the maintainer. It fails if credentials are missing, bundles JavaScript, and checks for duplicate React copies. The output is `android/app/build/outputs/apk/release/app-release.apk`.
+Run `npm run mobile:release` from the repository root. The build requires all four signing variables listed above, or the ignored local `.private/android/signing.json` file created for the maintainer. It fails if credentials are missing, bundles JavaScript, and checks for duplicate React copies. The output is `android/app/build/outputs/apk/release/app-universal-release.apk`.
 
 Keep an offline backup of the permanent signing key and its credentials. Future updates must use the same key. Never commit `.private`, keystores, or passwords. See [the release checklist](../../docs/releases/android-1.0.0.md).
 
@@ -198,3 +198,8 @@ and sharing files use owned content URIs and temporary read grants.
 Android is the implemented platform. iOS still needs a native transfer/media
 backend, Xcode project integration, signing, and testing on macOS and an iPhone.
 An Android build does not verify iOS behavior.
+
+The release also builds `app-arm64-v8a-release.apk` and `app-x86_64-release.apk`
+for smaller downloads. The universal APK remains the website's main download.
+Android, CLI, and desktop now share the same version and GitHub release tag.
+Verify split APKs with `node scripts/verify-release.cjs APK_PATH ABI`.

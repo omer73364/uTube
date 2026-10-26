@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.4.0 — 2026-10-26
+
+- Offer optional, verified FFmpeg downloads for desktop and CLI without bundling it in installers or changing system settings.
+- Add startup setup prompts, cancellation/retry, clearer progress, and direct links to desktop FFmpeg settings; return Home after successful setup.
+- Add English/Arabic About screens, app version information, GitHub links, and open-source licenses.
+- Use uTube as the installed app name and align Android, desktop, and CLI versions.
+- Publish signed Android APKs for ARM64, x86-64, and a universal download, with matching source archives and verification information.
+- Improve English and Arabic wording, website typography, app screenshots, and the combined desktop/mobile/CLI header preview.
+- Keep Windows/macOS signing checks enabled. Native unsigned previews are built separately and require explicit publication approval.
+
 ## 2.3.0 — 2026-10-24
 
 - Bring the red uTube identity to the CLI, desktop, website, and Android app.

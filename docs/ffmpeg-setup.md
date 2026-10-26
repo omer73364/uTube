@@ -1,7 +1,7 @@
 # Optional FFmpeg setup
 
-These instructions describe the next release. Existing public installers still
-use a separately installed system FFmpeg.
+These instructions apply to desktop and CLI 2.4.0 or later. Earlier desktop
+versions need a separately installed system FFmpeg.
 
 ## Desktop
 

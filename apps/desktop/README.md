@@ -77,9 +77,9 @@ Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian
 
 This preview has no partial-download resume or automatic updates. Windows and macOS packages have not been verified. The desktop package is private and does not change the public CLI version.
 
-### Optional FFmpeg download (next release)
+### Optional FFmpeg download
 
-Source builds now offer **Settings → Audio & video processing → Download FFmpeg**.
+Desktop 2.4.0 offers **Settings → Audio & video processing → Download FFmpeg**.
 This downloads a pinned third-party executable directly from
 [ffmpeg-static](https://github.com/eugeneware/ffmpeg-static/releases/tag/b6.1.1),
 checks its SHA-256 digest before execution, and saves it inside uTube's user-data
@@ -94,4 +94,4 @@ The upstream release label is not a promise that every platform has the same
 FFmpeg version. For example, its Linux x64 binary reports 7.0.2. The pinned asset
 manifest must be reviewed when updating providers or adopting newer builds;
 hashes verify the selected files, not the absence of software vulnerabilities.
-The currently published desktop installers do not yet include this setup UI.
+Desktop versions before 2.4.0 do not include this setup UI.
