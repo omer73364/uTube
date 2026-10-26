@@ -7,6 +7,14 @@ async function invoke(channel: string, ...args: unknown[]) {
 }
 const api: DesktopAPI = {
   openRepository: () => invoke('utube:open-repository'),
+  installFFmpeg: () => invoke('utube:install-ffmpeg'),
+  cancelFFmpeg: () => invoke('utube:cancel-ffmpeg'),
+  openFFmpegSource: () => invoke('utube:ffmpeg-source'),
+  onFFmpegProgress: (listener) => {
+    const handler = (_event: unknown, progress: { loaded: number; total: number; done?: boolean; ffmpeg?: boolean; failed?: boolean }) => listener(progress);
+    ipcRenderer.on('utube:ffmpeg-progress', handler);
+    return () => ipcRenderer.removeListener('utube:ffmpeg-progress', handler);
+  },
   settings: () => invoke('utube:settings'),
   preferences: (patch) => invoke('utube:preferences', patch),
   chooseFolder: () => invoke('utube:choose-folder'),

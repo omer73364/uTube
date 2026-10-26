@@ -4,8 +4,8 @@ import fs from 'node:fs/promises';
 type Port = { on(name: string, handler: (event: { data: any }) => void): void; postMessage(value: unknown): void };
 const port = (process as unknown as { parentPort: Port }).parentPort;
 const controllers = new Map<string, AbortController>();
-let enginePromise: Promise<ReturnType<typeof createDownloadEngine>> | undefined;
-async function getEngine() {
+let enginePromise: Promise<any> | undefined;
+async function getEngine(ffmpegPath?: string) {
   if (!enginePromise) enginePromise = (async () => {
     let client;
     if (process.env.UTUBE_TEST_MEDIA) {
@@ -29,16 +29,16 @@ async function getEngine() {
         },
       };
     } else client = await createYouTubeClient();
-    return createDownloadEngine({ client, ffmpegPath: process.env.UTUBE_FFMPEG || 'ffmpeg' });
+    return client;
   })().catch((error) => { enginePromise = undefined; throw error; });
-  return enginePromise;
+  return createDownloadEngine({ client: await enginePromise, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
 }
 port.on('message', async ({ data: message }) => {
   if (message.type === 'cancel') { controllers.get(message.id)?.abort(); return; }
   const controller = new AbortController();
   controllers.set(message.id, controller);
   try {
-    const engine = await getEngine();
+    const engine = await getEngine(message.ffmpegPath);
     const result = message.type === 'inspect'
       ? await engine.inspect(message.url, { signal: controller.signal })
       : await engine.download({

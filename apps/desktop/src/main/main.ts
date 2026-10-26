@@ -1,14 +1,13 @@
 import { app, BrowserWindow, dialog, ipcMain, shell, nativeTheme } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import { WorkerBridge } from './bridge';
 import { DownloadQueue } from './queue.mjs';
 import { DownloadHistory } from './history.mjs';
 import { validateURL, validateRequest, validateJobID } from './validation.mjs';
 import type { DownloadRequest, Job, Preferences } from '../shared';
 import { translator, languages } from '../locales';
+import { createFFmpegManager } from '../../../../packages/core/ffmpeg.js';
 import squirrelStartup from 'electron-squirrel-startup';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
@@ -17,6 +16,9 @@ app.setName('uTube');
 // Keep existing settings and download history when updating the app name.
 app.setPath('userData', path.join(app.getPath('appData'), 'uTube Desktop'));
 if (!app.isPackaged && process.env.UTUBE_TEST_USER_DATA) app.setPath('userData', process.env.UTUBE_TEST_USER_DATA);
+const mediaTools = createFFmpegManager({ directory: app.getPath('userData') });
+let toolInstall: AbortController | undefined;
+let toolProgress: { loaded: number; total: number } | undefined;
 let window: BrowserWindow;
 let folder: string;
 let preferences: Preferences = { theme: 'system', language: 'en' };
@@ -31,7 +33,7 @@ function reportHistoryError(message: string) {
 }
 const bridge = new WorkerBridge();
 const queue = new DownloadQueue(
-  (job: any, options: any) => { const { controller, ...request } = job; return bridge.call('download', { job: request }, options); },
+  async (job: any, options: any) => { const { controller, ...request } = job; return bridge.call('download', { job: request, ffmpegPath: await mediaTools.resolve() || process.env.UTUBE_FFMPEG || 'ffmpeg' }, options); },
   (jobs: any[]) => {
     if (window && !window.isDestroyed()) window.webContents.send('utube:jobs-changed', jobs);
     if (history) void history.save(jobs).catch(() => reportHistoryError('Download history could not be saved. Check available disk space and permissions.'));
@@ -52,10 +54,8 @@ function saveSettings(patch: Partial<Preferences> & { folder?: string }) {
   writes = pending.catch(() => {});
   return pending;
 }
-async function hasFFmpeg() {
-  try { await promisify(execFile)(process.env.UTUBE_FFMPEG || 'ffmpeg', ['-version'], { timeout: 5000 }); return true; }
-  catch { return false; }
-}
+async function hasFFmpeg() { return Boolean(await mediaTools.resolve()); }
+
 function handle(name: string, fn: (...args: any[]) => any) {
   ipcMain.handle(name, async (event, ...args) => {
     if (event.sender !== window.webContents || event.senderFrame !== window.webContents.mainFrame) return { ok: false, error: 'Untrusted window.' };
@@ -94,8 +94,32 @@ async function createWindow() {
   handle('utube:open-repository', () => shell.openExternal('https://github.com/omer73364/uTube'));
   handle('utube:settings', async () => {
     const ffmpeg = await hasFFmpeg();
-    return { folder, ...appearance(), version: app.getVersion(), ffmpeg, historyError };
+    return { folder, ...appearance(), version: app.getVersion(), ffmpeg, historyError, ffmpegSetupSupported: mediaTools.supported, ffmpegInstalling: Boolean(toolInstall), ffmpegProgress: toolProgress };
   });
+  handle('utube:install-ffmpeg', async () => {
+    if (toolInstall) throw new Error('FFmpeg setup is already running.');
+    toolInstall = new AbortController();
+    toolProgress = { loaded: 0, total: 0 };
+    let lastProgress = 0;
+    let succeeded = false;
+    try {
+      await mediaTools.install({ signal: toolInstall.signal, onProgress: (progress: { loaded: number; total: number }) => {
+        toolProgress = progress;
+        if (!window.isDestroyed() && Date.now() - lastProgress > 150) {
+          lastProgress = Date.now();
+          window.webContents.send('utube:ffmpeg-progress', progress);
+        }
+      } });
+      succeeded = true;
+      return { ffmpeg: await hasFFmpeg() };
+    } finally {
+      const cancelled = toolInstall?.signal.aborted;
+      toolInstall = undefined; toolProgress = undefined;
+      if (!window.isDestroyed()) window.webContents.send('utube:ffmpeg-progress', { loaded: 0, total: 0, done: true, ffmpeg: succeeded, failed: !succeeded && !cancelled });
+    }
+  });
+  handle('utube:cancel-ffmpeg', () => toolInstall?.abort());
+  handle('utube:ffmpeg-source', () => shell.openExternal('https://github.com/eugeneware/ffmpeg-static/releases/tag/b6.1.1'));
   handle('utube:preferences', async (patch: Partial<Preferences>) => {
     if (!patch || typeof patch !== 'object' || Array.isArray(patch) || Object.keys(patch).some((key) => !['theme', 'language'].includes(key)) ||
       ('theme' in patch && !['light', 'dark', 'system'].includes(patch.theme!)) ||
@@ -149,6 +173,7 @@ async function createWindow() {
       });
       if (response !== 1) { closeRequested = false; return; }
       }
+      toolInstall?.abort();
       const deadline = setTimeout(() => bridge.dispose(), 5000);
       try {
         await queue.shutdown();

@@ -17,8 +17,12 @@ export type DownloadRequest = {
 };
 export type Preferences = { theme: 'light' | 'dark' | 'system'; language: Language };
 export type Appearance = Preferences & { resolvedTheme: 'light' | 'dark' };
-export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean; historyError?: string };
+export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean; ffmpegSetupSupported?: boolean; ffmpegInstalling?: boolean; ffmpegProgress?: { loaded: number; total: number }; historyError?: string };
 export type DesktopAPI = {
+  installFFmpeg(): Promise<{ ffmpeg: boolean }>;
+  cancelFFmpeg(): Promise<void>;
+  openFFmpegSource(): Promise<void>;
+  onFFmpegProgress(listener: (progress: { loaded: number; total: number; done?: boolean; ffmpeg?: boolean; failed?: boolean }) => void): () => void;
   settings(): Promise<Settings>;
   openRepository(): Promise<void>;
   preferences(patch: Partial<Preferences>): Promise<Appearance>;
