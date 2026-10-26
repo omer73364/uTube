@@ -133,6 +133,10 @@ class JobStore(private val context: Context, private val scope: String = "") {
       val batchId = UUID.randomUUID().toString()
       for (i in 0 until requests.length()) {
         val plan = requests.getJSONObject(i)
+        // Audio requests have no video resolution. Normalize old failed share-sheet
+        // requests too, so retrying them matches the resolver's MP3 plan.
+        val requestedQuality =
+          if (plan.getString("mode") == "mp3") "MP3" else plan.getString("requestedQuality")
         val retry = plan.optString("retryId").takeIf { it.isNotBlank() }
         val duplicate =
           (0 until data.length())
@@ -141,7 +145,7 @@ class JobStore(private val context: Context, private val scope: String = "") {
               it.optString("status") in activeStates &&
                 it.optString("videoId") == plan.getString("videoId") &&
                 it.optString("mode") == plan.getString("mode") &&
-                it.optString("requestedQuality") == plan.getString("requestedQuality") &&
+                it.optString("requestedQuality") == requestedQuality &&
                 it.optString("playlistTitle") == plan.optString("playlistTitle")
             }
         if (retry == null && duplicate != null) {
@@ -155,13 +159,13 @@ class JobStore(private val context: Context, private val scope: String = "") {
             .put("videoId", plan.getString("videoId"))
             .put("title", plan.getString("title"))
             .put("mode", plan.getString("mode"))
-            .put("requestedQuality", plan.getString("requestedQuality"))
+            .put("requestedQuality", requestedQuality)
             .put("playlistTitle", plan.optString("playlistTitle"))
             .put("playlistIndex", plan.optInt("playlistIndex", 1))
             .put("batchId", retry?.let { get(it).optString("batchId", batchId) } ?: batchId)
             .put("id", id)
             .put("status", "queued")
-            .put("quality", plan.getString("requestedQuality"))
+            .put("quality", requestedQuality)
             .put("createdAt", System.currentTimeMillis())
             .put("fraction", 0)
             .put("loaded", 0)

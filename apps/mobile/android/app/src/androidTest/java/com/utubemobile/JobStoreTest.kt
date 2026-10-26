@@ -58,6 +58,26 @@ class JobStoreTest {
   }
 
   @Test
+  fun audioQualityIsNormalizedForNewRequestsAndOldRetries() {
+    val store = JobStore(context, "test-${UUID.randomUUID()}-")
+    store.recover()
+    val audioRequest = request().put("mode", "mp3").put("requestedQuality", "720p")
+    val id = store.enqueueBatch(JSONArray().put(audioRequest)).getString(0)
+    assertEquals("MP3", store.get(id).getString("requestedQuality"))
+    assertEquals("MP3", store.get(id).getString("quality"))
+    assertEquals(
+      id,
+      store
+        .enqueueBatch(JSONArray().put(request().put("mode", "mp3").put("requestedQuality", "best")))
+        .getString(0),
+    )
+    store.edit(id) { it.put("requestedQuality", "best").put("status", "failed") }
+    store.enqueueBatch(JSONArray().put(audioRequest.put("retryId", id)))
+    assertEquals("MP3", store.get(id).getString("requestedQuality"))
+    assertEquals("queued", store.get(id).getString("status"))
+  }
+
+  @Test
   fun invalidBatchNeverAddsHalfAPlaylist() {
     val store = JobStore(context, "test-${UUID.randomUUID()}-")
     store.recover()
