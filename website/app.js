@@ -86,7 +86,7 @@ const arabic = {
   themeLight: "التبديل إلى الوضع الفاتح",
   downloadFor: "تنزيل لنظام",
   screenshot:
-    "مكتبة uTube لسطح المكتب بالعربية مع بطاقات الفيديو والثيم الأحمر",
+    "مكتبة uTube لسطح المكتب بالعربية بالوضع الفاتح مع بطاقات الفيديو والثيم الأحمر",
   cliScreenshot:
     "جلسة حقيقية في سطر الأوامر تعرض معلومات الفيديو وإطارات حمراء وتنزيلًا مكتملًا",
   androidEyebrow: "uTube لأندرويد",
@@ -100,7 +100,7 @@ const arabic = {
   androidDownload: "تنزيل لأندرويد",
   androidRequirements: "الإصدار 1.0.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
   androidNotes: "التثبيت والتحقق من الملفات وملاحظات الإصدار ↗",
-  mobileCaption: "من تطبيق أندرويد الموقّع",
+  mobileCaption: "لقطة من هاتف أندرويد",
   mobileScreenshot:
     "واجهة تطبيق uTube لأندرويد مع معاينة الفيديو واختيار الصيغة والدقة",
 };
@@ -254,10 +254,7 @@ function renderLanguage() {
   for (const node of document.querySelectorAll("[data-i18n-alt]"))
     node.alt = t(node.dataset.i18nAlt);
   const mobileImage = document.querySelector("#mobile-image");
-  mobileImage.src =
-    language === "ar"
-      ? "./assets/mobile-ar-dark.png"
-      : "./assets/mobile-light.png";
+  mobileImage.src = language === "ar" ? "./assets/mobile-device-ar.jpg" : "./assets/mobile-device.jpg";
   mobileImage.alt = t("mobileScreenshot");
   const button = document.querySelector("#language");
   button.textContent = language === "en" ? "العربية" : "English";
@@ -267,10 +264,7 @@ function renderLanguage() {
     language === "en" ? "Switch to Arabic" : "التبديل إلى الإنجليزية",
   );
   const image = document.querySelector("#desktop-image");
-  image.src =
-    language === "en"
-      ? "./assets/desktop-light.png"
-      : "./assets/desktop-ar-dark.png";
+  image.src = language === "ar" ? "./assets/desktop-ar-light.png" : "./assets/desktop-light.png";
   image.alt = t("screenshot");
   document.title =
     language === "en"

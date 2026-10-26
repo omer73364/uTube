@@ -3,9 +3,12 @@
 These images show the current source checkout, not necessarily the older
 published CLI/desktop 2.2.0 packages.
 
-- `desktop-light.png` and `desktop-ar-dark.png`: the real desktop renderer with
+- `desktop-light.png`, `desktop-ar-light.png`, and `desktop-ar-dark.png`: the real desktop renderer with
   an explicitly illustrative saved library, captured using its renderer test
   harness. No private download history is included.
+- `mobile-device.jpg` and `mobile-device-ar.jpg`: original English and Arabic
+  light-mode screenshots supplied by the maintainer from an Android phone; used
+  by the website without cropping or recoloring.
 - `mobile-light.png` and `mobile-ar-dark.png`: unedited screenshots of the signed
   Android 1.0.0 APK on an Android 15 emulator, previewing the public video
   `jNQXAC9IVRw`. English/light and Arabic/dark show the actual app layouts.

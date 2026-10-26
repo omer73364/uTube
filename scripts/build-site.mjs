@@ -8,9 +8,9 @@ for (const file of ["index.html", "style.css", "app.js"])
   await fs.copyFile(path.join(root, "website", file), path.join(output, file));
 for (const file of [
   "desktop-light.png",
-  "desktop-ar-dark.png",
-  "mobile-light.png",
-  "mobile-ar-dark.png",
+  "desktop-ar-light.png",
+  "mobile-device.jpg",
+  "mobile-device-ar.jpg",
   "cli-download.png",
 ])
   await fs.copyFile(
