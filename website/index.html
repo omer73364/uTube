@@ -17,6 +17,9 @@
     <meta property="og:type" content="website" />
     <title>uTube — Video & audio downloader</title>
     <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./style.css" />
     <script src="./app.js" defer></script>
   </head>
@@ -232,15 +235,15 @@
           >
             <img
               id="mobile-image"
-              src="./assets/mobile-light.png"
-              width="720"
-              height="1280"
+              src="./assets/mobile-device.jpg"
+              width="1280"
+              height="2800"
               loading="lazy"
               alt="The signed uTube Android app previewing a real video, with format and quality controls"
             />
           </button>
           <span class="phone-label" data-i18n="mobileCaption"
-            >From the signed Android app</span
+            >Captured on an Android phone</span
           >
         </div>
         <div class="mobile-copy">
@@ -330,17 +333,7 @@
           <p class="requirements" data-i18n="cliRequirements">
             Requires Node.js 20+ and FFmpeg for MP3 conversion and HD merging.
           </p>
-          <a class="text-link" href="https://github.com/omer73364/uTube#-cli"
-            ><span data-i18n="cliDocs">Command reference</span
-            ><span aria-hidden="true">↗</span></a
-          >
-        </div>
-        <div class="terminal" dir="ltr">
-          <div class="terminal-title">
-            <div aria-hidden="true"><i></i><i></i><i></i></div>
-            <span>uTube / terminal</span>
-          </div>
-          <div class="terminal-body">
+          <div class="cli-install" dir="ltr">
             <div class="command-line">
               <span aria-hidden="true">$</span
               ><code id="install-command">npm install -g utube-cli@latest</code
@@ -352,6 +345,19 @@
                 <span data-i18n="copy">Copy</span>
               </button>
             </div>
+            <div class="command-line">
+              <span aria-hidden="true">$</span><code>utube</code>
+            </div>
+          </div>
+          <a class="text-link" href="https://github.com/omer73364/uTube#-cli"
+            ><span data-i18n="cliDocs">Command reference</span
+            ><span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="terminal" dir="ltr">
+          <div class="terminal-title">
+            <div aria-hidden="true"><i></i><i></i><i></i></div>
+            <span>uTube / terminal</span>
           </div>
           <button
             class="cli-image-button screenshot-button"

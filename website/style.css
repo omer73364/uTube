@@ -187,7 +187,6 @@ h1 .accent {
   font-size: clamp(26px, 2.6vw, 35px);
   letter-spacing: -1.3px;
   line-height: 1.25;
-  margin-top: 12px;
   color: var(--text);
 }
 .hero-description {
@@ -547,8 +546,14 @@ h3 {
 .terminal-title i:nth-child(3) {
   background: #78a78d;
 }
-.terminal-body {
-  padding: 18px 18px 0;
+.cli-install {
+  margin-block: 22px;
+  padding: 16px;
+  background: #211a1b;
+  color: #fff2ed;
+  border: 1px solid #49373b;
+  border-radius: 14px;
+  text-align: left;
 }
 .command-line {
   display: flex;
@@ -579,7 +584,6 @@ h3 {
 }
 .cli-screenshot {
   width: 100%;
-  margin-top: 12px;
 }
 .terminal-footnote {
   padding: 12px 18px;
@@ -820,7 +824,7 @@ footer > div {
     font-size: 9px;
     gap: 6px;
   }
-  .terminal-body {
+  .cli-install {
     padding-inline: 12px;
   }
   #copy-command {
@@ -893,4 +897,16 @@ footer > div {
   margin-inline: auto;
   object-fit: contain;
   border-radius: 10px;
+}
+
+:lang(ar) {
+  font-family: "Noto Sans Arabic", Tahoma, Arial, sans-serif;
+  letter-spacing: 0;
+}
+html:lang(ar) body {
+  line-height: 1.85;
+}
+
+.command-line + .command-line {
+  margin-top: 14px;
 }
