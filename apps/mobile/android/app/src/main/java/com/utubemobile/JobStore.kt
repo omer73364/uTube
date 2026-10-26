@@ -130,6 +130,7 @@ class JobStore(private val context: Context, private val scope: String = "") {
       var active =
         (0 until data.length()).count { data.getJSONObject(it).optString("status") in activeStates }
       val ids = JSONArray()
+      val batchId = UUID.randomUUID().toString()
       for (i in 0 until requests.length()) {
         val plan = requests.getJSONObject(i)
         val retry = plan.optString("retryId").takeIf { it.isNotBlank() }
@@ -157,6 +158,7 @@ class JobStore(private val context: Context, private val scope: String = "") {
             .put("requestedQuality", plan.getString("requestedQuality"))
             .put("playlistTitle", plan.optString("playlistTitle"))
             .put("playlistIndex", plan.optInt("playlistIndex", 1))
+            .put("batchId", retry?.let { get(it).optString("batchId", batchId) } ?: batchId)
             .put("id", id)
             .put("status", "queued")
             .put("quality", plan.getString("requestedQuality"))

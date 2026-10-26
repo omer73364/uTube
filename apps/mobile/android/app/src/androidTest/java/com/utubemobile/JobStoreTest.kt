@@ -38,6 +38,26 @@ class JobStoreTest {
   }
 
   @Test
+  fun playlistBatchesStaySeparateAndRetriesKeepTheirBatch() {
+    val store = JobStore(context, "test-${UUID.randomUUID()}-")
+    store.recover()
+    fun item(video: String) = request(video).put("playlistTitle", "My playlist")
+    val ids = store.enqueueBatch(JSONArray().put(item("jNQXAC9IVRw")).put(item("XIdA1AZ4zYI")))
+    val first = ids.getString(0)
+    val second = ids.getString(1)
+    val batch = store.get(first).getString("batchId")
+    assertTrue(batch.isNotBlank())
+    assertEquals(batch, store.get(second).getString("batchId"))
+    store.terminal(first, "saved")
+    store.terminal(second, "failed")
+    store.enqueueBatch(JSONArray().put(item("XIdA1AZ4zYI").put("retryId", second)))
+    assertEquals(batch, store.get(second).getString("batchId"))
+    store.terminal(second, "saved")
+    val later = store.enqueueBatch(JSONArray().put(item("jNQXAC9IVRw"))).getString(0)
+    assertNotEquals(batch, store.get(later).getString("batchId"))
+  }
+
+  @Test
   fun invalidBatchNeverAddsHalfAPlaylist() {
     val store = JobStore(context, "test-${UUID.randomUUID()}-")
     store.recover()
