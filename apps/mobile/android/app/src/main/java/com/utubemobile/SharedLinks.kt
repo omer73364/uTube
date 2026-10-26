@@ -5,7 +5,7 @@ import android.content.Intent
 import java.net.URI
 
 object SharedLinks {
-  fun accept(context: Context, intent: Intent?): String? {
+  fun parse(intent: Intent?): String? {
     val text =
       when (intent?.action) {
         Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)
@@ -27,6 +27,11 @@ object SharedLinks {
           listOf("youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com", "youtu.be")
     )
       return null
+    return match
+  }
+
+  fun accept(context: Context, intent: Intent?): String? {
+    val match = parse(intent) ?: return null
     context
       .getSharedPreferences("utube-mobile", Context.MODE_PRIVATE)
       .edit()

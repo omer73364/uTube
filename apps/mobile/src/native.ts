@@ -52,6 +52,7 @@ interface Bridge {
     language: "en" | "ar",
     theme: "light" | "dark" | "system",
   ): Promise<void>;
+  closeShare(): void;
   consumeSharedLink(): Promise<string | null>;
   licenses(): Promise<string>;
 }
@@ -82,6 +83,7 @@ export const downloads = {
   settings: () => bridge.settings(),
   saveSettings: (language: "en" | "ar", theme: "light" | "dark" | "system") =>
     bridge.saveSettings(language, theme),
+  closeShare: () => bridge.closeShare(),
   consumeSharedLink: () => bridge.consumeSharedLink(),
   licenses: () => bridge.licenses(),
 };

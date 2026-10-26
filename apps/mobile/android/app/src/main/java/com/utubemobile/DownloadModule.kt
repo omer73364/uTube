@@ -274,6 +274,13 @@ class DownloadModule(private val context: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun closeShare() {
+    context.runOnUiQueueThread {
+      (context.currentActivity as? ShareActivity)?.finish()
+    }
+  }
+
+  @ReactMethod
   fun consumeSharedLink(promise: Promise) {
     val value = prefs.getString("shared-link", null)
     prefs.edit().remove("shared-link").apply()

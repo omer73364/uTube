@@ -218,3 +218,12 @@ silently installing an incompatible debug-signed app.
 Prototype APKs still use the public development key. They cannot replace official
 builds. Keep the private release identity local; do not distribute debug builds
 signed with it as public releases.
+
+### Quick downloads from other apps
+
+In YouTube, choose **Share → uTube** to open a compact sheet over the current app.
+Choose video or MP3 audio, select quality, and add the download. The sheet closes
+once the queue accepts it; downloads continue in the background with notification
+progress. Shared playlists queue up to 1,000 videos in their original order.
+The sheet follows the saved language and theme. Closing it before adding a
+download leaves the queue unchanged; lookup failures offer a retry.
