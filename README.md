@@ -426,3 +426,11 @@ instructions are in [THIRD_PARTY_NOTICES.md](apps/mobile/THIRD_PARTY_NOTICES.md)
 **If uTube saved you time, drop it a ⭐. It really helps!**
 
 </div>
+
+### 🧰 Optional FFmpeg setup (next release)
+
+Desktop source builds offer **Settings → Audio & video processing → Download FFmpeg**.
+For the CLI, run `utube --install-ffmpeg`; interactive MP3 and HD downloads also
+offer setup when it is missing. Downloads are verified and saved for uTube only,
+without administrator access or system changes. Existing public installers do
+not include this option yet. See the [setup guide](docs/ffmpeg-setup.md).

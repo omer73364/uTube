@@ -69,7 +69,8 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
-    "docs/distribution.md"
+    "docs/distribution.md",
+    "docs/ffmpeg-setup.md"
   ],
   "workspaces": [
     "apps/*",

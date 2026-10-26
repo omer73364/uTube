@@ -73,6 +73,25 @@ The packaged check copies the actual installed app outside the repository and st
 npm run desktop:make
 ```
 
-Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian packaging needs `dpkg` and `fakeroot`. Nothing is uploaded by this command. FFmpeg remains a system dependency.
+Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian packaging needs `dpkg` and `fakeroot`. Nothing is uploaded by this command. The DEB still declares FFmpeg as a system dependency; source builds also offer the optional per-user download described below.
 
 This preview has no partial-download resume or automatic updates. Windows and macOS packages have not been verified. The desktop package is private and does not change the public CLI version.
+
+### Optional FFmpeg download (next release)
+
+Source builds now offer **Settings → Audio & video processing → Download FFmpeg**.
+This downloads a pinned third-party executable directly from
+[ffmpeg-static](https://github.com/eugeneware/ffmpeg-static/releases/tag/b6.1.1),
+checks its SHA-256 digest before execution, and saves it inside uTube's user-data
+folder with the upstream license and build/source notes. Nothing is bundled in
+installers, added to PATH, or installed with administrator privileges. Existing
+system FFmpeg takes priority; `UTUBE_FFMPEG` remains an authoritative override.
+Downloads can be cancelled and retried. Newly started jobs use the tool without
+restarting the app. Windows x64, macOS x64/ARM64, and Linux x64/ARM64 are supported;
+other targets retain manual installation.
+
+The upstream release label is not a promise that every platform has the same
+FFmpeg version. For example, its Linux x64 binary reports 7.0.2. The pinned asset
+manifest must be reviewed when updating providers or adopting newer builds;
+hashes verify the selected files, not the absence of software vulnerabilities.
+The currently published desktop installers do not yet include this setup UI.
