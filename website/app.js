@@ -1,4 +1,4 @@
-const desktopVersions = { linux: "2.3.0", windows: "2.2.0", macos: "2.2.0" };
+const desktopVersions = { linux: "2.4.0", windows: "2.2.0", macos: "2.2.0" };
 const arabic = {
   skip: "انتقل إلى المحتوى",
   home: "uTube — الصفحة الرئيسية",
@@ -11,7 +11,7 @@ const arabic = {
   screenshotDialog: "صورة التطبيق",
   closeScreenshot: "إغلاق الصورة",
   navCli: "سطر الأوامر",
-  release: "متاح الآن لأندرويد · 1.0.0",
+  release: "متاح الآن لأندرويد · 2.4.0",
   heroFirst: "uTube",
   heroSecond: "لتنزيل الفيديو والصوت",
   heroDescription:
@@ -33,7 +33,7 @@ const arabic = {
     "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
   downloadTitle: "تنزيل uTube لسطح المكتب",
   downloadIntro: "اختر نظام جهازك، ثم نزّل ملف التثبيت المناسب.",
-  versionLine: "الإصدار 2.3.0 · سطح المكتب",
+  versionLine: "الإصدار 2.4.0 · سطح المكتب",
   releaseNotes: "ملاحظات الإصدار",
   osLabel: "نظام التشغيل",
   unsigned:
@@ -43,7 +43,7 @@ const arabic = {
   cliIntro:
     "ثبّت النسخة باستخدام npm، ثم شغّل utube لفتح القائمة التفاعلية. يمكنك أيضًا إدخال رابط الفيديو والدقة المطلوبة مباشرة في الأمر.",
   cliRequirements:
-    "تحتاج إلى Node.js 20 أو أحدث، وإلى FFmpeg لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+    "تحتاج إلى Node.js 20 أو أحدث. يعرض uTube تنزيل FFmpeg لحفظ MP3 والفيديو بدقة عالية عند الحاجة.",
   cliDocs: "دليل الأوامر",
   copyLabel: "نسخ أمر التثبيت",
   copy: "نسخ",
@@ -55,7 +55,7 @@ const arabic = {
     "يحاول uTube التنزيل بالدقة التي اخترتها أولًا. إذا تعذّر ذلك، ينتقل إلى أفضل دقة متاحة أقل من المطلوبة، ويعرض دقة الملف المحفوظ.",
   faqTwoTitle: "هل أحتاج إلى تثبيت برامج إضافية؟",
   faqTwoText:
-    "يعمل تطبيق أندرويد مباشرة دون برامج إضافية. لا يحتاج تطبيق سطح المكتب إلى Node.js أو npm. تثبّت حزمة Debian برنامج FFmpeg تلقائيًا عبر apt. في Windows وmacOS ونسخ Linux المحمولة، تحتاج إلى تثبيت FFmpeg بنفسك لتحويل الصوت إلى MP3 ودمج الصوت مع الفيديو عالي الدقة.",
+    "يعمل تطبيق أندرويد دون برامج إضافية. في نسخة سطح المكتب 2.4.0، يمكنك تنزيل FFmpeg من الإعدادات لحفظ MP3 والفيديو بدقة عالية. يثبّته ملف Debian تلقائيًا. تحتاج نسخ سطح المكتب الأقدم إلى تثبيته يدويًا.",
   faqThreeTitle: "هل تبقى الملفات والسجل بعد إغلاق التطبيق؟",
   faqThreeText:
     "تبقى الملفات في المجلد الذي اخترته، ويحتفظ تطبيقا سطح المكتب وأندرويد بسجل التنزيلات على جهازك. يمكنك إعادة محاولة التنزيلات المتوقفة يدويًا؛ وتبدأ كل محاولة من البداية.",
@@ -76,7 +76,7 @@ const arabic = {
   windowsDependency:
     "لحفظ الصوت بصيغة MP3 وتنزيل الفيديو بدقة عالية، ثبّت البرنامج المجاني FFmpeg. يوضح دليل التثبيت طريقة إعداده.",
   linuxDependency:
-    "يثبّت ملف Debian / Ubuntu برنامج FFmpeg تلقائيًا. عند استخدام AppImage أو ZIP، ثبّت FFmpeg بشكل منفصل لحفظ MP3 وتنزيل الفيديو بدقة عالية.",
+    "يثبّت ملف Debian / Ubuntu برنامج FFmpeg تلقائيًا. عند استخدام AppImage أو ZIP، اختر تنزيل FFmpeg من الإعدادات لحفظ MP3 والفيديو بدقة عالية.",
   macosDependency:
     "اختر Apple Silicon لأجهزة Mac بمعالج من سلسلة M، أو Intel للأجهزة بمعالج Intel. ثبّت البرنامج المجاني FFmpeg لحفظ MP3 وتنزيل الفيديو بدقة عالية.",
   copied: "تم النسخ",
@@ -100,7 +100,7 @@ const arabic = {
   androidDownload: "تنزيل لأندرويد",
   androidUniversal: "نسخة لجميع الأجهزة المدعومة. تريد ملفًا أصغر؟",
   androidOtherVersions: "عرض النسخ الأخرى ←",
-  androidRequirements: "الإصدار 1.0.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
+  androidRequirements: "الإصدار 2.4.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
   androidNotes: "التثبيت والتحقق من الملفات وملاحظات الإصدار ↗",
   mobileCaption: "لقطة من هاتف أندرويد",
   mobileScreenshot:
@@ -119,7 +119,7 @@ const english = {
   windowsDependency:
     "To save MP3 audio and higher-quality videos, install the free FFmpeg tool. Follow the installation guide to set it up.",
   linuxDependency:
-    "The Debian / Ubuntu installer also installs FFmpeg. For AppImage or ZIP, install FFmpeg separately to save MP3 audio and higher-quality videos.",
+    "The Debian / Ubuntu installer also installs FFmpeg. In AppImage or ZIP, use Download FFmpeg in Settings for MP3 audio and HD video.",
   macosDependency:
     "Choose Apple Silicon for Macs with an M-series chip, or Intel for Intel-based Macs. Install the free FFmpeg tool for MP3 audio and higher-quality videos.",
   copied: "Copied!",
@@ -194,7 +194,7 @@ const formats = {
 function renderDownloads() {
   document.querySelector('[data-i18n="versionLine"]').textContent = t(
     "versionLine",
-  ).replace("2.3.0", desktopVersions[platform]);
+  ).replace("2.4.0", desktopVersions[platform]);
   document.querySelector("#desktop-release-notes").href =
     `https://github.com/omer73364/uTube/releases/tag/v${desktopVersions[platform]}`;
   const links = document.querySelector("#download-links");

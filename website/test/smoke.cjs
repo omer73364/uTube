@@ -73,11 +73,11 @@ const os = require("node:os");
     assert.equal(await page.locator("#download-links a").count(), 3);
     assert.match(
       await page.locator("#download-links a").first().getAttribute("href"),
-      /v2\.3\.0\/uTube-Desktop-2\.3\.0-linux/,
+      /v2\.4\.0\/uTube-Desktop-2\.4\.0-linux/,
     );
     assert.match(
       await page.locator("#desktop-release-notes").getAttribute("href"),
-      /v2\.3\.0$/,
+      /v2\.4\.0$/,
     );
     await page.getByRole("tab", { name: "Windows", exact: true }).click();
     assert.equal(await page.locator("#download-links a").count(), 2);
@@ -161,7 +161,7 @@ const os = require("node:os");
     }
     assert.match(
       await page.locator("#android-download").getAttribute("href"),
-      /android-v1\.0\.0\/uTube-android-1\.0\.0\.apk$/,
+      /v2\.4\.0\/uTube-android-2\.4\.0\.apk$/,
     );
     for (const id of ["desktop-image", "mobile-image", "cli-image"]) {
       await page.locator(`[data-image="${id}"]`).click();
