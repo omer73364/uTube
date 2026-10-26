@@ -63,9 +63,16 @@ class DownloadService : Service() {
         }
   }
 
-  private fun notification(title: String, stage: String, processing: Boolean = false) {
-    val arabic =
-      getSharedPreferences("utube-mobile", MODE_PRIVATE).getString("language", "en") == "ar"
+  private fun arabic() =
+    getSharedPreferences("utube-mobile", MODE_PRIVATE).getString("language", "en") == "ar"
+
+  private fun notification(
+    title: String,
+    stage: String,
+    processing: Boolean = false,
+    fraction: Double? = null,
+  ) {
+    val arabic = arabic()
     val translated =
       if (arabic)
         mapOf(
@@ -74,8 +81,11 @@ class DownloadService : Service() {
           "Downloading" to "جارٍ التنزيل",
           "Converting audio" to "جارٍ تحويل الصوت",
           "Finishing video" to "جارٍ تجهيز الفيديو",
+          "Saving file" to "جارٍ حفظ الملف",
         )[stage] ?: stage
       else stage
+    val percent = fraction?.let { (it.coerceIn(0.0, 1.0) * 100).toInt() }
+    val text = if (percent != null) "$translated · $percent%" else translated
     val pending =
       PendingIntent.getActivity(
         this,
@@ -87,7 +97,10 @@ class DownloadService : Service() {
       Notification.Builder(this, "downloads")
         .setSmallIcon(R.drawable.ic_utube)
         .setContentTitle(title.take(120))
-        .setContentText(translated)
+        .setContentText(text)
+        .setProgress(100, percent ?: 0, percent == null)
+        .setCategory(Notification.CATEGORY_PROGRESS)
+        .setShowWhen(false)
         .setContentIntent(pending)
         .setOngoing(true)
         .setOnlyAlertOnce(true)
@@ -123,7 +136,7 @@ class DownloadService : Service() {
         }
       return START_NOT_STICKY
     }
-    notification("uTube", "Preparing downloads")
+    if (!busy) notification("uTube", "Preparing downloads")
     drain()
     return START_NOT_STICKY
   }
@@ -179,6 +192,7 @@ class DownloadService : Service() {
       var lastError: Exception? = null
       var highWater = 0.0
       var lastUpdate = 0L
+      var lastNotification = 0L
       store.edit(id) { it.put("status", "running") }
       notification(job.getString("title"), "Downloading")
       for (index in 0 until candidates.length()) {
@@ -211,6 +225,14 @@ class DownloadService : Service() {
                       .put("fraction", highWater)
                       .put("loaded", completed + loaded)
                       .put("total", total)
+                  }
+                  if (lastUpdate - lastNotification >= 1000) {
+                    lastNotification = lastUpdate
+                    notification(
+                      job.getString("title"),
+                      "Downloading",
+                      fraction = if (denominator > 0) highWater else null,
+                    )
                   }
                 }
               },
@@ -256,6 +278,7 @@ class DownloadService : Service() {
       val result = output ?: throw (lastError ?: IllegalStateException("NO_FORMATS"))
       if (isCancelled()) throw InterruptedException("CANCELLED")
       store.edit(id) { it.put("status", "publishing").put("fraction", 0.98) }
+      notification(job.getString("title"), "Saving file")
       val mode = job.getString("mode")
       val extension = if (mode == "mp3") "mp3" else "mp4"
       val group =
