@@ -150,7 +150,7 @@ See the [desktop guide](apps/desktop/README.md) for recovery behavior and develo
 **Download, install, and go.** Get the signed [Android APK](https://github.com/omer73364/uTube/releases/tag/v2.4.0) for Android 10 or newer. The main APK supports both ARM64 and x86-64; smaller
 CPU-specific APKs are available on the same release page. No computer or Metro server is needed. iOS is not implemented.
 
-Allow your browser or file manager to install the APK when Android asks. If you used a development build, its signing key differs: uninstall it first after saving anything you need from its history. Downloaded files remain in Downloads / uTube.
+Allow your browser or file manager to install the APK when Android asks. If you used an older prototype signed with the development key, uninstall it first after saving anything you need from its history. Downloaded files remain in Downloads / uTube.
 
 - 🏠 **Home, Library, and Downloads** with thumbnail cards, rounded navigation,
   search, status filters, and saved playlist groups.
