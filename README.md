@@ -416,7 +416,7 @@ See the [changelog](CHANGELOG.md) for published release history.
 uTube is intended for content you have permission to download. Respect the
 creator's rights and the platform's terms.
 
-[MIT](LICENSE) © Omer Anwar. Android media-library notices and redistribution
+[MIT](LICENSE) © Omar Anwar. Android media-library notices and redistribution
 instructions are in [THIRD_PARTY_NOTICES.md](apps/mobile/THIRD_PARTY_NOTICES.md).
 
 <div align="center">

@@ -47,7 +47,7 @@
     "videos",
     "youtube-downloader"
   ],
-  "author": "OMER ANWAR",
+  "author": "OMAR ANWAR",
   "license": "MIT",
   "dependencies": {
     "cli-progress": "^3.12.0",
