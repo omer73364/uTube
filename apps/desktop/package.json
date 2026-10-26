@@ -1,6 +1,6 @@
 {
   "name": "@utube/desktop",
-  "productName": "uTube Desktop",
+  "productName": "uTube",
   "version": "2.3.0",
   "description": "Videos, playlists and audio in a desktop app",
   "private": true,

@@ -13,7 +13,9 @@ import squirrelStartup from 'electron-squirrel-startup';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
 declare const MAIN_WINDOW_VITE_NAME: string;
-app.setName('uTube Desktop');
+app.setName('uTube');
+// Keep existing settings and download history when updating the app name.
+app.setPath('userData', path.join(app.getPath('appData'), 'uTube Desktop'));
 if (!app.isPackaged && process.env.UTUBE_TEST_USER_DATA) app.setPath('userData', process.env.UTUBE_TEST_USER_DATA);
 let window: BrowserWindow;
 let folder: string;
@@ -76,7 +78,7 @@ async function createWindow() {
   nativeTheme.themeSource = preferences.theme;
   window = new BrowserWindow({
     width: 1240, height: 860, minWidth: 850, minHeight: 640, backgroundColor: nativeTheme.shouldUseDarkColors ? '#17191d' : '#f7f8fa',
-    title: 'uTube Desktop', autoHideMenuBar: true,
+    title: 'uTube', autoHideMenuBar: true,
     icon: app.isPackaged ? path.join(process.resourcesPath, 'icon.png') : path.join(app.getAppPath(), 'assets/icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true },
   });

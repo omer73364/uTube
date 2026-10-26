@@ -315,7 +315,7 @@ class DownloadModule(private val context: ReactApplicationContext) :
           }
           .joinToString("\n\n────────────────\n\n")
       promise.resolve(
-        "uTube Mobile · MIT\nFFmpegKit Audio 8.1.9 · LGPL-3.0\nSource: https://github.com/ffmpegkit-maintained/ffmpeg/tree/469e560b89a9ba4cab357d2c306c676b0c611745\n\n" +
+        "uTube · MIT\nFFmpegKit Audio 8.1.9 · LGPL-3.0\nSource: https://github.com/ffmpegkit-maintained/ffmpeg/tree/469e560b89a9ba4cab357d2c306c676b0c611745\n\n" +
           text
       )
     } catch (e: Exception) {

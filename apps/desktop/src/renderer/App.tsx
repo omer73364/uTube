@@ -119,7 +119,7 @@ export default function App() {
   }, []);
   useEffect(() => {
     if (!window.utube) {
-      setError("Open this interface in uTube Desktop to use downloads.");
+      setError("Open this interface in uTube to use downloads.");
       return;
     }
     let mounted = true;
@@ -903,7 +903,7 @@ export default function App() {
             <div className="settings-section">
               <h2>{t("about")}</h2>
               <p>
-                <bdi>uTube Desktop {settings?.version || "0.1.0"}</bdi> ·{" "}
+                <bdi>uTube {settings?.version || "0.1.0"}</bdi> ·{" "}
                 {t("aboutDescription")}
               </p>
             </div>

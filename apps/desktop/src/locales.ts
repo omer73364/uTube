@@ -117,7 +117,7 @@ export const en = {
   dismissError: "Dismiss error",
   dismissNotice: "Dismiss notification",
   genericError: "Something went wrong. Please try again.",
-  desktopOnly: "Open this interface in uTube Desktop to use downloads.",
+  desktopOnly: "Open this interface in uTube to use downloads.",
   downloaded: "Downloaded",
   skipped: "Already downloaded",
   waiting: "Waiting in queue",
