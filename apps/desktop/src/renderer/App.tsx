@@ -27,6 +27,7 @@ import {
   Library,
   Monitor,
 } from "lucide-react";
+import appLicense from "../../../../LICENSE?raw";
 import JobCard from "./JobCard";
 import Thumbnail from "./Thumbnail";
 import { languages, translator, localizeError } from "../locales";
@@ -67,6 +68,7 @@ export default function App() {
     "files",
   );
   const [playlist, setPlaylist] = useState<string>();
+  const aboutDialog = useRef<HTMLDialogElement>(null);
   const urlInput = useRef<HTMLInputElement>(null);
   const pageContent = useRef<HTMLElement>(null);
   const language = settings?.language || "en";
@@ -902,10 +904,24 @@ export default function App() {
             </div>
             <div className="settings-section">
               <h2>{t("about")}</h2>
-              <p>
-                <bdi>uTube {settings?.version || "0.1.0"}</bdi> ·{" "}
-                {t("aboutDescription")}
-              </p>
+              <button
+                className="about-entry"
+                onClick={() => aboutDialog.current?.showModal()}
+              >
+                <img
+                  src={new URL("../../assets/icon.svg", import.meta.url).href}
+                  alt=""
+                  width="42"
+                  height="42"
+                />
+                <span>
+                  <strong>{t("aboutApp")}</strong>
+                  <small>
+                    {t("versionLabel")} <bdi>{settings?.version}</bdi>
+                  </small>
+                </span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </button>
             </div>
           </section>
         )}
@@ -927,6 +943,57 @@ export default function App() {
           </span>
         </footer>
       </main>
+      <dialog
+        ref={aboutDialog}
+        className="about-dialog"
+        aria-labelledby="about-title"
+      >
+        <form method="dialog" className="about-dialog-header">
+          <h2 id="about-title">{t("aboutApp")}</h2>
+          <button className="icon-button" aria-label={t("close")}>
+            <X size={20} />
+          </button>
+        </form>
+        <div className="about-identity">
+          <img
+            src={new URL("../../assets/icon.svg", import.meta.url).href}
+            alt=""
+            width="76"
+            height="76"
+          />
+          <h3>uTube</h3>
+          <p>
+            {t("versionLabel")} <bdi>{settings?.version}</bdi>
+          </p>
+        </div>
+        <p className="about-summary">{t("appSummary")}</p>
+        <p className="about-credit">{t("freeOpenSource")}</p>
+        <button
+          className="about-github"
+          onClick={() =>
+            void window.utube
+              .openRepository()
+              .catch((error) => setError(String(error)))
+          }
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.2-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.5 4.9 18.5 5.2 18.5 5.2c.7 1.7.3 2.9.2 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.4c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" />
+          </svg>
+          <span>{t("repository")}</span>
+          <ArrowRight size={16} aria-hidden="true" />
+        </button>
+        <details className="about-licenses">
+          <summary>{t("openSourceLicenses")}</summary>
+          <p>{t("desktopLicenseNote")}</p>
+          <pre dir="ltr">{appLicense}</pre>
+        </details>
+      </dialog>
       <nav aria-label={t("navigation")}>
         {navigation.map(({ id, label, icon: Icon }) => (
           <button

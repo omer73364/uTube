@@ -20,6 +20,7 @@ export type Appearance = Preferences & { resolvedTheme: 'light' | 'dark' };
 export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean; historyError?: string };
 export type DesktopAPI = {
   settings(): Promise<Settings>;
+  openRepository(): Promise<void>;
   preferences(patch: Partial<Preferences>): Promise<Appearance>;
   onTheme(listener: (dark: boolean) => void): () => void;
   onHistoryError(listener: (message: string) => void): () => void;

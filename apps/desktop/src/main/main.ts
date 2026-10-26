@@ -91,6 +91,7 @@ async function createWindow() {
     window.webContents.send('utube:theme-changed', nativeTheme.shouldUseDarkColors);
   });
   const appearance = () => ({ ...preferences, resolvedTheme: nativeTheme.shouldUseDarkColors ? 'dark' as const : 'light' as const });
+  handle('utube:open-repository', () => shell.openExternal('https://github.com/omer73364/uTube'));
   handle('utube:settings', async () => {
     const ffmpeg = await hasFFmpeg();
     return { folder, ...appearance(), version: app.getVersion(), ffmpeg, historyError };

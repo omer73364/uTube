@@ -6,6 +6,7 @@ async function invoke(channel: string, ...args: unknown[]) {
   return response.value;
 }
 const api: DesktopAPI = {
+  openRepository: () => invoke('utube:open-repository'),
   settings: () => invoke('utube:settings'),
   preferences: (patch) => invoke('utube:preferences', patch),
   chooseFolder: () => invoke('utube:choose-folder'),

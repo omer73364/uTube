@@ -101,6 +101,16 @@ export const en = {
   encoderHelp:
     "FFmpeg is needed for MP3 conversion and merging video and audio. Install it, then restart the app.",
   about: "About",
+  aboutApp: "About uTube",
+  versionLabel: "Version",
+  appSummary:
+    "Keep your favorite YouTube videos and music close. Save a video or a whole playlist, then watch or listen whenever you want—even offline.",
+  appCredit: "Free and open source · Created by OMER ANWAR",
+  freeOpenSource: "Free and open source",
+  repository: "uTube on GitHub",
+  openSourceLicenses: "Open-source licenses",
+  desktopLicenseNote:
+    "uTube uses the MIT license below. Electron and Chromium notices are distributed in the installation folder as LICENSE and LICENSES.chromium.html. Dependency information is available in the GitHub repository. FFmpeg is installed separately and has its own license.",
   aboutDescription:
     "Videos and playlist downloads stay in your history after closing. Interrupted downloads can be retried from the beginning.",
   interrupted: "Interrupted",
@@ -252,6 +262,16 @@ const ar: Record<keyof typeof en, string> = {
   encoderHelp:
     "يلزم FFmpeg لتحويل MP3 ودمج الفيديو والصوت. ثبّته ثم أعد تشغيل التطبيق.",
   about: "حول التطبيق",
+  aboutApp: "عن uTube",
+  versionLabel: "الإصدار",
+  appSummary:
+    "احتفظ بفيديوهاتك وموسيقاك المفضلة من يوتيوب. نزّل فيديو أو قائمة تشغيل كاملة، وشاهد أو استمع وقتما تحب، حتى بدون إنترنت.",
+  appCredit: "مجاني ومفتوح المصدر · تطوير OMER ANWAR",
+  freeOpenSource: "مجاني ومفتوح المصدر",
+  repository: "uTube على GitHub",
+  openSourceLicenses: "تراخيص المصادر المفتوحة",
+  desktopLicenseNote:
+    "يستخدم uTube ترخيص MIT الموضح أدناه. توجد إشعارات Electron وChromium في مجلد التثبيت باسم LICENSE وLICENSES.chromium.html. تتوفر معلومات الاعتماديات في مستودع GitHub. يُثبّت FFmpeg بشكل منفصل وله ترخيصه الخاص.",
   aboutDescription:
     "تبقى الفيديوهات وتنزيلات قوائم التشغيل في السجل بعد إغلاق التطبيق. يمكن إعادة محاولة التنزيلات المتوقفة من البداية.",
   interrupted: "توقّف التنزيل",
