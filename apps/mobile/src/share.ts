@@ -18,7 +18,7 @@ export function shareRequests(
     videoId: item.id,
     title: item.title.slice(0, 180),
     mode,
-    requestedQuality: quality,
+    requestedQuality: mode === "mp3" ? "MP3" : quality,
     ...(preview.kind === "playlist"
       ? {
           playlistTitle: preview.title.slice(0, 180),

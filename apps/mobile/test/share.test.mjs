@@ -9,13 +9,13 @@ const video = {
   qualities: ["360p"],
   audioAvailable: true,
 };
-test("sharing a video preserves the selected audio mode and quality", () => {
+test("sharing audio uses the MP3 quality expected by the native download plan", () => {
   assert.deepEqual(shareRequests(video, "mp3", "best"), [
     {
       videoId: video.id,
       title: "Video",
       mode: "mp3",
-      requestedQuality: "best",
+      requestedQuality: "MP3",
     },
   ]);
 });
@@ -71,4 +71,20 @@ test("playlist selection keeps original numbering and supports repeated videos",
     /EMPTY_PLAYLIST/,
   );
   assert.equal(shareRequests(video, "video", "best", new Set()).length, 1);
+});
+
+test("MP3 ignores the last selected video resolution for videos and playlists", () => {
+  const playlist = {
+    kind: "playlist",
+    id: "PL",
+    title: "Mix",
+    items: [{ id: video.id, title: "Track", index: 1 }],
+  };
+  for (const preview of [video, playlist]) {
+    for (const quality of ["best", "1080p", "360p"]) {
+      const [request] = shareRequests(preview, "mp3", quality);
+      assert.equal(request.requestedQuality, "MP3");
+      assert.equal(request.mode, "mp3");
+    }
+  }
 });
