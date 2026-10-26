@@ -18,13 +18,26 @@ for (const key of [
   if (!env[key]) throw new Error(`Release signing requires ${key}`);
 }
 const gradle = process.platform === "win32" ? "gradlew.bat" : "./gradlew";
-const result = spawnSync(gradle, ["assembleRelease", "--max-workers=2"], {
-  cwd: path.join(app, "android"),
-  env,
-  stdio: "inherit",
-});
-if (result.error) throw result.error;
-if (result.status !== 0) process.exit(result.status ?? 1);
+const pkg = require("../package.json");
+const output = path.join(app, "build/release");
+fs.mkdirSync(output, { recursive: true });
+const variants = [
+  { architectures: "arm64-v8a,x86_64", suffix: "" },
+  { architectures: "arm64-v8a", suffix: "-arm64-v8a" },
+  { architectures: "x86_64", suffix: "-x86_64" },
+];
+for (const variant of variants) {
+  const result = spawnSync(gradle, ["assembleRelease", "--max-workers=2", `-PreactNativeArchitectures=${variant.architectures}`], {
+    cwd: path.join(app, "android"), env, stdio: "inherit",
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0) process.exit(result.status ?? 1);
+  const apk = path.join(output, `uTube-android-${pkg.version}${variant.suffix}.apk`);
+  fs.copyFileSync(path.join(app, "android/app/build/outputs/apk/release/app-release.apk"), apk);
+  const verify = spawnSync(process.execPath, [path.join(__dirname, "verify-release.cjs"), apk,
+    ...(variant.suffix ? [variant.architectures] : [])], { env, stdio: "inherit" });
+  if (verify.status !== 0) process.exit(verify.status ?? 1);
+}
 const check = spawnSync(
   process.execPath,
   [
@@ -37,9 +50,4 @@ const check = spawnSync(
   { stdio: "inherit" },
 );
 if (check.status !== 0) process.exit(check.status ?? 1);
-const verify = spawnSync(
-  process.execPath,
-  [path.join(__dirname, "verify-release.cjs")],
-  { env, stdio: "inherit" },
-);
-process.exit(verify.status ?? 1);
+console.log(`Signed and verified ${variants.length} Android ${pkg.version} APKs in ${output}`);

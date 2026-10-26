@@ -7,9 +7,10 @@ const app = path.resolve(__dirname, "..");
 const sdk = process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT;
 assert(sdk, "Set ANDROID_HOME to verify the APK");
 const tools = path.join(sdk, "build-tools/37.0.0");
+const pkg = require("../package.json");
 const apk =
   process.argv[2] ||
-  path.join(app, "android/app/build/outputs/apk/release/app-universal-release.apk");
+  path.join(app, `build/release/uTube-android-${pkg.version}.apk`);
 function run(name, args) {
   return execFileSync(path.join(tools, name), args, { encoding: "utf8" });
 }
@@ -32,7 +33,6 @@ assert(
   "Development signatures cannot be published",
 );
 const badging = run("aapt2", ["dump", "badging", apk]);
-const pkg = require("../package.json");
 assert(badging.includes("package: name='io.github.omer73364.utube.mobile'"));
 assert(badging.includes(`versionName='${pkg.version}'`));
 assert(badging.includes(`versionCode='${pkg.androidVersionCode}'`));

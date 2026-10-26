@@ -81,7 +81,7 @@ For a standalone APK with JavaScript bundled:
 
 ```sh
 npm run mobile:build
-adb install -r apps/mobile/android/app/build/outputs/apk/prototype/app-universal-prototype.apk
+adb install -r apps/mobile/android/app/build/outputs/apk/prototype/app-prototype.apk
 ```
 
 The prototype uses the public development key and does not need Metro.
@@ -114,7 +114,7 @@ The prototype always uses its development identity.
 
 ## Signed production APK
 
-Run `npm run mobile:release` from the repository root. The build requires all four signing variables listed above, or the ignored local `.private/android/signing.json` file created for the maintainer. It fails if credentials are missing, bundles JavaScript, and checks for duplicate React copies. The output is `android/app/build/outputs/apk/release/app-universal-release.apk`.
+Run `npm run mobile:release` from the repository root. The build requires all four signing variables listed above, or the ignored local `.private/android/signing.json` file created for the maintainer. It fails if credentials are missing, bundles JavaScript, and checks for duplicate React copies. The verified outputs are written to `build/release/`.
 
 Keep an offline backup of the permanent signing key and its credentials. Future updates must use the same key. Never commit `.private`, keystores, or passwords. See [the release checklist](../../docs/releases/android-1.0.0.md).
 
@@ -199,7 +199,7 @@ Android is the implemented platform. iOS still needs a native transfer/media
 backend, Xcode project integration, signing, and testing on macOS and an iPhone.
 An Android build does not verify iOS behavior.
 
-The release also builds `app-arm64-v8a-release.apk` and `app-x86_64-release.apk`
+The release builds `uTube-android-2.4.0.apk`, `uTube-android-2.4.0-arm64-v8a.apk`, and `uTube-android-2.4.0-x86_64.apk`
 for smaller downloads. The universal APK remains the website's main download.
 Android, CLI, and desktop now share the same version and GitHub release tag.
 Verify split APKs with `node scripts/verify-release.cjs APK_PATH ABI`.
