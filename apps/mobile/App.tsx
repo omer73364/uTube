@@ -186,6 +186,11 @@ function Screen() {
     if (/NO_FORMATS|No downloadable/.test(detail)) return t.noFormat;
     if (detail.includes("PLAYER_")) return t.player;
     if (/valid YouTube|No valid video/.test(detail)) return t.invalid;
+    if (/Instagram/.test(detail)) {
+      if (/limiting/.test(detail)) return t.instagramRateLimited;
+      if (/no downloadable|selected.*unavailable/.test(detail)) return t.instagramNoVideo;
+      return t.instagramUnavailable;
+    }
     if (detail.includes("requires sign-in")) return t.xUnavailable;
     if (/X post has no downloadable|X video has no downloadable|selected video is not available/.test(detail)) return t.xNoVideo;
     if (/X is limiting/.test(detail)) return t.xRateLimited;
@@ -908,7 +913,7 @@ function Screen() {
               <View style={[s.previewCard, card]}>
                 <View style={s.previewHeader}>
                   <Text style={[s.eyebrow, { color: c.muted }]}>
-                    {preview.provider === "x" ? t.xPost : preview.kind === "playlist" ? t.playlist : t.previewLabel}
+                    {preview.provider === "instagram" ? t.instagramPost : preview.provider === "x" ? t.xPost : preview.kind === "playlist" ? t.playlist : t.previewLabel}
                   </Text>
                   {iconButton("close", t.close, () => setPreview(undefined))}
                 </View>

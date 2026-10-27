@@ -4,12 +4,15 @@ import java.net.URI
 import org.json.JSONObject
 
 object TransferPolicy {
+  private fun instagramHost(host: String?) = host?.let { it.endsWith(".cdninstagram.com") || it.endsWith(".fbcdn.net") } == true
+  private fun provider(id: String) = if (id.startsWith("ig-") && Regex("^ig-[A-Za-z0-9_-]{5,32}-[1-9][0-9]?$").matches(id)) "instagram" else if (Regex("^x-[1-9][0-9]{14,19}-[1-4]$").matches(id)) "x" else "youtube"
+
   fun mediaUrl(value: String): URI {
     val uri = URI(value)
     require(
       uri.scheme == "https" &&
         (uri.host?.lowercase()?.endsWith(".googlevideo.com") == true ||
-          (uri.host == "video.twimg.com" && uri.path.endsWith(".mp4"))) &&
+          ((uri.host == "video.twimg.com" || instagramHost(uri.host)) && uri.path.endsWith(".mp4"))) &&
         uri.userInfo == null &&
         uri.port in listOf(-1, 443)
     ) {
@@ -24,7 +27,8 @@ object TransferPolicy {
       uri.scheme == "https" && uri.userInfo == null && uri.port in listOf(-1, 443) &&
         (uri.host in listOf("www.youtube.com", "youtube.com", "music.youtube.com",
           "www.youtube-nocookie.com", "youtubei.googleapis.com") ||
-          (uri.host == "cdn.syndication.twimg.com" && uri.path == "/tweet-result"))
+          (uri.host == "cdn.syndication.twimg.com" && uri.path == "/tweet-result") ||
+          (uri.host == "www.instagram.com" && (Regex("^/p/[A-Za-z0-9_-]{5,32}/$").matches(uri.path) || uri.path == "/api/graphql")))
     ) { "Invalid metadata URL." }
     return uri
   }
@@ -32,7 +36,7 @@ object TransferPolicy {
   fun validThumbnail(value: String): Boolean = runCatching {
     val uri = URI(value)
     uri.scheme == "https" && uri.userInfo == null && uri.port in listOf(-1, 443) &&
-      uri.host in listOf("i.ytimg.com", "pbs.twimg.com")
+      (uri.host in listOf("i.ytimg.com", "pbs.twimg.com") || instagramHost(uri.host))
   }.getOrDefault(false)
 
   fun safeName(value: String): String {
@@ -47,7 +51,7 @@ object TransferPolicy {
   }
 
   fun validateRequest(plan: JSONObject) {
-    require(Regex("^(?:[A-Za-z0-9_-]{11}|x-[1-9][0-9]{14,19}-[1-4])$").matches(plan.getString("videoId"))) { "Invalid video ID." }
+    require(Regex("^(?:[A-Za-z0-9_-]{11}|x-[1-9][0-9]{14,19}-[1-4]|ig-[A-Za-z0-9_-]{5,32}-[1-9][0-9]?)$").matches(plan.getString("videoId"))) { "Invalid video ID." }
     if (plan.has("thumbnail")) require(validThumbnail(plan.getString("thumbnail"))) { "Invalid thumbnail." }
     require(plan.getString("mode") in listOf("video", "mp3")) { "Invalid output format." }
     require(
@@ -71,7 +75,8 @@ object TransferPolicy {
       for (kind in listOf("video", "audio")) if (candidate.has(kind)) {
         val stream = candidate.getJSONObject(kind)
         val uri = mediaUrl(stream.getString("url"))
-        require((uri.host == "video.twimg.com") == Regex("^x-[1-9][0-9]{14,19}-[1-4]$").matches(plan.getString("videoId"))) { "Media source does not match the request." }
+        val source = if (instagramHost(uri.host)) "instagram" else if (uri.host == "video.twimg.com") "x" else "youtube"
+        require(source == provider(plan.getString("videoId"))) { "Media source does not match the request." }
         require(stream.optLong("size", 0) in 0..8_000_000_000_000L) { "Invalid stream size." }
       }
     }

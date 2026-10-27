@@ -24,7 +24,7 @@ object RangedTransfer {
       while (total == 0L || offset < total) {
         if (cancelled()) throw InterruptedException("CANCELLED")
         val end = if (total > 0) minOf(total - 1, offset + chunk - 1) else offset + chunk - 1
-        // YouTube uses a query parameter; X's CDN requires HTTP byte ranges.
+        // YouTube uses a query parameter; other media CDNs use HTTP byte ranges.
         val queryRange = total > 0 && uri.host.endsWith(".googlevideo.com")
         val requestUri =
           if (queryRange)
@@ -40,12 +40,12 @@ object RangedTransfer {
           connection.instanceFollowRedirects = false
           if (!queryRange) connection.setRequestProperty("Range", "bytes=$offset-$end")
           connection.setRequestProperty("Accept", "*/*")
-          val origin = if (uri.host == "video.twimg.com") "https://x.com" else "https://www.youtube.com"
+          val origin = if (uri.host == "video.twimg.com") "https://x.com" else if (!uri.host.endsWith(".googlevideo.com")) "https://www.instagram.com" else "https://www.youtube.com"
           connection.setRequestProperty("Origin", origin)
           connection.setRequestProperty("Referer", "$origin/")
           connection.setRequestProperty("Accept-Encoding", "identity")
           status = connection.responseCode
-          if (uri.host == "video.twimg.com" && status in listOf(200, 206)) check(connection.contentType?.substringBefore(";") == "video/mp4") { "INVALID_MEDIA_TYPE" }
+          if (!uri.host.endsWith(".googlevideo.com") && status in listOf(200, 206)) check(connection.contentType?.substringBefore(";") == "video/mp4") { "INVALID_MEDIA_TYPE" }
           if (status == 200 && !queryRange && offset == 0L) {
             streamedResponse = true
             val length = connection.contentLengthLong

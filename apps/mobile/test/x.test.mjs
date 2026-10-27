@@ -25,7 +25,7 @@ test('mobile routes X and Twitter links and encoded retry IDs before initializin
   await service.resolve('jNQXAC9IVRw', '360p', 'video');
   assert.deepEqual(calls.slice(-2), ['youtube-inspect', 'youtube-resolve']);
   assert.equal(videoId(url), id);
-  await assert.rejects(async () => service.inspect(`https://x.com.evil.test/a/status/${postId}`), /valid YouTube or X/);
+  await assert.rejects(async () => service.inspect(`https://x.com.evil.test/a/status/${postId}`), /valid YouTube, X, or Instagram/);
 });
 
 test('mobile X preview uses real portrait resolutions and keeps thumbnails in queue requests', async () => {

@@ -1,6 +1,7 @@
 import { AppRegistry, DeviceEventEmitter } from "react-native";
 import { downloads } from "./native";
 import { createYouTubeService } from "./youtube";
+import { createInstagramService } from './instagram';
 import { createXService } from './x';
 import { createMediaService } from './media';
 import { nativeFetch } from './requests';
@@ -10,6 +11,7 @@ const transport = nativeFetch((...args) => downloads.http(...args), id => downlo
 export const media = createMediaService(
   createYouTubeService(script => downloads.evaluate(script)),
   createXService((url, signal) => transport(url, { signal, headers: { 'User-Agent': 'Googlebot', Accept: 'application/json' } })),
+  createInstagramService((url, options) => transport(url, options)),
 );
 const preparing = new Map<string, AbortController>();
 DeviceEventEmitter.addListener("utubeCancelPreparation", (id: string) =>

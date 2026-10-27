@@ -14,7 +14,7 @@ export type DownloadPlan = {
 export type Format = { id: number; quality: string; url: string };
 export type Preview = {
   kind: "video";
-  provider?: 'youtube' | 'x';
+  provider?: 'youtube' | 'x' | 'instagram';
   thumbnail?: string;
   id: string;
   title: string;
@@ -25,7 +25,7 @@ export type Preview = {
 export type PlaylistItem = { id: string; title: string; index: number; thumbnail?: string };
 export type PlaylistPreview = {
   kind: "playlist";
-  provider?: 'youtube' | 'x';
+  provider?: 'youtube' | 'x' | 'instagram';
   thumbnail?: string;
   qualities?: string[];
   id: string;

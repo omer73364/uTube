@@ -429,7 +429,7 @@ function Sheet({ url }: { url: string }) {
                 accessibilityRole="alert"
                 style={[text, { color: p.error }]}
               >
-                {error.includes("requires sign-in") ? t.xUnavailable : /X post has no downloadable|X video has no downloadable|selected video/.test(error) ? t.xNoVideo : error.includes("X is limiting") ? t.xRateLimited : preview ? t.error : t.preparationFailed}
+                {error.includes("Instagram") ? error.includes("limiting") ? t.instagramRateLimited : /no downloadable|selected.*unavailable/.test(error) ? t.instagramNoVideo : t.instagramUnavailable : error.includes("requires sign-in") ? t.xUnavailable : /X post has no downloadable|X video has no downloadable|selected video/.test(error) ? t.xNoVideo : error.includes("X is limiting") ? t.xRateLimited : preview ? t.error : t.preparationFailed}
               </Text>
               {!busy &&
                 button(t.retry, () =>
