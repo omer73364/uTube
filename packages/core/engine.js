@@ -2,11 +2,12 @@ import { checkAbort, withAbort, abortError } from "./cancellation.js";
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { videoFormats, selectFormat, selectAudioFormat, matchingVideoFormats, lowerVideoFormats } from "./formats.js";
+import { qualityValue, videoFormats, selectFormat, selectAudioFormat, matchingVideoFormats, lowerVideoFormats } from "./formats.js";
 import { saveStream, downloadFormat, streamStatus, retryableStreamError } from "./streams.js";
 import { specialRemover, availavleQualities } from "./urls.js";
 import { getPlaylist } from "./playlist.js";
-import { parseMediaURL, isXVideoID, isInstagramVideoID, isProgressiveVideoID } from './media-source.js';
+import { parseMediaURL, isXVideoID, isInstagramVideoID, isFacebookVideoID, isProgressiveVideoID } from './media-source.js';
+import { createFacebookClient } from './facebook.js';
 import { createInstagramClient } from './instagram.js';
 import { createXClient } from './x.js';
 
@@ -71,7 +72,7 @@ const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, select
     checkAbort(signal);
     // Exclusive creation avoids overwriting a download created by another process.
     await fs.promises.copyFile(result, target, fs.constants.COPYFILE_EXCL);
-    if (!audioOnly && quality && parseInt(format.quality_label) < parseInt(quality)) {
+    if (!audioOnly && quality && qualityValue(format.quality_label) < qualityValue(quality)) {
       emit({ type: 'warning', message: `Could not download ${quality}; saved the best working alternative at ${format.quality_label}.` });
     }
     emit({ type: "saved", path: target });
@@ -81,22 +82,22 @@ const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, select
   }
 };
 
-export function createDownloadEngine({ client, xClient = createXClient(), instagramClient = createInstagramClient(), ffmpegPath = "ffmpeg" }) {
+export function createDownloadEngine({ client, xClient = createXClient(), instagramClient = createInstagramClient(), facebookClient = createFacebookClient(), ffmpegPath = "ffmpeg" }) {
   const getVideoData = (id, name = "IOS", { signal } = {}) => isXVideoID(id)
     ? xClient.getInfo(id, { signal })
-    : isInstagramVideoID(id) ? instagramClient.getInfo(id, { signal }) : client.getInfo(id, { client: name });
+    : isInstagramVideoID(id) ? instagramClient.getInfo(id, { signal }) : isFacebookVideoID(id) ? facebookClient.getInfo(id, { signal }) : client.getInfo(id, { client: name });
   return {
     getVideoData,
     getPlaylist: (id) => getPlaylist(client, id),
     async inspect(url, { signal } = {}) {
       checkAbort(signal);
       const { provider, type, id, postId, selectedVideo } = parseMediaURL(url);
-      if (provider === 'x' || provider === 'instagram') {
-        const providerClient = provider === 'x' ? xClient : instagramClient;
-        const prefix = provider === 'x' ? 'x' : 'ig';
-        const label = provider === 'x' ? 'X' : 'Instagram';
+      if (provider !== 'youtube') {
+        const providerClient = provider === 'x' ? xClient : provider === 'instagram' ? instagramClient : facebookClient;
+        const prefix = provider === 'x' ? 'x' : provider === 'instagram' ? 'ig' : 'fb';
+        const label = provider === 'x' ? 'X' : provider === 'instagram' ? 'Instagram' : 'Facebook';
         const post = await providerClient.getPost(postId, { signal });
-        const videos = post.media.map((_, index) => ({ id: `${prefix}-${postId}-${index + 1}`, info: providerClient.videoInfo(postId, index + 1, post, { signal }) }));
+        const videos = post.media.map((_, index) => ({ id: `${prefix}-${post.id || postId}-${index + 1}`, info: providerClient.videoInfo(postId, index + 1, post, { signal }) }));
         const chosen = videos[(selectedVideo || 1) - 1];
         if (!chosen) throw new Error(`The selected video is not available in this ${label} post.`);
         const info = chosen.info;
@@ -158,7 +159,7 @@ export function createDownloadEngine({ client, xClient = createXClient(), instag
       // lower qualities. Rank across clients so 720p beats another client's 360p.
       if (!options.audio && options.quality) {
         const alternatives = sources.flatMap((info) => lowerVideoFormats(info, options.quality).map((selectedFormat) => ({ info, selectedFormat })))
-          .sort((a, b) => parseInt(b.selectedFormat.quality_label) - parseInt(a.selectedFormat.quality_label));
+          .sort((a, b) => qualityValue(b.selectedFormat.quality_label) - qualityValue(a.selectedFormat.quality_label));
         for (const { info, selectedFormat } of alternatives) {
           checkAbort(options.signal);
           try {

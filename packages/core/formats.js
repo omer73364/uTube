@@ -1,3 +1,5 @@
+export const qualityValue = quality => quality === 'HD' ? 720 : quality === 'SD' ? 360 : parseInt(quality);
+
 export const videoFormats = (info) => [
   ...(info.streaming_data?.formats || []),
   ...(info.streaming_data?.adaptive_formats || []),
@@ -27,8 +29,8 @@ export const matchingVideoFormats = (info, quality) => {
 export const selectFormat = (info, quality) => matchingVideoFormats(info, quality)[0];
 
 export const lowerVideoFormats = (info, quality) => videoFormats(info)
-  .filter((format) => parseInt(format.quality_label) < parseInt(quality))
-  .sort((a, b) => parseInt(b.quality_label) - parseInt(a.quality_label) || Number(!!b.has_audio) - Number(!!a.has_audio));
+  .filter((format) => qualityValue(format.quality_label) < qualityValue(quality))
+  .sort((a, b) => qualityValue(b.quality_label) - qualityValue(a.quality_label) || Number(!!b.has_audio) - Number(!!a.has_audio));
 
 export const audioFormats = (info) => [
   ...(info.streaming_data?.adaptive_formats || []),

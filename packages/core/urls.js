@@ -1,3 +1,4 @@
+import { qualityValue } from './formats.js';
 import { getVideoOrListID } from "./url-parser.js";
 export { getVideoOrListID } from "./url-parser.js";
 
@@ -12,7 +13,7 @@ export const specialRemover = (title) => {
 };
 
 
-export const availavleQualities = (list) => [...new Set(list.filter(Boolean))].sort((a, b) => parseInt(a) - parseInt(b));
+export const availavleQualities = (list) => [...new Set(list.filter(Boolean))].sort((a, b) => qualityValue(a) - qualityValue(b));
 export const convertToWatchUrl = (input) => {
   const { type, id } = getVideoOrListID(input);
   return type === "video" ? `https://www.youtube.com/watch?v=${id}` : `https://www.youtube.com/playlist?list=${id}`;
