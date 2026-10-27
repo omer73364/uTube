@@ -40,7 +40,7 @@ const { execFileSync } = require('node:child_process');
     await page.getByRole('button', { name: 'Download FFmpeg', exact: true }).click();
     await expect(page.getByRole('progressbar')).toBeVisible();
     await expect.poll(async () => (await page.evaluate(() => window.utube.settings())).ffmpeg, { timeout: 180000 }).toBe(true);
-    await expect(page.getByRole('heading', { name: 'Download from YouTube, X, Instagram, or Facebook' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Download a video' })).toBeVisible();
     await page.evaluate(() => window.utube.enqueue({ audio: true, items: [{ id: 'jNQXAC9IVRw', title: 'Downloaded FFmpeg audio' }] }));
     await expect.poll(async () => (await page.evaluate(() => window.utube.jobs()))[0]?.status, { timeout: 20000 }).toBe('saved');
     const [job] = await page.evaluate(() => window.utube.jobs());

@@ -17,7 +17,7 @@ const os = require('node:os');
   try {
     const page = await app.firstWindow(); const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await expect(page.getByRole('heading', { name: 'Download from YouTube, X, Instagram, or Facebook' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Download a video' })).toBeVisible();
     await expect(page.getByText('Ready to download')).toBeVisible();
     await app.evaluate(({ shell }) => { shell.openPath = async (folder) => { globalThis.openedDownloadFolder = folder; return ''; }; });
     await page.getByRole('button', { name: 'Open folder', exact: true }).click();

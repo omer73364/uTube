@@ -43,7 +43,7 @@ export const en = {
   queueEmptyHelp: "Add a link from Home or choose another filter.",
 
   subtitle: "Videos · Playlists · Audio",
-  title: "Download from YouTube, X, Instagram, or Facebook",
+  title: "Download a video",
   intro: "Save videos from YouTube, X, Instagram, and Facebook. Start with a link.",
   url: "YouTube, X, Instagram, or Facebook link",
   find: "Preview link",
@@ -186,7 +186,7 @@ export const ar: Record<keyof typeof en, string> = {
   queueEmptyHelp: "أضف رابطًا من الرئيسية أو اختر تصنيفًا آخر.",
 
   subtitle: "فيديوهات · قوائم تشغيل · صوت",
-  title: "تنزيل من يوتيوب أو X أو إنستغرام أو فيسبوك",
+  title: "تنزيل فيديو",
   intro: "فيديو أو قائمة تشغيل أو صوت فقط. ابدأ بإضافة الرابط.",
   url: "رابط يوتيوب أو X أو إنستغرام أو فيسبوك",
   find: "عرض الرابط",

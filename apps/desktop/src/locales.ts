@@ -24,8 +24,9 @@ export const en = {
   queue: "Queue",
   settings: "Settings",
   navigation: "Main navigation",
-  downloadTitle: "Download from YouTube, X, Instagram, or Facebook",
-  downloadDescription: "Paste a video link from YouTube, X, Instagram, or Facebook.",
+  downloadTitle: "Download a video",
+  downloadDescription:
+    "Paste a video link from YouTube, X, Instagram, or Facebook.",
   queueTitle: "Download queue",
   queueDescription:
     "Follow current downloads and find the ones you saved earlier.",
@@ -68,9 +69,12 @@ export const en = {
   instagramPostPreview: "Instagram post · {count} videos",
   xVideoPreview: "X video",
   xPostPreview: "X post · {count} videos",
-  xUnavailable: "This X post is unavailable or requires sign-in. Only public video posts are supported.",
-  xNoVideo: "This X post has no downloadable public video. Photos, live broadcasts, and external links are not supported.",
-  xNoStreams: "This X video has no downloadable MP4 streams. Try another public video post.",
+  xUnavailable:
+    "This X post is unavailable or requires sign-in. Only public video posts are supported.",
+  xNoVideo:
+    "This X post has no downloadable public video. Photos, live broadcasts, and external links are not supported.",
+  xNoStreams:
+    "This X video has no downloadable MP4 streams. Try another public video post.",
   xMissingVideo: "The selected video is not available in this X post.",
   xRateLimited: "X is limiting requests. Please try again later.",
   playlistPreview: "Playlist · {count} videos",
@@ -94,7 +98,8 @@ export const en = {
   clearFilters: "Clear filters",
   trySearch: "Try another search or filter.",
   empty: "No downloads yet",
-  emptyDescription: "Add a YouTube, X, Instagram, or Facebook link to download a video.",
+  emptyDescription:
+    "Add a YouTube, X, Instagram, or Facebook link to download a video.",
   sequential: "Downloads run one at a time",
   completedCount: "{count} completed",
   activeCount: "{count} active",
@@ -219,7 +224,7 @@ const ar: Record<keyof typeof en, string> = {
   queue: "قائمة التنزيلات",
   settings: "الإعدادات",
   navigation: "التنقل الرئيسي",
-  downloadTitle: "تنزيل من يوتيوب أو X أو إنستغرام أو فيسبوك",
+  downloadTitle: "تنزيل فيديو",
   downloadDescription: "ألصق رابط فيديو من يوتيوب أو X أو إنستغرام أو فيسبوك.",
   queueTitle: "قائمة التنزيلات",
   queueDescription: "الفيديوهات وقوائم التشغيل وسجل التنزيلات المحفوظة.",
@@ -261,9 +266,12 @@ const ar: Record<keyof typeof en, string> = {
   instagramPostPreview: "منشور إنستغرام · {count} فيديو",
   xVideoPreview: "فيديو من X",
   xPostPreview: "منشور X · {count} فيديو",
-  xUnavailable: "هذا المنشور غير متاح أو يتطلب تسجيل الدخول. تُدعم منشورات الفيديو العامة فقط.",
-  xNoVideo: "لا يحتوي هذا المنشور على فيديو عام قابل للتنزيل. الصور والبث المباشر والروابط الخارجية غير مدعومة.",
-  xNoStreams: "لا تتوفر لهذا الفيديو ملفات MP4 قابلة للتنزيل. جرّب منشور فيديو عام آخر.",
+  xUnavailable:
+    "هذا المنشور غير متاح أو يتطلب تسجيل الدخول. تُدعم منشورات الفيديو العامة فقط.",
+  xNoVideo:
+    "لا يحتوي هذا المنشور على فيديو عام قابل للتنزيل. الصور والبث المباشر والروابط الخارجية غير مدعومة.",
+  xNoStreams:
+    "لا تتوفر لهذا الفيديو ملفات MP4 قابلة للتنزيل. جرّب منشور فيديو عام آخر.",
   xMissingVideo: "الفيديو المحدد غير متاح في هذا المنشور.",
   xRateLimited: "يفرض X حدًا على الطلبات. حاول مجددًا لاحقًا.",
   playlistPreview: "قائمة تشغيل · {count} فيديو",
@@ -285,7 +293,8 @@ const ar: Record<keyof typeof en, string> = {
   clearFilters: "مسح التصفية",
   trySearch: "جرّب بحثًا أو تصفية أخرى.",
   empty: "لا توجد تنزيلات بعد",
-  emptyDescription: "أضف رابط فيديو عام من يوتيوب أو X أو إنستغرام أو فيسبوك لتنزيله.",
+  emptyDescription:
+    "أضف رابط فيديو عام من يوتيوب أو X أو إنستغرام أو فيسبوك لتنزيله.",
   sequential: "تُنزَّل الملفات واحدًا تلو الآخر",
   completedCount: "المكتمل: {count}",
   activeCount: "قيد التنزيل: {count}",
@@ -408,9 +417,14 @@ export function localizeError(value: unknown, language: Language) {
   if (language === "en") return text;
   const direct = (Object.keys(en) as TextKey[]).find((key) => en[key] === text);
   if (direct) return t(direct);
-  if (/valid YouTube (?:or X (?:post )?)?URL|No valid video or playlist/.test(text))
+  if (
+    /valid YouTube (?:or X (?:post )?)?URL|No valid video or playlist/.test(
+      text,
+    )
+  )
     return t("validURL");
-  if (/Loading details took too long|timed out|timeout/i.test(text)) return t("timeout");
+  if (/Loading details took too long|timed out|timeout/i.test(text))
+    return t("timeout");
   if (/requires FFmpeg|Install ffmpeg/.test(text)) return t("encoderNeeded");
   if (/not ready to open/.test(text)) return t("fileNotReady");
   if (/moved or deleted/.test(text)) return t("fileMissing");
