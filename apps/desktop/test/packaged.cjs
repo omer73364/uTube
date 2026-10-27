@@ -22,6 +22,8 @@ const path = require("node:path");
     await fs.cp(source, installed, {
       recursive: true,
       mode: constants.COPYFILE_FICLONE,
+      // Keep macOS framework links relative so the copy is self-contained.
+      verbatimSymlinks: true,
     });
     let executablePath = path.join(
       installed,
