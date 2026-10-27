@@ -269,3 +269,10 @@ integration tests passed. The standalone ARM64 APK built successfully and passed
 the single-React bundle check. Live public X downloads saved a 720p MP4 with audio
 and an MP3 through the real native background queue on an ARM64 emulator.
 Desktop integration and packaged-worker checks passed after sharing the parser.
+
+### Instagram (next release)
+
+Paste a public Instagram Reel or video-post link to preview and download it.
+Video carousels support selecting individual videos. MP4 and MP3 use the existing
+download flow. Private posts, Stories, live streams, and photos are not supported;
+Instagram may limit access without signing in.

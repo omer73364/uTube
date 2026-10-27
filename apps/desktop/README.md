@@ -129,3 +129,10 @@ the target architecture even when ARM64 builds are present. Use `--arch=arm64` f
 Apple Silicon. Intel apps can be smoke-tested under Rosetta on Apple Silicon;
 this does not replace testing on a physical Intel Mac. The signing command applies a local ad-hoc signature; these builds are not
 Apple-notarized or signed with a Developer ID certificate.
+
+### Instagram (next release)
+
+Paste a public Instagram Reel or video-post link to preview and download it.
+Video carousels support selecting individual videos. MP4 and MP3 use the existing
+download flow. Private posts, Stories, live streams, and photos are not supported;
+Instagram may limit access without signing in.

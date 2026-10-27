@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add public Instagram Reel and video-post downloads to desktop, Android, and CLI, including video carousels, MP3 conversion, safe thumbnails, fresh media links, and Android sharing.
+
 - Add public X/Twitter video downloads across Android, CLI, and the Windows/macOS/Linux desktop app, with a shared metadata parser, native MP4 quality selection, MP3 extraction, and multi-video post selection.
 - Extend Android share/browser intents, fresh-link background preparation, native byte-range transfers, persistent thumbnails, retry, and English/Arabic messages to X posts.
 - Keep metadata/media hosts restricted and cancellation IDs unique across foreground and background provider requests.

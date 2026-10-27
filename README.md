@@ -461,3 +461,19 @@ See the [Android guide](apps/mobile/README.md) for background downloads and shar
 and the [desktop guide](apps/desktop/README.md) for limitations and Intel macOS builds.
 The desktop code supports macOS, Windows, and Linux. iOS still needs the native
 backend described in the mobile guide.
+
+### Instagram downloads (next release)
+
+Download public **Reels and video posts** in desktop, Android, and CLI. Posts with
+multiple videos use the existing video selection screen. Save MP4 video or MP3
+audio; Android also accepts links shared from Instagram.
+
+```sh
+utube -u "https://www.instagram.com/reel/DemPo6-NFZK/"
+utube --audio -u "https://www.instagram.com/reel/DemPo6-NFZK/"
+```
+
+Only public videos accessible without signing in are supported. Private posts,
+Stories, live streams, and photos are not supported. Instagram may temporarily
+limit anonymous requests; try again later if it asks you to sign in. MP3 conversion
+requires FFmpeg on desktop and CLI.
