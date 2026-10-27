@@ -116,7 +116,7 @@ export default function JobCard({
             <Clock3 size={13} />
           )}
           <span>{label}</span>
-          {running && job.total && <span className="ml-auto">{percent}%</span>}
+          {running && job.total && <span>{percent}%</span>}
         </div>
         {(running || job.status === "cancelling") && (
           <>
