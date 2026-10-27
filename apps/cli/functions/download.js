@@ -21,7 +21,7 @@ import {
   availavleQualities,
   getSetting,
 } from "./heperFunctions.js";
-import { parseMediaURL, isXVideoID } from '../../../packages/core/media-source.js';
+import { parseMediaURL, isProgressiveVideoID } from '../../../packages/core/media-source.js';
 import { askForQuality } from "./readInput.js";
 import { videoFormats } from "../../../packages/core/formats.js";
 import { createProgressFilter } from "../../../packages/core/progress.js";
@@ -45,7 +45,7 @@ export const downloadVideo = async (
   audio = false,
   { showInfo = true } = {},
 ) => {
-  await ensureFFmpeg(audio || (!isXVideoID(item.id) && parseInt(quality) > 360));
+  await ensureFFmpeg(audio || (!isProgressiveVideoID(item.id) && parseInt(quality) > 360));
   let display;
   let started = false;
   let formatWarning;
@@ -115,9 +115,9 @@ export const downloadVideo = async (
 
 export const download = async ({ url, quality, audio = false }) => {
   const source = parseMediaURL(url);
-  const xPreview = source.provider === 'x' ? await task('Loading X post', () => getEngine().inspect(url)) : undefined;
-  const type = xPreview?.type === 'playlist' ? 'list' : source.type;
-  const id = xPreview?.id || source.id;
+  const postPreview = source.provider !== 'youtube' ? await task(`Loading ${source.provider === 'x' ? 'X' : 'Instagram'} post`, () => getEngine().inspect(url)) : undefined;
+  const type = postPreview?.type === 'playlist' ? 'list' : source.type;
+  const id = postPreview?.id || source.id;
   if (type === "video") {
     const info = await task("Loading video details", () => getVideoData(id));
     videoCard({
@@ -146,8 +146,8 @@ export const download = async ({ url, quality, audio = false }) => {
     );
     return;
   }
-  const data = xPreview?.type === 'playlist'
-    ? { info: { title: xPreview.title }, items: xPreview.items }
+  const data = postPreview?.type === 'playlist'
+    ? { info: { title: postPreview.title }, items: postPreview.items }
     : await task("Loading playlist", () => getListData(id));
   if (!data.items.length)
     throw new Error("This playlist is empty or has no accessible videos.");
