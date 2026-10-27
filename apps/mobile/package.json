@@ -1,6 +1,6 @@
 {
   "name": "@utube/mobile",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -37,7 +37,7 @@
   "engines": {
     "node": ">= 22.11.0"
   },
-  "description": "YouTube videos, playlists and audio for Android",
+  "description": "Public videos and audio from YouTube, X, Instagram, and Facebook for Android",
   "license": "MIT",
-  "androidVersionCode": 4
+  "androidVersionCode": 5
 }

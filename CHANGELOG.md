@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.5.0 — 2026-10-28
 
 - Add public Facebook videos and Reels across desktop, Android, and CLI, including share/fb.watch links, MP3 conversion, SD/HD choices and fallback, thumbnails, and Android sharing.
 

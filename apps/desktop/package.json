@@ -1,8 +1,8 @@
 {
   "name": "@utube/desktop",
   "productName": "uTube",
-  "version": "2.4.0",
-  "description": "Videos, playlists and audio in a desktop app",
+  "version": "2.5.0",
+  "description": "Public videos and audio from YouTube, X, Instagram, and Facebook",
   "private": true,
   "main": ".vite/build/main.cjs",
   "author": "OMER ANWAR",

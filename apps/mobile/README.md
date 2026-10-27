@@ -7,7 +7,7 @@ This app is developed alongside uTube's CLI and desktop app.
 
 ## Install Android
 
-Download the signed **uTube 2.4.0 APK** from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.4.0). It supports Android 10+ on ARM64 phones and x86-64 devices. The app bundles its JavaScript and media tools; Metro and a computer are only needed for development.
+Download the signed **uTube 2.5.0 APK** from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.5.0). It supports Android 10+ on ARM64 phones and x86-64 devices. The app bundles its JavaScript and media tools; Metro and a computer are only needed for development.
 
 Android may ask you to allow installation from your browser or file manager. If replacing a development/prototype build, uninstall that build first because it uses a different signing key. Save any history you need before uninstalling; downloaded media stays in Downloads / uTube. Updates from the same production signing identity can be installed over this release.
 
@@ -199,7 +199,7 @@ Android is the implemented platform. iOS still needs a native transfer/media
 backend, Xcode project integration, signing, and testing on macOS and an iPhone.
 An Android build does not verify iOS behavior.
 
-The release builds `uTube-android-2.4.0.apk`, `uTube-android-2.4.0-arm64-v8a.apk`, and `uTube-android-2.4.0-x86_64.apk`
+The release builds `uTube-android-2.5.0.apk`, `uTube-android-2.5.0-arm64-v8a.apk`, and `uTube-android-2.5.0-x86_64.apk`
 for smaller downloads. The universal APK remains the website's main download.
 Android, CLI, and desktop now share the same version and GitHub release tag.
 Verify split APKs with `node scripts/verify-release.cjs APK_PATH ABI`.
@@ -270,14 +270,14 @@ the single-React bundle check. Live public X downloads saved a 720p MP4 with aud
 and an MP3 through the real native background queue on an ARM64 emulator.
 Desktop integration and packaged-worker checks passed after sharing the parser.
 
-### Instagram (next release)
+### Instagram
 
 Paste a public Instagram Reel or video-post link to preview and download it.
 Video carousels support selecting individual videos. MP4 and MP3 use the existing
 download flow. Private posts, Stories, live streams, and photos are not supported;
 Instagram may limit access without signing in.
 
-### Facebook (next release)
+### Facebook
 
 Paste a public Facebook video, Reel, share link, or `fb.watch` link. Choose SD/HD
 (or a resolution when available) and save MP4 or MP3 through the existing download

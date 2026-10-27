@@ -20,7 +20,7 @@ These notices must stay in redistributed builds.
 The upstream source tree contains Android build scripts, external-library
 recipes, and source download configuration. Retain the corresponding source
 and build inputs for any public binary distribution, including modifications
-to the media libraries. Android releases include a `uTube-android-2.4.0-media-sources.tar` companion archive with the versioned upstream wrapper/build recipes, FFmpeg and audio-library sources, hashes, and rebuild instructions. Download it beside the APK from the same release.
+to the media libraries. Android releases include a `uTube-android-2.5.0-media-sources.tar` companion archive with the versioned upstream wrapper/build recipes, FFmpeg and audio-library sources, hashes, and rebuild instructions. Download it beside the APK from the same release.
 
 Maintainers can collect these inputs using `python3 apps/mobile/scripts/collect-media-sources.py /tmp/utube-media-sources`. This requires Python 3 and network access. Keep the source companion publicly available alongside the APK.
 

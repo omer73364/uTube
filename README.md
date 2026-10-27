@@ -4,16 +4,16 @@
 
 # uTube
 
-### Your YouTube library, offline. In one command or one click.
+### Your favorite videos, offline. In one command or one click.
 
-Download videos and whole playlists as **MP4** or **MP3** from a slick desktop app,
-a friendly terminal, or the Android app.
+Save public videos from **YouTube, X, Instagram, and Facebook** as **MP4** or
+**MP3**. Use the desktop app, a friendly terminal, or the Android app.
 
 <br>
 
 [![npm](https://img.shields.io/npm/v/utube-cli?style=for-the-badge&logo=npm&color=dd3b20&labelColor=292225)](https://www.npmjs.com/package/utube-cli)
 [![Desktop](https://img.shields.io/badge/desktop-preview-dd3b20?style=for-the-badge&logo=electron&logoColor=white&labelColor=292225)](#-desktop-app)
-[![Android](https://img.shields.io/badge/Android-2.4.0-dd3b20?style=for-the-badge&logo=android&logoColor=white&labelColor=292225)](#-android-app)
+[![Android](https://img.shields.io/badge/Android-2.5.0-dd3b20?style=for-the-badge&logo=android&logoColor=white&labelColor=292225)](#-android-app)
 [![License](https://img.shields.io/badge/license-MIT-dd3b20?style=for-the-badge&labelColor=292225)](LICENSE)
 
 [🌐 Website](https://omer73364.github.io/uTube/) · [⚡ Quick start](#-quick-start) · [💻 CLI](#-cli) · [🖥️ Desktop](#-desktop-app) · [📱 Android](#-android-app) · [🛟 Help](#-troubleshooting)
@@ -34,13 +34,13 @@ a friendly terminal, or the Android app.
 for Linux, Windows, and macOS. Start with the [desktop downloads](#-desktop-app).
 
 **📱 Android** brings the same red theme and library to your phone, with background
-downloads and Android sharing. Install it from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.4.0).
+downloads and Android sharing. Install it from [GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.5.0).
 
 **💻 CLI** takes you from a link to a saved file through an interactive menu or a
 single command. Install it with [npm](#-cli).
 
 > [!NOTE]
-> CLI, desktop, and signed Android downloads are at **2.4.0**, under one release tag.
+> CLI, desktop, and signed Android downloads are at **2.5.0**, under one release tag.
 > Windows and macOS downloads are unsigned previews and may show security
 > warnings. macOS previews are not notarized.
 
@@ -95,7 +95,7 @@ Find installers and archives on **[GitHub Releases](https://github.com/omer73364
 - 🍎 **macOS:** `.dmg` and `.zip` for Apple Silicon and Intel.
 
 Desktop packages include their runtime, so Node.js is not required. The Debian
-package installs FFmpeg as a dependency. Desktop 2.4.0 also offers
+package installs FFmpeg as a dependency. Desktop 2.5.0 also offers
 **Download FFmpeg** in Settings, with progress and cancellation. It saves the
 verified tool for uTube only, without administrator access. Read the
 [installation guide](docs/distribution.md) for platform instructions and checksums.
@@ -104,7 +104,7 @@ Existing previews are unsigned, and macOS previews are not notarized.
 
 ### 🪄 How it works
 
-1. 🔗 Open **Home**, paste a YouTube video or playlist link, and choose **Preview link**.
+1. 🔗 Open **Home**, paste a supported video link or YouTube playlist, and choose **Preview link**.
 2. 🎚️ Review the preview, choose MP4 or MP3, pick a quality, and select playlist items.
 3. 📁 Confirm or change the destination, then add your downloads.
 4. 📋 Follow progress in **Downloads**, or open completed files from **Library**.
@@ -147,7 +147,7 @@ See the [desktop guide](apps/desktop/README.md) for recovery behavior and develo
 
 ## 📱 Android app
 
-**Download, install, and go.** Get the signed [Android APK](https://github.com/omer73364/uTube/releases/tag/v2.4.0) for Android 10 or newer. The main APK supports both ARM64 and x86-64; smaller
+**Download, install, and go.** Get the signed [Android APK](https://github.com/omer73364/uTube/releases/tag/v2.5.0) for Android 10 or newer. The main APK supports both ARM64 and x86-64; smaller
 CPU-specific APKs are available on the same release page. No computer or Metro server is needed. iOS is not implemented.
 
 Allow your browser or file manager to install the APK when Android asks. If you used an older prototype signed with the development key, uninstall it first after saving anything you need from its history. Downloaded files remain in Downloads / uTube.
@@ -159,7 +159,7 @@ Allow your browser or file manager to install the APK when Android asks. If you 
 - 📚 **Playlist selection**, continuation-page loading, and separate playlist folders.
 - ⏬ **Background transfers and media processing** through a native foreground service.
 - 🧳 **Persistent queue and preferences**, including failures and interrupted work.
-- 🔗 **Share from YouTube:** pick your quality and videos, and let downloads run in the background.
+- 🔗 **Share from supported apps:** pick your quality and videos, and let downloads run in the background.
 - 📂 **Open and share saved files**, cancel active work, and retry failed downloads.
 - 🗑️ **Remove from list** for individual finished entries, or clear finished history,
   while keeping the downloaded files on your device.
@@ -434,7 +434,7 @@ instructions are in [THIRD_PARTY_NOTICES.md](apps/mobile/THIRD_PARTY_NOTICES.md)
 
 ### 🧰 Optional FFmpeg setup
 
-Desktop 2.4.0 offers **Settings → Audio & video processing → Download FFmpeg**.
+Desktop 2.5.0 offers **Settings → Audio & video processing → Download FFmpeg**.
 For the CLI, run `utube --install-ffmpeg`; interactive MP3 and HD downloads also
 offer setup when it is missing. Downloads are verified and saved for uTube only,
 without administrator access or system changes. See the
@@ -462,7 +462,7 @@ and the [desktop guide](apps/desktop/README.md) for limitations and Intel macOS 
 The desktop code supports macOS, Windows, and Linux. iOS still needs the native
 backend described in the mobile guide.
 
-### Instagram downloads (next release)
+### Instagram downloads
 
 Download public **Reels and video posts** in desktop, Android, and CLI. Posts with
 multiple videos use the existing video selection screen. Save MP4 video or MP3
@@ -478,7 +478,7 @@ Stories, live streams, and photos are not supported. Instagram may temporarily
 limit anonymous requests; try again later if it asks you to sign in. MP3 conversion
 requires FFmpeg on desktop and CLI.
 
-### Facebook downloads (next release)
+### Facebook downloads
 
 Download public **Facebook videos and Reels** in desktop, Android, and CLI.
 Paste a video link, a Facebook share link, or an `fb.watch` link. Save MP4 video

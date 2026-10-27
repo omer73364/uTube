@@ -1,7 +1,7 @@
 {
   "name": "utube-cli",
-  "version": "2.4.0",
-  "description": "simple user friendly command line tool to download YouTube videos and playlists",
+  "version": "2.5.0",
+  "description": "Download public videos and audio from YouTube, X, Instagram, and Facebook",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -45,7 +45,11 @@
     "terminal",
     "youtube-dl",
     "videos",
-    "youtube-downloader"
+    "youtube-downloader",
+    "instagram",
+    "facebook",
+    "twitter",
+    "mp3"
   ],
   "author": "OMAR ANWAR",
   "license": "MIT",

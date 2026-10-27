@@ -130,14 +130,14 @@ Apple Silicon. Intel apps can be smoke-tested under Rosetta on Apple Silicon;
 this does not replace testing on a physical Intel Mac. The signing command applies a local ad-hoc signature; these builds are not
 Apple-notarized or signed with a Developer ID certificate.
 
-### Instagram (next release)
+### Instagram
 
 Paste a public Instagram Reel or video-post link to preview and download it.
 Video carousels support selecting individual videos. MP4 and MP3 use the existing
 download flow. Private posts, Stories, live streams, and photos are not supported;
 Instagram may limit access without signing in.
 
-### Facebook (next release)
+### Facebook
 
 Paste a public Facebook video, Reel, share link, or `fb.watch` link. Choose SD/HD
 (or a resolution when available) and save MP4 or MP3 through the existing download
