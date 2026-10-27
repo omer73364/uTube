@@ -1,4 +1,4 @@
-const desktopVersions = { linux: "2.4.0", windows: "2.4.0", macos: "2.4.0" };
+const desktopVersions = { linux: "2.5.0", windows: "2.5.0", macos: "2.5.0" };
 const arabic = {
   skip: "انتقل إلى المحتوى",
   home: "uTube — الصفحة الرئيسية",
@@ -11,11 +11,11 @@ const arabic = {
   screenshotDialog: "صورة التطبيق",
   closeScreenshot: "إغلاق الصورة",
   navCli: "سطر الأوامر",
-  release: "متاح الآن لأندرويد · 2.4.0",
+  release: "متاح الآن لأندرويد · 2.5.0",
   heroFirst: "uTube",
   heroSecond: "لتنزيل الفيديو والصوت",
   heroDescription:
-    "نزّل فيديوهات يوتيوب وقوائم التشغيل، أو احفظ الصوت بصيغة MP3. على هاتفك أو حاسوبك أو من سطر الأوامر. تبقى الملفات محفوظة على جهازك.",
+    "نزّل فيديوهات عامة من يوتيوب وX وإنستغرام وفيسبوك، أو احفظ الصوت بصيغة MP3. من هاتفك أو حاسوبك أو سطر الأوامر. تبقى الملفات على جهازك.",
   heroDownload: "تنزيل التطبيق",
   heroCli: "نسخة سطر الأوامر",
   heroNote: "مجاني ومفتوح المصدر · أندرويد وWindows وmacOS وLinux",
@@ -24,7 +24,7 @@ const arabic = {
   featuresTitle: "ميزات التطبيق",
   featureOneTitle: "تنزيل الفيديوهات وقوائم التشغيل",
   featureOneText:
-    "نزّل فيديو واحدًا، أو قائمة تشغيل كاملة، أو مقاطع تختارها منها. تُحفظ ملفات كل قائمة في مجلد خاص بها.",
+    "نزّل فيديو عامًا، أو قائمة تشغيل يوتيوب كاملة، أو مقاطع تختارها منها. تُحفظ ملفات كل قائمة في مجلد خاص بها.",
   featureTwoTitle: "فيديو MP4 أو صوت MP3",
   featureTwoText:
     "احفظ الفيديو بالدقة التي تختارها، أو نزّل الصوت فقط للاستماع إليه لاحقًا.",
@@ -33,7 +33,7 @@ const arabic = {
     "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
   downloadTitle: "تنزيل uTube لسطح المكتب",
   downloadIntro: "اختر نظام جهازك، ثم نزّل ملف التثبيت المناسب.",
-  versionLine: "الإصدار 2.4.0 · سطح المكتب",
+  versionLine: "الإصدار 2.5.0 · سطح المكتب",
   releaseNotes: "ملاحظات الإصدار",
   osLabel: "نظام التشغيل",
   unsigned:
@@ -55,7 +55,7 @@ const arabic = {
     "يحاول uTube التنزيل بالدقة التي اخترتها أولًا. إذا تعذّر ذلك، ينتقل إلى أفضل دقة متاحة أقل من المطلوبة، ويعرض دقة الملف المحفوظ.",
   faqTwoTitle: "هل أحتاج إلى تثبيت برامج إضافية؟",
   faqTwoText:
-    "يعمل تطبيق أندرويد دون برامج إضافية. في نسخة سطح المكتب 2.4.0، يمكنك تنزيل FFmpeg من الإعدادات لحفظ MP3 والفيديو بدقة عالية. يثبّته ملف Debian تلقائيًا. تحتاج نسخ سطح المكتب الأقدم إلى تثبيته يدويًا.",
+    "يعمل تطبيق أندرويد دون برامج إضافية. على سطح المكتب، نزّل FFmpeg من الإعدادات لحفظ MP3 والفيديوهات التي تحتاج إلى دمج الصوت. يثبّته ملف Debian تلقائيًا.",
   faqThreeTitle: "هل تبقى الملفات والسجل بعد إغلاق التطبيق؟",
   faqThreeText:
     "تبقى الملفات في المجلد الذي اخترته، ويحتفظ تطبيقا سطح المكتب وأندرويد بسجل التنزيلات على جهازك. يمكنك إعادة محاولة التنزيلات المتوقفة يدويًا؛ وتبدأ كل محاولة من البداية.",
@@ -92,16 +92,16 @@ const arabic = {
   androidEyebrow: "uTube لأندرويد",
   androidTitle: "uTube الذي تعرفه.<br />على هاتفك أيضًا.",
   androidIntro:
-    "شارك رابط يوتيوب مع التطبيق، واختر الفيديو أو الصوت، ودع uTube يتولى التنزيل. افتح ملفاتك المحفوظة متى شئت.",
+    "شارك رابط فيديو من أحد التطبيقات المدعومة، واختر الفيديو أو الصوت، ودع uTube يتولى التنزيل. افتح ملفاتك المحفوظة متى شئت.",
   androidFeatureOne: "تنزيل في الخلفية ومكتبة تحتفظ بما نزّلته.",
   androidFeatureTwo: "دقّات متعددة وقوائم تشغيل وصوت بصيغة MP3.",
   androidFeatureThree:
     "بالعربية والإنجليزية، مع الوضع الفاتح والداكن مثل تطبيق سطح المكتب.",
-  androidShareFeature: "نزّل من يوتيوب دون مغادرته: شارك، اختر، وابدأ.",
+  androidShareFeature: "نزّل من التطبيقات المدعومة: شارك، اختر، وابدأ.",
   androidDownload: "تنزيل لأندرويد",
   androidUniversal: "نسخة لجميع الأجهزة المدعومة. تريد ملفًا أصغر؟",
   androidOtherVersions: "عرض النسخ الأخرى ←",
-  androidRequirements: "الإصدار 2.4.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
+  androidRequirements: "الإصدار 2.5.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
   androidNotes: "التثبيت والتحقق من الملفات وملاحظات الإصدار ↗",
   mobileCaption: "لقطة من هاتف أندرويد",
   mobileScreenshot:
@@ -195,7 +195,7 @@ const formats = {
 function renderDownloads() {
   document.querySelector('[data-i18n="versionLine"]').textContent = t(
     "versionLine",
-  ).replace("2.4.0", desktopVersions[platform]);
+  ).replace("2.5.0", desktopVersions[platform]);
   document.querySelector("#desktop-release-notes").href =
     `https://github.com/omer73364/uTube/releases/tag/v${desktopVersions[platform]}`;
   const links = document.querySelector("#download-links");
@@ -284,7 +284,7 @@ function renderLanguage() {
       : "uTube — تنزيل الفيديو والصوت";
   document.querySelector('meta[name="description"]').content =
     language === "en"
-      ? "Download YouTube videos, playlists, and MP3 audio with uTube for Android, Windows, macOS, Linux, and your terminal."
+      ? "Download public videos and MP3 audio from YouTube, X, Instagram, and Facebook with uTube for Android, desktop, and your terminal."
       : "نزّل فيديوهات يوتيوب وقوائم التشغيل وملفات MP3 باستخدام تطبيق uTube لأندرويد وWindows وmacOS وLinux وسطر الأوامر.";
   if (androidDevice) {
     document.querySelector("#hero-download").href = "#android";
