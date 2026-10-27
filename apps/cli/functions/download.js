@@ -115,7 +115,7 @@ export const downloadVideo = async (
 
 export const download = async ({ url, quality, audio = false }) => {
   const source = parseMediaURL(url);
-  const postPreview = source.provider !== 'youtube' ? await task(`Loading ${source.provider === 'x' ? 'X' : 'Instagram'} post`, () => getEngine().inspect(url)) : undefined;
+  const postPreview = source.provider !== 'youtube' ? await task(`Loading ${source.provider === 'x' ? 'X' : source.provider === 'instagram' ? 'Instagram' : 'Facebook'} post`, () => getEngine().inspect(url)) : undefined;
   const type = postPreview?.type === 'playlist' ? 'list' : source.type;
   const id = postPreview?.id || source.id;
   if (type === "video") {

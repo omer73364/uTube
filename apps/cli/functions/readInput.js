@@ -47,7 +47,7 @@ export const home = async () => {
 
 export const askForURL = async () => {
   const { url } = await inquirer.prompt([{
-    ...promptOptions, name: "url", message: "YouTube, X, or Instagram URL", filter: (value) => value.trim(),
+    ...promptOptions, name: "url", message: "YouTube, X, Instagram, or Facebook URL", filter: (value) => value.trim(),
     validate: (value) => { try { getVideoOrListID(value); return true; } catch (error) { return error.message; } },
   }]);
   return url;
@@ -68,12 +68,12 @@ export const readArgs = async () => {
   }
   if (values["-v"] || values["--version"]) { console.log(`uTube v${version}`); return null; }
   if (values["-h"] || values["--help"]) {
-    console.log(`Usage: utube [-u <YouTube, X, or Instagram URL>] [-q <quality>] [--audio]
+    console.log(`Usage: utube [-u <YouTube, X, Instagram, or Facebook URL>] [-q <quality>] [--audio]
 
 Run utube without arguments to open the interactive menu.
 
-  -u <url>                     YouTube video/playlist, public X post, or Instagram Reel URL
-  -q <quality>                 Quality, for example 720p
+  -u <url>                     YouTube video/playlist, public X post, Instagram Reel, or Facebook video URL
+  -q <quality>                 Quality, for example 720p (Facebook also accepts SD/HD)
   -a, --audio                  Download audio as MP3 (requires FFmpeg)
   --install-ffmpeg             Download FFmpeg for uTube (MP3 and HD video)
   -v, --version                Show version
@@ -91,7 +91,7 @@ Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
     return null;
   }
   if (values["--get-download-folder"]) { console.log(getSetting("downloadFolder", process.cwd())); return null; }
-  if (values["-q"] && !/^\d+p(?:\d+)?$/.test(values["-q"])) throw new Error("Quality must look like 360p or 720p.");
+  if (values["-q"] && !/^(?:\d+p(?:\d+)?|SD|HD)$/.test(values["-q"])) throw new Error("Quality must look like 360p or 720p, or SD/HD for Facebook.");
   let audio = Boolean(values["-a"] || values["--audio"]);
   if (audio && values["-q"]) throw new Error("-q selects video resolution. Omit it when using --audio.");
   const session = args.length === 0 && interactive();
@@ -103,7 +103,7 @@ Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
   }
   let url = values["-u"];
   if (!url) {
-    if (!interactive()) throw new Error("Provide a YouTube, X, or Instagram URL with -u <url>.");
+    if (!interactive()) throw new Error("Provide a YouTube, X, Instagram, or Facebook URL with -u <url>.");
     url = await askForURL();
   }
   getVideoOrListID(url);
