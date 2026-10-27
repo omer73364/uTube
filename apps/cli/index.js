@@ -5,6 +5,7 @@ import { initializeInternetVariables } from "./functions/intialize.js";
 import { readArgs, home, askForURL } from "./functions/readInput.js";
 import { download } from "./functions/download.js";
 import { failure, info, promptOptions } from "./functions/ui.js";
+import { parseMediaURL } from '../../packages/core/media-source.js';
 
 (async () => {
   try {
@@ -12,7 +13,7 @@ import { failure, info, promptOptions } from "./functions/ui.js";
     if (!args) return;
     do {
       try {
-        if (!getYouTubeClient()) await initializeInternetVariables();
+        if (parseMediaURL(args.url).provider === 'youtube' && !getYouTubeClient()) await initializeInternetVariables();
         await download(args);
       } catch (error) {
         failure(error.message || error);

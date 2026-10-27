@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add public X/Twitter video downloads across Android, CLI, and the Windows/macOS/Linux desktop app, with a shared metadata parser, native MP4 quality selection, MP3 extraction, and multi-video post selection.
+- Extend Android share/browser intents, fresh-link background preparation, native byte-range transfers, persistent thumbnails, retry, and English/Arabic messages to X posts.
+- Keep metadata/media hosts restricted and cancellation IDs unique across foreground and background provider requests.
+- Support collecting Intel macOS artifacts from Apple Silicon builds without mixing architectures.
+
 ## 2.4.0 — 2026-10-26
 
 - Offer optional, verified FFmpeg downloads for desktop and CLI without bundling it in installers or changing system settings.

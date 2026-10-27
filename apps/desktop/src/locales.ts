@@ -16,7 +16,7 @@ export const en = {
   playlists: "Playlists",
   allPlaylists: "All playlists",
   noPlaylists: "No saved playlists yet",
-  linkPlaceholder: "Paste a YouTube link",
+  linkPlaceholder: "Paste a YouTube or X post link",
   clearLink: "Clear link",
   closePreview: "Close preview",
 
@@ -24,15 +24,15 @@ export const en = {
   queue: "Queue",
   settings: "Settings",
   navigation: "Main navigation",
-  downloadTitle: "Download from YouTube",
-  downloadDescription: "Paste a video or playlist link to get started.",
+  downloadTitle: "Download from YouTube or X",
+  downloadDescription: "Paste a YouTube video, playlist, or public X post link.",
   queueTitle: "Download queue",
   queueDescription:
     "Follow current downloads and find the ones you saved earlier.",
   settingsTitle: "Settings",
   settingsDescription: "Choose your appearance, language, and download folder.",
-  link: "YouTube URL",
-  linkHeading: "YouTube link",
+  link: "YouTube or X URL",
+  linkHeading: "YouTube or X link",
   find: "Preview link",
   loading: "Loading…",
   shortcut: "Focus link: Ctrl / ⌘ L",
@@ -62,6 +62,13 @@ export const en = {
   selectAll: "Select all",
   deselectAll: "Deselect all",
   videoPreview: "Video preview",
+  xVideoPreview: "X video",
+  xPostPreview: "X post · {count} videos",
+  xUnavailable: "This X post is unavailable or requires sign-in. Only public video posts are supported.",
+  xNoVideo: "This X post has no downloadable public video. Photos, live broadcasts, and external links are not supported.",
+  xNoStreams: "This X video has no downloadable MP4 streams. Try another public video post.",
+  xMissingVideo: "The selected video is not available in this X post.",
+  xRateLimited: "X is limiting requests. Please try again later.",
   playlistPreview: "Playlist · {count} videos",
   noPlaylist: "This playlist has no accessible videos.",
   noQualities:
@@ -83,7 +90,7 @@ export const en = {
   clearFilters: "Clear filters",
   trySearch: "Try another search or filter.",
   empty: "No downloads yet",
-  emptyDescription: "Add a YouTube link to download a video or playlist.",
+  emptyDescription: "Add a YouTube or public X post link to download a video.",
   sequential: "Downloads run one at a time",
   completedCount: "{count} completed",
   activeCount: "{count} active",
@@ -125,7 +132,7 @@ export const en = {
   aboutApp: "About uTube",
   versionLabel: "Version",
   appSummary:
-    "Keep your favorite YouTube videos and music close. Save a video or a whole playlist, then watch or listen whenever you want—even offline.",
+    "Keep your favorite YouTube and X videos and music close. Save a video or a whole playlist, then watch or listen whenever you want—even offline.",
   appCredit: "Free and open source",
   freeOpenSource: "Free and open source",
   repository: "uTube on GitHub",
@@ -174,10 +181,10 @@ export const en = {
   openFile: "Open file",
   fileNotReady: "This download is not ready to open.",
   fileMissing: "This file was moved or deleted. Download it again.",
-  validURL: "Enter a valid YouTube URL.",
+  validURL: "Enter a valid YouTube or X post URL.",
   timeout: "Loading details took too long. Please try again.",
   rejected:
-    "YouTube rejected this download (HTTP {status}). Please try again later.",
+    "The service rejected this download (HTTP {status}). Please try again later.",
   fallback:
     "Could not download {requested}; saved the best working alternative at {actual}.",
   quitTitle: "Downloads are still in progress",
@@ -200,7 +207,7 @@ const ar: Record<keyof typeof en, string> = {
   playlists: "قوائم التشغيل",
   allPlaylists: "كل قوائم التشغيل",
   noPlaylists: "لا توجد قوائم تشغيل محفوظة",
-  linkPlaceholder: "ألصق رابط يوتيوب هنا",
+  linkPlaceholder: "ألصق رابط يوتيوب أو منشور X هنا",
   clearLink: "مسح الرابط",
   closePreview: "إغلاق المعاينة",
 
@@ -208,14 +215,14 @@ const ar: Record<keyof typeof en, string> = {
   queue: "قائمة التنزيلات",
   settings: "الإعدادات",
   navigation: "التنقل الرئيسي",
-  downloadTitle: "تنزيل من يوتيوب",
-  downloadDescription: "ألصق رابط فيديو أو قائمة تشغيل للبدء.",
+  downloadTitle: "تنزيل من يوتيوب أو X",
+  downloadDescription: "ألصق رابط فيديو أو قائمة تشغيل يوتيوب، أو منشور X عام.",
   queueTitle: "قائمة التنزيلات",
   queueDescription: "الفيديوهات وقوائم التشغيل وسجل التنزيلات المحفوظة.",
   settingsTitle: "الإعدادات",
   settingsDescription: "اختر المظهر واللغة ومجلد التنزيل.",
-  link: "رابط يوتيوب",
-  linkHeading: "رابط يوتيوب",
+  link: "رابط يوتيوب أو X",
+  linkHeading: "رابط يوتيوب أو X",
   find: "عرض الرابط",
   loading: "جارٍ التحميل…",
   shortcut: "الانتقال للرابط: Ctrl / ⌘ L",
@@ -244,6 +251,13 @@ const ar: Record<keyof typeof en, string> = {
   selectAll: "تحديد الكل",
   deselectAll: "إلغاء تحديد الكل",
   videoPreview: "معاينة الفيديو",
+  xVideoPreview: "فيديو من X",
+  xPostPreview: "منشور X · {count} فيديو",
+  xUnavailable: "هذا المنشور غير متاح أو يتطلب تسجيل الدخول. تُدعم منشورات الفيديو العامة فقط.",
+  xNoVideo: "لا يحتوي هذا المنشور على فيديو عام قابل للتنزيل. الصور والبث المباشر والروابط الخارجية غير مدعومة.",
+  xNoStreams: "لا تتوفر لهذا الفيديو ملفات MP4 قابلة للتنزيل. جرّب منشور فيديو عام آخر.",
+  xMissingVideo: "الفيديو المحدد غير متاح في هذا المنشور.",
+  xRateLimited: "يفرض X حدًا على الطلبات. حاول مجددًا لاحقًا.",
   playlistPreview: "قائمة تشغيل · {count} فيديو",
   noPlaylist: "لا تحتوي قائمة التشغيل على فيديوهات متاحة.",
   noQualities: "يتعذّر تنزيل هذا الفيديو حاليًا. جرّب تنزيل الصوت فقط.",
@@ -263,7 +277,7 @@ const ar: Record<keyof typeof en, string> = {
   clearFilters: "مسح التصفية",
   trySearch: "جرّب بحثًا أو تصفية أخرى.",
   empty: "لا توجد تنزيلات بعد",
-  emptyDescription: "أضف رابط يوتيوب لتنزيل فيديو أو قائمة تشغيل.",
+  emptyDescription: "أضف رابط يوتيوب أو منشور X عام لتنزيل فيديو.",
   sequential: "تُنزَّل الملفات واحدًا تلو الآخر",
   completedCount: "المكتمل: {count}",
   activeCount: "قيد التنزيل: {count}",
@@ -304,7 +318,7 @@ const ar: Record<keyof typeof en, string> = {
   aboutApp: "عن uTube",
   versionLabel: "الإصدار",
   appSummary:
-    "احتفظ بفيديوهاتك وموسيقاك المفضلة من يوتيوب. نزّل فيديو أو قائمة تشغيل كاملة، وشاهد أو استمع وقتما تحب، حتى بدون إنترنت.",
+    "احتفظ بفيديوهاتك وموسيقاك المفضلة من يوتيوب وX. نزّل فيديو أو قائمة تشغيل كاملة، وشاهد أو استمع وقتما تحب، حتى بدون إنترنت.",
   appCredit: "مجاني ومفتوح المصدر",
   freeOpenSource: "مجاني ومفتوح المصدر",
   repository: "uTube على GitHub",
@@ -351,9 +365,9 @@ const ar: Record<keyof typeof en, string> = {
   openFile: "فتح الملف",
   fileNotReady: "هذا التنزيل غير جاهز للفتح.",
   fileMissing: "نُقل الملف أو حُذف. نزّله مجددًا.",
-  validURL: "أدخل رابط يوتيوب صالحًا.",
+  validURL: "أدخل رابط يوتيوب أو منشور X صالحًا.",
   timeout: "استغرق تحميل التفاصيل وقتًا طويلًا. حاول مجددًا.",
-  rejected: "رفض يوتيوب هذا التنزيل (HTTP {status}). حاول لاحقًا.",
+  rejected: "رفضت الخدمة هذا التنزيل (HTTP {status}). حاول لاحقًا.",
   fallback: "تعذّر تنزيل {requested}؛ حُفظت أفضل جودة بديلة متاحة: {actual}.",
   quitTitle: "لا تزال هناك تنزيلات جارية",
   quitQuestion: "هل تريد إلغاء التنزيلات والخروج؟",
@@ -386,9 +400,9 @@ export function localizeError(value: unknown, language: Language) {
   if (language === "en") return text;
   const direct = (Object.keys(en) as TextKey[]).find((key) => en[key] === text);
   if (direct) return t(direct);
-  if (/valid YouTube URL|No valid video or playlist/.test(text))
+  if (/valid YouTube (?:or X (?:post )?)?URL|No valid video or playlist/.test(text))
     return t("validURL");
-  if (/Loading details took too long/.test(text)) return t("timeout");
+  if (/Loading details took too long|timed out|timeout/i.test(text)) return t("timeout");
   if (/requires FFmpeg|Install ffmpeg/.test(text)) return t("encoderNeeded");
   if (/not ready to open/.test(text)) return t("fileNotReady");
   if (/moved or deleted/.test(text)) return t("fileMissing");

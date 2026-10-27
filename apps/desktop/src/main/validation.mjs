@@ -1,7 +1,6 @@
-import { getVideoOrListID } from '../../../../packages/core/urls.js';
+import { parseMediaURL, validMediaID, safeMediaThumbnail } from '../../../../packages/core/media-source.js';
 export function validateURL(value) {
-  if (typeof value !== 'string' || value.length > 2048) throw new Error('Enter a valid YouTube URL.');
-  getVideoOrListID(value);
+  parseMediaURL(value);
   return value.trim();
 }
 export function validateRequest(value) {
@@ -13,8 +12,8 @@ export function validateRequest(value) {
   return {
     audio: value.audio, quality: value.quality, playlistTitle: value.playlistTitle,
     items: value.items.map((item, index) => {
-      if (!item || typeof item.id !== 'string' || !/^[\w-]{11}$/.test(item.id) || typeof item.title !== 'string' || !item.title.trim() || item.title.length > 1000 || (item.index !== undefined && (!Number.isInteger(item.index) || item.index < 0 || item.index > 100000))) throw new Error('Invalid playlist item.');
-      return { id: item.id, title: item.title, index: item.index ?? index };
+      if (!item || !validMediaID(item.id) || typeof item.title !== 'string' || !item.title.trim() || item.title.length > 1000 || (item.index !== undefined && (!Number.isInteger(item.index) || item.index < 0 || item.index > 100000))) throw new Error('Invalid playlist item.');
+      return { id: item.id, title: item.title, index: item.index ?? index, thumbnail: safeMediaThumbnail(item.thumbnail) };
     }),
   };
 }

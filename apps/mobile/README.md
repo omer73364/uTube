@@ -1,6 +1,6 @@
 # uTube Mobile
 
-Save YouTube videos, playlists, and MP3 audio on Android. Choose a quality,
+Save YouTube videos and playlists, public X/Twitter videos, and MP3 audio on Android. Choose a quality,
 select playlist items, and manage everything in one persistent download queue.
 
 This app is developed alongside uTube's CLI and desktop app.
@@ -16,7 +16,7 @@ Android may ask you to allow installation from your browser or file manager. If 
 - Download MP4 videos, including adaptive HD video with a separate audio track.
 - Save MP3 audio at 192 kbps, preferring the original audio track.
 - Load playlist pages, choose videos, and save each playlist in its own folder.
-- Send a YouTube link to uTube from Android's share menu.
+- Send a YouTube or X post link to uTube from Android's share menu.
 - Browse thumbnail cards in Home, Library, and Downloads; group saved files by playlist.
 - Search and filter downloads, cancel work, retry failures, and open or share files.
 - Use each card’s menu to remove an entry without deleting its downloaded file.
@@ -136,9 +136,9 @@ cd apps/mobile/android
 ./gradlew connectedPrototypeAndroidTest --max-workers=2
 ```
 
-Twenty-three mobile tests cover adaptive quality order, audio pairing, playlist
+Mobile tests cover adaptive quality order, audio pairing, playlist
 pagination, URL restrictions, cancellation/deadlines, progress, and parser
-compatibility. Eight Android integration tests use real tiny media fixtures to
+compatibility. Android integration tests use real tiny media fixtures to
 verify 1080p muxing with audio, MP3 output, ranged retry without duplicate
 bytes, persistent queue recovery, atomic batches, individual removal without deleting files, and isolated player execution.
 
@@ -221,9 +221,51 @@ signed with it as public releases.
 
 ### Quick downloads from other apps
 
-In YouTube, choose **Share → uTube** to open a compact sheet over the current app.
+In YouTube or X/Twitter, choose **Share → uTube** to open a compact sheet over the current app.
 Choose video or MP3 audio, select quality, and add the download. The sheet closes
 once the queue accepts it; downloads continue in the background with notification
 progress. Shared playlists queue up to 1,000 videos in their original order.
 The sheet follows the saved language and theme. Closing it before adding a
 download leaves the queue unchanged; lookup failures offer a retry.
+
+
+## X / Twitter support
+
+The main link field, Android share sheet, and supported browser links accept
+public `x.com` and `twitter.com` video posts. Preview actual MP4 resolutions,
+choose videos from a multi-video post, or use `/video/N` to select one video.
+**Best available** keeps the highest available native resolution. Portrait
+resolution labels use the shorter edge, such as 720p for 720×900.
+
+X uses the same persistent native queue, foreground notifications, cancellation,
+retry, media processing, file actions, and English/Arabic interface as YouTube.
+Thumbnails are saved with history. Links are resolved again immediately before
+background transfers, so a retry does not depend on an expired preview URL.
+At a requested resolution, the native service tries alternate encodings before
+lower qualities; **Best available** tries candidates from highest to lowest.
+MP3 extraction uses the bundled FFmpeg libraries.
+
+Metadata is requested through the existing cancellable native HTTP bridge.
+Only X's embedded-post endpoint is added to the metadata allowlist; media is
+restricted to HTTPS MP4 files on `video.twimg.com`, with native HTTP byte ranges.
+The metadata/format parser is shared with desktop and CLI and has no Node.js
+runtime dependencies.
+
+Support covers public native MP4 videos exposed by X. Private, deleted,
+login-restricted, or unavailable posts, photos, GIFs, live broadcasts, external
+videos, and HLS-only media are unsupported. X can rate-limit or change its public
+endpoint; the app reports lookup failures and keeps queue retries available.
+No account or cookies are read.
+
+X-specific automated checks cover routing, preview/selection, fresh links,
+quality ordering, MP3 plans, cancellation, URL restrictions, Android share
+intents, native byte ranges, queue recovery, and combined-MP4 processing.
+The opt-in `LiveDownloadTest` also accepts IDs such as
+`x-1577855540407197696-1` for a real X download through the background service.
+
+
+On October 27, 2026, 34 mobile tests, 75 core/CLI tests, and 15 offline Android
+integration tests passed. The standalone ARM64 APK built successfully and passed
+the single-React bundle check. Live public X downloads saved a 720p MP4 with audio
+and an MP3 through the real native background queue on an ARM64 emulator.
+Desktop integration and packaged-worker checks passed after sharing the parser.

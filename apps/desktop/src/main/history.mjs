@@ -2,8 +2,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { specialRemover } from '../../../../packages/core/urls.js';
 import { validateJobID, validateRequest } from './validation.mjs';
+import { safeMediaThumbnail } from '../../../../packages/core/media-source.js';
 
-const fields = ['id', 'videoId', 'title', 'folder', 'playlistTitle', 'audio', 'quality', 'status', 'path', 'actualQuality', 'note', 'error', 'interrupted', 'createdAt', 'completedAt'];
+const fields = ['id', 'videoId', 'thumbnail', 'title', 'folder', 'playlistTitle', 'audio', 'quality', 'status', 'path', 'actualQuality', 'note', 'error', 'interrupted', 'createdAt', 'completedAt'];
 const statuses = ['queued', 'running', 'cancelling', 'saved', 'skipped', 'failed', 'cancelled'];
 const record = (job) => Object.fromEntries(fields.filter((key) => job[key] !== undefined).map((key) => [key, job[key]]));
 
@@ -13,6 +14,7 @@ function restoreRecord(value) {
   if (typeof value.title !== 'string' || value.title.length > 1100 || typeof value.folder !== 'string' || !path.isAbsolute(value.folder) || !statuses.includes(value.status)) throw new Error('Invalid history entry.');
   validateRequest({ audio: value.audio, quality: value.quality, playlistTitle: value.playlistTitle, items: [{ id: value.videoId, title: value.title.slice(0, 1000) }] });
   const job = record(value);
+  if (job.thumbnail !== undefined) job.thumbnail = safeMediaThumbnail(job.thumbnail);
   for (const key of ['actualQuality', 'note', 'error']) if (job[key] !== undefined && (typeof job[key] !== 'string' || job[key].length > 10000)) delete job[key];
   for (const key of ['createdAt', 'completedAt']) if (!Number.isFinite(job[key]) || job[key] < 0 || job[key] > 8640000000000000) delete job[key];
   job.interrupted = job.interrupted === true;

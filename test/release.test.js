@@ -37,3 +37,17 @@ test('release collection rejects mismatched versions and tags', async (t) => {
   await fs.writeFile(path.join(cwd, 'apps/desktop/package.json'), '{"version":"0.1.0"}');
   assert.throws(() => run(cwd), /versions must match/);
 });
+
+test('cross-built installers keep their target architecture when both builds are present', async (t) => {
+  const cwd = await fixture(t);
+  for (const arch of ['x64', 'arm64']) {
+    const directory = path.join(cwd, 'apps/desktop/out/make', arch);
+    await fs.mkdir(directory);
+    for (const extension of extensions) await fs.writeFile(path.join(directory, `test.${extension}`), arch);
+  }
+  execFileSync(process.execPath, [script, '--arch=x64'], { cwd, env: { ...process.env, GITHUB_REF_TYPE: '' }, stdio: 'pipe' });
+  const output = path.join(cwd, 'release-artifacts');
+  for (const extension of extensions) assert.equal(await fs.readFile(path.join(output, `uTube-Desktop-2.2.0-${platform}-x64${extension === 'exe' ? '-Setup' : ''}.${extension}`), 'utf8'), 'x64');
+  assert.ok((await fs.readFile(path.join(output, `SHA256SUMS-${platform}-x64.txt`), 'utf8')).includes('-x64'));
+  assert.throws(() => execFileSync(process.execPath, [script, '--arch=unknown'], { cwd, stdio: 'pipe' }), /Unsupported target architecture/);
+});

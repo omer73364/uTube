@@ -1,18 +1,18 @@
 import type { Language } from './locales';
 export type Preview = {
-  type: 'video' | 'playlist'; id: string; title: string; author?: string;
+  type: 'video' | 'playlist'; provider?: 'youtube' | 'x'; id: string; title: string; author?: string;
   duration?: number; thumbnail?: string | null; qualities?: string[];
-  items?: { id: string; title: string }[];
+  items?: { id: string; title: string; thumbnail?: string }[];
 };
 export type Job = {
-  id: string; videoId: string; title: string; audio: boolean; quality?: string;
+  id: string; videoId: string; thumbnail?: string; title: string; audio: boolean; quality?: string;
   status: 'queued' | 'running' | 'cancelling' | 'saved' | 'skipped' | 'failed' | 'cancelled';
   stage?: string; loaded: number; total?: number; speed?: number; eta?: number; note?: string; actualQuality?: string;
   path?: string; error?: string;
   playlistTitle?: string; createdAt?: number; completedAt?: number; interrupted?: boolean;
 };
 export type DownloadRequest = {
-  items: { id: string; title: string; index?: number }[];
+  items: { id: string; title: string; index?: number; thumbnail?: string }[];
   playlistTitle?: string; audio: boolean; quality?: string;
 };
 export type Preferences = { theme: 'light' | 'dark' | 'system'; language: Language };

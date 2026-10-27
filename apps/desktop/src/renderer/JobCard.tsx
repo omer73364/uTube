@@ -73,7 +73,7 @@ export default function JobCard({
       className={`job job-${job.status} ${complete ? "job-done" : ""}`}
       data-testid="job"
     >
-      <Thumbnail videoId={job.videoId} />
+      <Thumbnail videoId={job.videoId} thumbnail={job.thumbnail} />
       <div className="job-body">
         <div className="job-top">
           <h3 dir="auto" title={job.title}>

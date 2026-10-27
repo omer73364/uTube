@@ -24,25 +24,7 @@ class MetadataHttp {
     pool.shutdownNow()
   }
 
-  private fun allowed(value: String): URI {
-    val uri = URI(value)
-    require(
-      uri.scheme == "https" &&
-        uri.userInfo == null &&
-        uri.port in listOf(-1, 443) &&
-        uri.host in
-          listOf(
-            "www.youtube.com",
-            "youtube.com",
-            "music.youtube.com",
-            "www.youtube-nocookie.com",
-            "youtubei.googleapis.com",
-          )
-    ) {
-      "Invalid metadata URL."
-    }
-    return uri
-  }
+  private fun allowed(value: String): URI = TransferPolicy.metadataUrl(value)
 
   fun request(
     id: String,
@@ -53,7 +35,8 @@ class MetadataHttp {
     promise: Promise,
   ) {
     try {
-      allowed(url)
+      val target = allowed(url)
+      if (target.host == "cdn.syndication.twimg.com") require(method == "GET" && body == null) { "Invalid X metadata request." }
       require(method in listOf("GET", "POST", "HEAD"))
       require((body?.length ?: 0) <= 1024 * 1024)
     } catch (e: Exception) {
@@ -94,6 +77,7 @@ class MetadataHttp {
             }
             val status = connection.responseCode
             if (status in listOf(301, 302, 303, 307, 308)) {
+              require(allowed(target).host != "cdn.syndication.twimg.com") { "Unexpected X metadata redirect." }
               require(method != "POST") { "Unexpected metadata redirect." }
               target =
                 allowed(target)
@@ -109,7 +93,7 @@ class MetadataHttp {
                 while (true) {
                   val count = input.read(buffer)
                   if (count < 0) break
-                  require(out.size() + count <= 8 * 1024 * 1024) {
+                  require(out.size() + count <= (if (allowed(target).host == "cdn.syndication.twimg.com") 2 else 8) * 1024 * 1024) {
                     "Metadata response is too large."
                   }
                   out.write(buffer, 0, count)

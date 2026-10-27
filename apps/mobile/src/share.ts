@@ -9,13 +9,14 @@ export function shareRequests(
 ): DownloadRequest[] {
   const items =
     preview.kind === "video"
-      ? [{ id: preview.id, title: preview.title, index: 1 }]
+      ? [{ id: preview.id, title: preview.title, index: 1, thumbnail: preview.thumbnail }]
       : preview.items
           .slice(0, 1000)
           .filter((item) => !selected || selected.has(item.index));
   if (!items.length) throw new Error("EMPTY_PLAYLIST");
   return items.map((item) => ({
     videoId: item.id,
+    ...(item.thumbnail ? { thumbnail: item.thumbnail } : {}),
     title: item.title.slice(0, 180),
     mode,
     requestedQuality: mode === "mp3" ? "MP3" : quality,

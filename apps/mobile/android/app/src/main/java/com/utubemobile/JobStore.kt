@@ -170,6 +170,7 @@ class JobStore(private val context: Context, private val scope: String = "") {
             .put("fraction", 0)
             .put("loaded", 0)
             .put("total", 0)
+        plan.optString("thumbnail").takeIf { it.isNotBlank() }?.let { record.put("thumbnail", it) }
         if (retry == null) data.put(record)
         else
           for (j in 0 until data.length()) if (data.getJSONObject(j).getString("id") == id)

@@ -7,6 +7,7 @@ import {
 } from "./domain";
 export type DownloadRequest = {
   videoId: string;
+  thumbnail?: string;
   title: string;
   mode: MediaMode;
   requestedQuality: string;

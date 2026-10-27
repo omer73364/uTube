@@ -3,7 +3,8 @@ import inquirer from "./prompts.js";
 import { welcome } from "./welcome.js";
 import { muted, details, success, interactive, promptOptions } from "./ui.js";
 import { version } from "../../../version.js";
-import { getSetting, setDownloadFolder, getVideoOrListID } from "./heperFunctions.js";
+import { getSetting, setDownloadFolder } from "./heperFunctions.js";
+import { parseMediaURL as getVideoOrListID } from '../../../packages/core/media-source.js';
 
 export const askForQuality = async (qualities) => {
   if (!qualities.length) throw new Error("No downloadable video formats available.");
@@ -46,7 +47,7 @@ export const home = async () => {
 
 export const askForURL = async () => {
   const { url } = await inquirer.prompt([{
-    ...promptOptions, name: "url", message: "YouTube URL", filter: (value) => value.trim(),
+    ...promptOptions, name: "url", message: "YouTube or X URL", filter: (value) => value.trim(),
     validate: (value) => { try { getVideoOrListID(value); return true; } catch (error) { return error.message; } },
   }]);
   return url;
@@ -67,11 +68,11 @@ export const readArgs = async () => {
   }
   if (values["-v"] || values["--version"]) { console.log(`uTube v${version}`); return null; }
   if (values["-h"] || values["--help"]) {
-    console.log(`Usage: utube [-u <YouTube URL>] [-q <quality>] [--audio]
+    console.log(`Usage: utube [-u <YouTube or X URL>] [-q <quality>] [--audio]
 
 Run utube without arguments to open the interactive menu.
 
-  -u <url>                     Video or playlist URL
+  -u <url>                     YouTube video/playlist or public X post URL
   -q <quality>                 Quality, for example 720p
   -a, --audio                  Download audio as MP3 (requires FFmpeg)
   --install-ffmpeg             Download FFmpeg for uTube (MP3 and HD video)
@@ -102,7 +103,7 @@ Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
   }
   let url = values["-u"];
   if (!url) {
-    if (!interactive()) throw new Error("Provide a YouTube URL with -u <url>.");
+    if (!interactive()) throw new Error("Provide a YouTube or X URL with -u <url>.");
     url = await askForURL();
   }
   getVideoOrListID(url);
