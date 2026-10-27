@@ -54,6 +54,12 @@
           <data android:host="m.youtube.com" />
           <data android:host="music.youtube.com" />
           <data android:host="youtu.be" />
+          <data android:host="facebook.com" />
+          <data android:host="www.facebook.com" />
+          <data android:host="m.facebook.com" />
+          <data android:host="mbasic.facebook.com" />
+          <data android:host="web.facebook.com" />
+          <data android:host="fb.watch" />
           <data android:host="instagram.com" />
           <data android:host="www.instagram.com" />
           <data android:host="m.instagram.com" />

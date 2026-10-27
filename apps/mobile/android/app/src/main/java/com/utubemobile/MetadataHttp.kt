@@ -40,6 +40,7 @@ class MetadataHttp {
       if (target.host == "www.instagram.com") require(
         if (target.path == "/api/graphql") method == "POST" && body != null else method == "GET" && body == null
       ) { "Invalid Instagram metadata request." }
+      if (TransferPolicy.facebookPage(target)) require(method == "GET" && body == null) { "Invalid Facebook metadata request." }
       require(method in listOf("GET", "POST", "HEAD"))
       require((body?.length ?: 0) <= 1024 * 1024)
     } catch (e: Exception) {
@@ -79,7 +80,7 @@ class MetadataHttp {
               connection.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
             }
             val status = connection.responseCode
-            if (status in listOf(301, 302, 303, 307, 308)) {
+            if (status in listOf(301, 302, 303, 307, 308) && !TransferPolicy.facebookPage(allowed(target))) {
               require(allowed(target).host !in listOf("cdn.syndication.twimg.com", "www.instagram.com")) { "Unexpected metadata redirect." }
               require(method != "POST") { "Unexpected metadata redirect." }
               target =

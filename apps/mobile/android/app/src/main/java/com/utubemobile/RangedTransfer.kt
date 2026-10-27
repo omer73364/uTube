@@ -40,7 +40,7 @@ object RangedTransfer {
           connection.instanceFollowRedirects = false
           if (!queryRange) connection.setRequestProperty("Range", "bytes=$offset-$end")
           connection.setRequestProperty("Accept", "*/*")
-          val origin = if (uri.host == "video.twimg.com") "https://x.com" else if (!uri.host.endsWith(".googlevideo.com")) "https://www.instagram.com" else "https://www.youtube.com"
+          val origin = if (uri.host == "video.twimg.com") "https://x.com" else if (uri.host.endsWith(".fbcdn.net") && stream.optString("provider") == "facebook") "https://www.facebook.com" else if (!uri.host.endsWith(".googlevideo.com")) "https://www.instagram.com" else "https://www.youtube.com"
           connection.setRequestProperty("Origin", origin)
           connection.setRequestProperty("Referer", "$origin/")
           connection.setRequestProperty("Accept-Encoding", "identity")
