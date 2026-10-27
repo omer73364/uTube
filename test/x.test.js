@@ -28,7 +28,7 @@ test('X links accept both domains, mobile aliases, share queries, and specific v
   assert.equal(parseMediaURL(`x.com/i/web/status/${postId}`).provider, 'x');
   assert.equal(parseMediaURL(`https://x.com/i/status/${postId}`).id, videoId);
   assert.equal(parseMediaURL('https://youtu.be/jNQXAC9IVRw').provider, 'youtube');
-  for (const url of [`https://x.com.evil.test/a/status/${postId}`, `https://x.com@evil.test/a/status/${postId}`, `https://user@x.com/a/status/${postId}`, `https://x.com:8443/a/status/${postId}`, `file://x.com/a/status/${postId}`, 'https://x.com/a', `https://x.com/a/status/${postId}/video/5`, 'https://x.com/a/status/0000000000000000001']) assert.throws(() => parseMediaURL(url), /valid YouTube or X/);
+  for (const url of [`https://x.com.evil.test/a/status/${postId}`, `https://x.com@evil.test/a/status/${postId}`, `https://user@x.com/a/status/${postId}`, `https://x.com:8443/a/status/${postId}`, `file://x.com/a/status/${postId}`, 'https://x.com/a', `https://x.com/a/status/${postId}/video/5`, 'https://x.com/a/status/0000000000000000001']) assert.throws(() => parseMediaURL(url), /valid YouTube, X, or Instagram/);
 });
 
 test('X previews expose actual MP4 qualities, metadata and safe thumbnails without connecting to YouTube', async () => {

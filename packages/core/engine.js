@@ -6,7 +6,8 @@ import { videoFormats, selectFormat, selectAudioFormat, matchingVideoFormats, lo
 import { saveStream, downloadFormat, streamStatus, retryableStreamError } from "./streams.js";
 import { specialRemover, availavleQualities } from "./urls.js";
 import { getPlaylist } from "./playlist.js";
-import { parseMediaURL, isXVideoID } from './media-source.js';
+import { parseMediaURL, isXVideoID, isInstagramVideoID, isProgressiveVideoID } from './media-source.js';
+import { createInstagramClient } from './instagram.js';
 import { createXClient } from './x.js';
 
 const ffmpeg = (args, executable = "ffmpeg", signal) => new Promise((resolve, reject) => {
@@ -80,30 +81,33 @@ const downloadAttempt = async ({ item, playlistTitle: listTitle, quality, select
   }
 };
 
-export function createDownloadEngine({ client, xClient = createXClient(), ffmpegPath = "ffmpeg" }) {
+export function createDownloadEngine({ client, xClient = createXClient(), instagramClient = createInstagramClient(), ffmpegPath = "ffmpeg" }) {
   const getVideoData = (id, name = "IOS", { signal } = {}) => isXVideoID(id)
     ? xClient.getInfo(id, { signal })
-    : client.getInfo(id, { client: name });
+    : isInstagramVideoID(id) ? instagramClient.getInfo(id, { signal }) : client.getInfo(id, { client: name });
   return {
     getVideoData,
     getPlaylist: (id) => getPlaylist(client, id),
     async inspect(url, { signal } = {}) {
       checkAbort(signal);
       const { provider, type, id, postId, selectedVideo } = parseMediaURL(url);
-      if (provider === 'x') {
-        const post = await xClient.getPost(postId, { signal });
-        const videos = post.media.map((_, index) => ({ id: `x-${postId}-${index + 1}`, info: xClient.videoInfo(postId, index + 1, post, { signal }) }));
+      if (provider === 'x' || provider === 'instagram') {
+        const providerClient = provider === 'x' ? xClient : instagramClient;
+        const prefix = provider === 'x' ? 'x' : 'ig';
+        const label = provider === 'x' ? 'X' : 'Instagram';
+        const post = await providerClient.getPost(postId, { signal });
+        const videos = post.media.map((_, index) => ({ id: `${prefix}-${postId}-${index + 1}`, info: providerClient.videoInfo(postId, index + 1, post, { signal }) }));
         const chosen = videos[(selectedVideo || 1) - 1];
-        if (!chosen) throw new Error('The selected video is not available in this X post.');
+        if (!chosen) throw new Error(`The selected video is not available in this ${label} post.`);
         const info = chosen.info;
         const preview = {
-          type: 'video', provider: 'x', id: chosen.id, title: info.basic_info.title,
+          type: 'video', provider, id: chosen.id, title: info.basic_info.title,
           author: info.basic_info.author, duration: info.basic_info.duration,
           thumbnail: info.basic_info.thumbnail[0]?.url,
           qualities: availavleQualities(videoFormats(info).map(format => format.quality_label)),
         };
         if (videos.length === 1 || selectedVideo) return preview;
-        return { ...preview, type: 'playlist', title: `${info.basic_info.author} — X post ${postId}`,
+        return { ...preview, type: 'playlist', title: `${info.basic_info.author} — ${label} post ${postId}`,
           qualities: availavleQualities(videos.flatMap(video => videoFormats(video.info).map(format => format.quality_label))),
           items: videos.map(video => ({ id: video.id, title: video.info.basic_info.title, thumbnail: video.info.basic_info.thumbnail[0]?.url })),
         };
@@ -125,13 +129,13 @@ export function createDownloadEngine({ client, xClient = createXClient(), ffmpeg
       if (!options.folder || !path.isAbsolute(options.folder)) throw new Error("An absolute download folder is required.");
       checkAbort(options.signal);
       const emit = options.onEvent || (() => {});
-      const clients = isXVideoID(options.item.id) ? ['X', 'X'] : options.audio ? ["IOS", "IOS", "ANDROID"] : ["IOS", "VISIONOS", "ANDROID_VR", "ANDROID"];
+      const clients = isProgressiveVideoID(options.item.id) ? ['WEB', 'WEB'] : options.audio ? ["IOS", "IOS", "ANDROID"] : ["IOS", "VISIONOS", "ANDROID_VR", "ANDROID"];
       let lastError;
       let transferError;
       const sources = [];
       for (const [attempt, name] of clients.entries()) {
         try {
-          const info = attempt === 0 && options.info && !isXVideoID(options.item.id) ? options.info : await withAbort(getVideoData(options.item.id, name, { signal: options.signal }), options.signal);
+          const info = attempt === 0 && options.info && !isProgressiveVideoID(options.item.id) ? options.info : await withAbort(getVideoData(options.item.id, name, { signal: options.signal }), options.signal);
           sources.push(info);
           const formats = options.audio ? [selectAudioFormat(info)] : matchingVideoFormats(info, options.quality);
           for (const selectedFormat of formats) {
