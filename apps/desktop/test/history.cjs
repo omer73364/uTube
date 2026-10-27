@@ -18,7 +18,7 @@ const os = require('node:os');
   let app;
   try {
     app = await launch(); let page = await app.firstWindow();
-    await page.getByRole('textbox', { name: 'YouTube or X URL' }).fill('https://youtube.com/playlist?list=PL123');
+    await page.getByRole('textbox', { name: 'YouTube, X, or Instagram URL' }).fill('https://youtube.com/playlist?list=PL123');
     await page.getByRole('button', { name: 'Preview link', exact: true }).click();
     await page.getByRole('button', { name: 'Download 2 videos', exact: true }).click();
     await expect.poll(() => page.evaluate(async () => (await window.utube.jobs()).map((job) => job.status)), { timeout: 20000 }).toEqual(['saved', 'failed']);

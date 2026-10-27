@@ -1,5 +1,6 @@
 import { createDownloadEngine, createYouTubeClient } from '../../../../packages/core/index.js';
 import fs from 'node:fs/promises';
+import { createInstagramClient } from '../../../../packages/core/instagram.js';
 import { createXClient } from '../../../../packages/core/x.js';
 
 type Port = { on(name: string, handler: (event: { data: any }) => void): void; postMessage(value: unknown): void };
@@ -7,6 +8,7 @@ const port = (process as unknown as { parentPort: Port }).parentPort;
 const controllers = new Map<string, AbortController>();
 let enginePromise: Promise<any> | undefined;
 let xClient: ReturnType<typeof createXClient> | undefined;
+let instagramClient: ReturnType<typeof createInstagramClient> | undefined;
 async function getEngine(ffmpegPath?: string) {
   if (!enginePromise) enginePromise = (async () => {
     let client;
@@ -22,6 +24,20 @@ async function getEngine(ffmpegPath?: string) {
             })),
           } })),
         }));
+        const { setTimeout: delay } = await import('node:timers/promises');
+        await delay(Number(process.env.UTUBE_TEST_DELAY || 0), undefined, { signal: options?.signal || undefined });
+        return new Response(media, { headers: { 'Content-Type': 'video/mp4', 'Content-Length': String(media.length) } });
+      } });
+      instagramClient = createInstagramClient({ fetch: async (input, options) => {
+        const url = new URL(String(input));
+        if (url.hostname === 'www.instagram.com') {
+          const code = url.pathname.split('/')[2];
+          const data = { code, user: { username: 'uTube Studio' }, caption: { text: 'A moment from Instagram' },
+            original_width: 1280, original_height: 720, video_duration: 1,
+            image_versions2: { candidates: [{ url: 'https://scontent.cdninstagram.com/test.jpg' }] },
+            video_versions: [{ url: 'https://instagram.test.fna.fbcdn.net/fixture.mp4' }] };
+          return new Response(`<script type="application/json">${JSON.stringify(data)}</script>`);
+        }
         const { setTimeout: delay } = await import('node:timers/promises');
         await delay(Number(process.env.UTUBE_TEST_DELAY || 0), undefined, { signal: options?.signal || undefined });
         return new Response(media, { headers: { 'Content-Type': 'video/mp4', 'Content-Length': String(media.length) } });
@@ -56,7 +72,7 @@ async function getEngine(ffmpegPath?: string) {
     return client;
   })().catch((error) => { enginePromise = undefined; throw error; });
   const client = await enginePromise;
-  return createDownloadEngine({ client, xClient, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
+  return createDownloadEngine({ client, xClient, instagramClient, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
 }
 port.on('message', async ({ data: message }) => {
   if (message.type === 'cancel') { controllers.get(message.id)?.abort(); return; }

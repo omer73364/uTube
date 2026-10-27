@@ -89,7 +89,7 @@ const os = require("node:os");
       }
     };
     await expect(
-      page.getByRole("heading", { name: "Download from YouTube or X" }),
+      page.getByRole("heading", { name: "Download from YouTube, X, or Instagram" }),
     ).toBeVisible();
     await expect(page.getByRole("button", { name: "Audio only" })).toHaveCount(
       0,

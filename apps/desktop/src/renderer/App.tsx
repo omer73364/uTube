@@ -257,7 +257,7 @@ export default function App() {
       setPreview(data);
       setSelected((data.items || [data]).map((_, index) => index));
       setQuality(
-        data.provider !== "x" && data.qualities?.includes("360p")
+        (!data.provider || data.provider === "youtube") && data.qualities?.includes("360p")
           ? "360p"
           : data.qualities?.at(-1) || "360p",
       );
@@ -335,7 +335,7 @@ export default function App() {
       ? preview.qualities || []
       : preview.qualities || ["144p", "240p", "360p", "480p", "720p", "1080p"];
   const hasEncoder = settings?.ffmpeg !== false;
-  const requiresFFmpeg = audio || (preview?.provider !== "x" && quality !== "360p");
+  const requiresFFmpeg = audio || ((!preview?.provider || preview.provider === "youtube") && quality !== "360p");
   const image = safeMediaThumbnail(preview?.thumbnail);
   const filters = [
     ["all", t("all"), jobs.length],
@@ -642,8 +642,8 @@ export default function App() {
                         <span>
                           {t(
                             preview.type === "playlist"
-                              ? preview.provider === "x" ? "xPostPreview" : "playlistPreview"
-                              : preview.provider === "x" ? "xVideoPreview" : "videoPreview",
+                              ? preview.provider === "instagram" ? "instagramPostPreview" : preview.provider === "x" ? "xPostPreview" : "playlistPreview"
+                              : preview.provider === "instagram" ? "instagramVideoPreview" : preview.provider === "x" ? "xVideoPreview" : "videoPreview",
                             { count: preview.items?.length || 0 },
                           )}
                         </span>

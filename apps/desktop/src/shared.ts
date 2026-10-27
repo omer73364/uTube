@@ -1,6 +1,6 @@
 import type { Language } from './locales';
 export type Preview = {
-  type: 'video' | 'playlist'; provider?: 'youtube' | 'x'; id: string; title: string; author?: string;
+  type: 'video' | 'playlist'; provider?: 'youtube' | 'x' | 'instagram'; id: string; title: string; author?: string;
   duration?: number; thumbnail?: string | null; qualities?: string[];
   items?: { id: string; title: string; thumbnail?: string }[];
 };
