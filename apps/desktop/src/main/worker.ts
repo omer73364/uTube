@@ -1,5 +1,6 @@
 import { createDownloadEngine, createYouTubeClient } from '../../../../packages/core/index.js';
 import fs from 'node:fs/promises';
+import { createFacebookClient } from '../../../../packages/core/facebook.js';
 import { createInstagramClient } from '../../../../packages/core/instagram.js';
 import { createXClient } from '../../../../packages/core/x.js';
 
@@ -9,6 +10,7 @@ const controllers = new Map<string, AbortController>();
 let enginePromise: Promise<any> | undefined;
 let xClient: ReturnType<typeof createXClient> | undefined;
 let instagramClient: ReturnType<typeof createInstagramClient> | undefined;
+let facebookClient: ReturnType<typeof createFacebookClient> | undefined;
 async function getEngine(ffmpegPath?: string) {
   if (!enginePromise) enginePromise = (async () => {
     let client;
@@ -36,6 +38,20 @@ async function getEngine(ffmpegPath?: string) {
             original_width: 1280, original_height: 720, video_duration: 1,
             image_versions2: { candidates: [{ url: 'https://scontent.cdninstagram.com/test.jpg' }] },
             video_versions: [{ url: 'https://instagram.test.fna.fbcdn.net/fixture.mp4' }] };
+          return new Response(`<script type="application/json">${JSON.stringify(data)}</script>`);
+        }
+        const { setTimeout: delay } = await import('node:timers/promises');
+        await delay(Number(process.env.UTUBE_TEST_DELAY || 0), undefined, { signal: options?.signal || undefined });
+        return new Response(media, { headers: { 'Content-Type': 'video/mp4', 'Content-Length': String(media.length) } });
+      } });
+      facebookClient = createFacebookClient({ fetch: async (input, options) => {
+        const url = new URL(String(input));
+        if (url.hostname === 'www.facebook.com') {
+          if (url.pathname.startsWith('/share/')) return new Response(null, { status: 302, headers: { Location: 'https://www.facebook.com/reel/2298871784249067/' } });
+          const id = url.searchParams.get('v') || url.pathname.match(/reel\/([0-9]+)/)?.[1];
+          const data = { id, name: 'A moment from Facebook', owner: { name: 'uTube Studio' },
+            thumbnailImage: { uri: 'https://scontent.test.fbcdn.net/image.jpg' }, length_in_second: 1,
+            videoDeliveryLegacyFields: { browser_native_sd_url: 'https://video.test.fbcdn.net/sd.mp4', browser_native_hd_url: 'https://video.test.fbcdn.net/hd.mp4' } };
           return new Response(`<script type="application/json">${JSON.stringify(data)}</script>`);
         }
         const { setTimeout: delay } = await import('node:timers/promises');
@@ -72,7 +88,7 @@ async function getEngine(ffmpegPath?: string) {
     return client;
   })().catch((error) => { enginePromise = undefined; throw error; });
   const client = await enginePromise;
-  return createDownloadEngine({ client, xClient, instagramClient, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
+  return createDownloadEngine({ client, xClient, instagramClient, facebookClient, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
 }
 port.on('message', async ({ data: message }) => {
   if (message.type === 'cancel') { controllers.get(message.id)?.abort(); return; }

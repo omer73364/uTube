@@ -642,8 +642,8 @@ export default function App() {
                         <span>
                           {t(
                             preview.type === "playlist"
-                              ? preview.provider === "instagram" ? "instagramPostPreview" : preview.provider === "x" ? "xPostPreview" : "playlistPreview"
-                              : preview.provider === "instagram" ? "instagramVideoPreview" : preview.provider === "x" ? "xVideoPreview" : "videoPreview",
+                              ? preview.provider === "facebook" ? "facebookPostPreview" : preview.provider === "instagram" ? "instagramPostPreview" : preview.provider === "x" ? "xPostPreview" : "playlistPreview"
+                              : preview.provider === "facebook" ? "facebookVideoPreview" : preview.provider === "instagram" ? "instagramVideoPreview" : preview.provider === "x" ? "xVideoPreview" : "videoPreview",
                             { count: preview.items?.length || 0 },
                           )}
                         </span>

@@ -18,7 +18,7 @@ const assert = require('node:assert/strict');
   try {
     const page = await app.firstWindow();
     await page.getByRole('button',{name:'Not now',exact:true}).click();
-    await page.getByRole('textbox',{name:'YouTube, X, or Instagram URL'}).fill('https://www.instagram.com/reel/DemPo6-NFZK/');
+    await page.getByRole('textbox',{name:'YouTube, X, Instagram, or Facebook URL'}).fill('https://www.instagram.com/reel/DemPo6-NFZK/');
     await page.getByRole('button',{name:'Preview link',exact:true}).click();
     await expect(page.getByText('Instagram video',{exact:true})).toBeVisible();
     const quality = page.getByRole('combobox');
