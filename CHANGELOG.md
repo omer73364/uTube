@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add public Facebook videos and Reels across desktop, Android, and CLI, including share/fb.watch links, MP3 conversion, SD/HD choices and fallback, thumbnails, and Android sharing.
+
 - Add public Instagram Reel and video-post downloads to desktop, Android, and CLI, including video carousels, MP3 conversion, safe thumbnails, fresh media links, and Android sharing.
 
 - Add public X/Twitter video downloads across Android, CLI, and the Windows/macOS/Linux desktop app, with a shared metadata parser, native MP4 quality selection, MP3 extraction, and multi-video post selection.

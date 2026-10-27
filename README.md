@@ -477,3 +477,19 @@ Only public videos accessible without signing in are supported. Private posts,
 Stories, live streams, and photos are not supported. Instagram may temporarily
 limit anonymous requests; try again later if it asks you to sign in. MP3 conversion
 requires FFmpeg on desktop and CLI.
+
+### Facebook downloads (next release)
+
+Download public **Facebook videos and Reels** in desktop, Android, and CLI.
+Paste a video link, a Facebook share link, or an `fb.watch` link. Save MP4 video
+or MP3 audio; Android also accepts links shared from Facebook.
+
+```sh
+utube -u "https://www.facebook.com/share/r/1BhmM7uP7K/" -q HD
+utube --audio -u "https://www.facebook.com/share/r/1BhmM7uP7K/"
+```
+
+Available quality options follow Facebook's metadata: **SD/HD**, or a resolution
+when Facebook provides one. If HD fails, uTube can try SD. MP3 conversion requires
+FFmpeg on desktop and CLI. Private or login-restricted videos, live streams,
+photos, and videos offered only as streaming playlists are not supported.

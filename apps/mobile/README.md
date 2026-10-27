@@ -276,3 +276,10 @@ Paste a public Instagram Reel or video-post link to preview and download it.
 Video carousels support selecting individual videos. MP4 and MP3 use the existing
 download flow. Private posts, Stories, live streams, and photos are not supported;
 Instagram may limit access without signing in.
+
+### Facebook (next release)
+
+Paste a public Facebook video, Reel, share link, or `fb.watch` link. Choose SD/HD
+(or a resolution when available) and save MP4 or MP3 through the existing download
+flow. Private/login-restricted videos, live streams, photos, and streaming-only
+videos are not supported.
