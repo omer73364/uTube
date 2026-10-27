@@ -1,0 +1,64 @@
+const { _electron: electron } = require('playwright');
+const { expect } = require('@playwright/test');
+const { execFileSync } = require('node:child_process');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const os = require('node:os');
+const assert = require('node:assert/strict');
+
+(async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-x-ui-'));
+  const prefs = path.join(root, 'prefs');
+  const media = path.join(root, 'fixture.mp4');
+  await fs.mkdir(prefs);
+  await fs.writeFile(path.join(prefs, 'settings.json'), JSON.stringify({ folder: root }));
+  execFileSync('ffmpeg', ['-v', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=1280x720:r=10', '-f', 'lavfi', '-i', 'sine=duration=0.3', '-t', '0.3', '-c:v', 'libx264', '-preset', 'ultrafast', '-c:a', 'aac', media]);
+  const env = { ...process.env, UTUBE_TEST_USER_DATA: prefs, UTUBE_TEST_MEDIA: media, UTUBE_TEST_DELAY: '100', UTUBE_FFMPEG: '/missing/ffmpeg' };
+  delete env.ELECTRON_RUN_AS_NODE;
+  const args = [path.resolve(__dirname, '..')];
+  if (process.env.UTUBE_TEST_NO_SANDBOX === '1') args.unshift('--no-sandbox');
+  let app;
+  const launch = () => electron.launch({ executablePath: require('electron'), args, env });
+  try {
+    app = await launch();
+    let page = await app.firstWindow();
+    await page.getByRole('button', { name: 'Not now', exact: true }).click();
+    await page.getByRole('textbox', { name: 'YouTube or X URL' }).fill('https://x.com/studio/status/1577855540407197696');
+    await page.getByRole('button', { name: 'Preview link', exact: true }).click();
+    await expect(page.getByTestId('source-preview')).toContainText('X post · 2 videos');
+    await expect(page.getByRole('combobox', { name: 'Video quality' })).toHaveValue('720p');
+    await page.getByRole('checkbox').first().uncheck();
+    await expect(page.getByRole('button', { name: 'Download 1 videos', exact: true })).toBeEnabled();
+    await page.getByRole('button', { name: 'Download 1 videos', exact: true }).click();
+    await expect.poll(() => page.evaluate(async () => (await window.utube.jobs())[0]?.status), { timeout: 20000 }).toBe('saved');
+    const [job] = await page.evaluate(() => window.utube.jobs());
+    assert.equal(job.videoId, 'x-1577855540407197696-2');
+    assert.equal(job.actualQuality, '720p');
+    assert.equal(job.thumbnail, 'https://pbs.twimg.com/media/utube-test.jpg');
+    assert.equal((JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_streams', '-of', 'json', job.path], { encoding: 'utf8' }))).streams[0].height, 720);
+    await page.getByRole('textbox', { name: 'YouTube or X URL' }).fill('https://twitter.com/studio/status/1577855540407197696/video/1');
+    await page.getByRole('button', { name: 'Preview link', exact: true }).click();
+    await expect(page.getByTestId('source-preview')).toContainText('X video');
+    await page.getByRole('button', { name: /Audio only/ }).click();
+    await expect(page.getByRole('button', { name: 'Download MP3', exact: true })).toBeDisabled();
+    await page.screenshot({ path: '/tmp/utube-x-desktop.png' });
+    await app.close(); app = undefined;
+    app = await launch(); page = await app.firstWindow();
+    const [restored] = await page.evaluate(() => window.utube.jobs());
+    assert.equal(restored.path, job.path);
+    assert.equal(restored.videoId, job.videoId);
+    assert.equal(restored.status, 'saved');
+    await app.close(); app = undefined;
+    await fs.writeFile(path.join(prefs, 'settings.json'), JSON.stringify({ folder: root, language: 'ar', theme: 'dark' }));
+    app = await launch(); page = await app.firstWindow();
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await page.getByRole('button', { name: 'ليس الآن', exact: true }).click();
+    await page.getByRole('textbox', { name: 'رابط يوتيوب أو X' }).fill('https://twitter.com/studio/status/1577855540407197696/video/1');
+    await page.getByRole('button', { name: 'عرض الرابط', exact: true }).click();
+    await expect(page.getByTestId('source-preview')).toContainText('فيديو من X');
+    console.log('PASS: X post/video previews, quality choice, selection, native HD without FFmpeg, MP3 gating, thumbnails, restart history, and Arabic RTL.');
+  } finally {
+    await app?.close();
+    await fs.rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+  }
+})().catch(error => { console.error(error); process.exitCode = 1; });

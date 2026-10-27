@@ -17,7 +17,7 @@ const os = require('node:os');
   let closed = false;
   try {
     const page = await app.firstWindow();
-    await page.getByRole('textbox', {name:'YouTube URL'}).fill('https://youtube.com/playlist?list=PL123');
+    await page.getByRole('textbox', {name:'YouTube or X URL'}).fill('https://youtube.com/playlist?list=PL123');
     await page.getByRole('button', {name:'Preview link',exact:true}).click();
     await expect(page.getByText('2 selected')).toBeVisible();
     await page.getByRole('button', {name:'Download 2 videos',exact:true}).click();
@@ -31,7 +31,7 @@ const os = require('node:os');
     await expect(page.getByText('No matching downloads')).toBeVisible();
     await page.getByRole('button', { name: 'Home', exact: true }).click();
     // Use the actual UI to start another transfer, then cancel it.
-    await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/BaW_jenozKc');
+    await page.getByRole('textbox',{name:'YouTube or X URL'}).fill('https://youtu.be/BaW_jenozKc');
     await page.getByRole('button',{name:'Preview link',exact:true}).click();
     await page.getByRole('button',{name:'Download video',exact:true}).click();
     await jobAction(page, 'Cancel A small moment, worth keeping');
@@ -64,7 +64,7 @@ const os = require('node:os');
     const page=await second.firstWindow();
     await page.getByRole('button', { name: 'Not now', exact: true }).click();
     await expect(page.getByText('FFmpeg not found')).toBeVisible();
-    await page.getByRole('textbox',{name:'YouTube URL'}).fill('https://youtu.be/jNQXAC9IVRw');
+    await page.getByRole('textbox',{name:'YouTube or X URL'}).fill('https://youtu.be/jNQXAC9IVRw');
     await page.getByRole('button',{name:'Preview link',exact:true}).click();
     await page.getByRole('button',{name:/Audio only/}).click();
     await expect(page.getByRole('button',{name:'Download MP3',exact:true})).toBeDisabled();

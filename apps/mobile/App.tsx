@@ -35,7 +35,8 @@ import {
   type Preview,
   type PlaylistPreview,
 } from "./src/domain";
-import { youtube } from "./src/tasks";
+import { media } from "./src/tasks";
+import { validMediaID } from "../../packages/core/media-source.js";
 import { en, ar } from "./src/locales";
 import { Icon, type IconName } from "./src/ui/Icon";
 import { Thumbnail } from "./src/ui/Thumbnail";
@@ -98,7 +99,7 @@ function Screen() {
   } as const;
   const active = jobs.filter((job) => activeStates.has(job.status));
   const retryable = jobs.filter(
-    (job) => retryStates.has(job.status) && /^[\w-]{11}$/.test(job.videoId),
+    (job) => retryStates.has(job.status) && validMediaID(job.videoId),
   );
   const refresh = useCallback(async () => {
     try {
@@ -185,6 +186,9 @@ function Screen() {
     if (/NO_FORMATS|No downloadable/.test(detail)) return t.noFormat;
     if (detail.includes("PLAYER_")) return t.player;
     if (/valid YouTube|No valid video/.test(detail)) return t.invalid;
+    if (detail.includes("requires sign-in")) return t.xUnavailable;
+    if (/X post has no downloadable|X video has no downloadable|selected video is not available/.test(detail)) return t.xNoVideo;
+    if (/X is limiting/.test(detail)) return t.xRateLimited;
     if (detail.includes("MISSING_FILE")) return t.missingHelp;
     if (/No Activity|ActivityNotFound/.test(detail)) return t.openHelp;
     if (/HTTP_403|HTTP_410|HTTP_404/.test(detail)) return t.denied;
@@ -201,7 +205,7 @@ function Screen() {
     setNotice("");
     setPreview(undefined);
     try {
-      const data = await youtube.inspect(url, controller.signal);
+      const data = await media.inspect(url, controller.signal);
       if (id !== generation.current) return;
       setPreview(data);
       setQuality("best");
@@ -251,6 +255,7 @@ function Screen() {
         ? [
             {
               videoId: preview.id,
+              thumbnail: preview.thumbnail,
               title: preview.title.slice(0, 180),
               mode,
               requestedQuality,
@@ -260,6 +265,7 @@ function Screen() {
             .filter((item) => selection.has(item.id))
             .map((item) => ({
               videoId: item.id,
+              thumbnail: item.thumbnail,
               title: item.title.slice(0, 180),
               mode,
               requestedQuality,
@@ -270,6 +276,7 @@ function Screen() {
   }
   const requestFor = (job: Job): DownloadRequest => ({
     videoId: job.videoId,
+    thumbnail: job.thumbnail,
     title: job.title,
     mode: job.mode,
     requestedQuality: job.requestedQuality,
@@ -446,7 +453,7 @@ function Screen() {
   const qualities =
     preview?.kind === "video"
       ? preview.qualities
-      : ["1080p", "720p", "480p", "360p"];
+      : preview?.qualities || ["1080p", "720p", "480p", "360p"];
   const saved = jobs.filter((job) => job.status === "saved");
   const matches = useMemo(
     () =>
@@ -515,6 +522,7 @@ function Screen() {
           >
             <Thumbnail
               videoId={job.videoId}
+              thumbnail={job.thumbnail}
               tint={c.tint}
               accent={c.blue}
               style={s.smallThumbnail}
@@ -900,7 +908,7 @@ function Screen() {
               <View style={[s.previewCard, card]}>
                 <View style={s.previewHeader}>
                   <Text style={[s.eyebrow, { color: c.muted }]}>
-                    {preview.kind === "playlist" ? t.playlist : t.previewLabel}
+                    {preview.provider === "x" ? t.xPost : preview.kind === "playlist" ? t.playlist : t.previewLabel}
                   </Text>
                   {iconButton("close", t.close, () => setPreview(undefined))}
                 </View>
@@ -911,6 +919,7 @@ function Screen() {
                         ? preview.id
                         : preview.items[0]?.id
                     }
+                    thumbnail={preview.thumbnail}
                     tint={c.tint}
                     accent={c.blue}
                     style={s.heroThumbnail}
@@ -1058,6 +1067,7 @@ function Screen() {
                       >
                         <Thumbnail
                           videoId={item.id}
+                          thumbnail={item.thumbnail}
                           tint={c.tint}
                           accent={c.blue}
                           style={{
@@ -1282,6 +1292,7 @@ function Screen() {
                       >
                         <Thumbnail
                           videoId={items[0]?.videoId}
+                          thumbnail={items[0]?.thumbnail}
                           tint={c.tint}
                           accent={c.blue}
                           style={s.smallThumbnail}
@@ -1519,6 +1530,7 @@ function Screen() {
             <View style={s.sheetMedia}>
               <Thumbnail
                 videoId={selectedJob.videoId}
+                thumbnail={selectedJob.thumbnail}
                 tint={c.tint}
                 accent={c.blue}
                 style={{ width: 90, aspectRatio: 16 / 9 }}

@@ -25,6 +25,9 @@ type NativeResponse = {
   url: string;
   headers: Record<string, string>;
 };
+// Foreground X lookups and headless YouTube preparation share the native bridge.
+// Separate transports must never reuse an in-flight cancellation ID.
+let sequence = 0;
 export function nativeFetch(
   http: (
     id: string,
@@ -35,7 +38,6 @@ export function nativeFetch(
   ) => Promise<NativeResponse>,
   cancel: (id: string) => void,
 ): typeof fetch {
-  let sequence = 0;
   return (async (input, init) => {
     const id = `metadata-${++sequence}`;
     const signal =

@@ -60,7 +60,7 @@ const path = require("node:path");
       env,
     });
     const page = await app.firstWindow();
-    await page.getByRole("textbox", { name: "YouTube URL", includeHidden: true }).waitFor();
+    await page.getByRole("textbox", { name: "YouTube or X URL", includeHidden: true }).waitFor();
     assert.equal(await app.evaluate(({ app }) => app.getPath("userData")), path.join(root, "profile"));
     const result = await app.evaluate(
       ({ app, utilityProcess }, bootstrap) =>

@@ -15,7 +15,7 @@ test("single-video input shares core URL validation and rejects playlists and un
     videoId("https://youtube.com.evil.test/watch?v=jNQXAC9IVRw"),
   );
 });
-test("only HTTPS Google video hosts can reach the native downloader", () => {
+test("the YouTube resolver accepts only HTTPS Google video hosts", () => {
   assert.equal(
     mediaURL("https://rr1.googlevideo.com/videoplayback?sig=abc"),
     "https://rr1.googlevideo.com/videoplayback?sig=abc",

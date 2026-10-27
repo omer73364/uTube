@@ -1,15 +1,31 @@
 import { createDownloadEngine, createYouTubeClient } from '../../../../packages/core/index.js';
 import fs from 'node:fs/promises';
+import { createXClient } from '../../../../packages/core/x.js';
 
 type Port = { on(name: string, handler: (event: { data: any }) => void): void; postMessage(value: unknown): void };
 const port = (process as unknown as { parentPort: Port }).parentPort;
 const controllers = new Map<string, AbortController>();
 let enginePromise: Promise<any> | undefined;
+let xClient: ReturnType<typeof createXClient> | undefined;
 async function getEngine(ffmpegPath?: string) {
   if (!enginePromise) enginePromise = (async () => {
     let client;
     if (process.env.UTUBE_TEST_MEDIA) {
       const media = await fs.readFile(process.env.UTUBE_TEST_MEDIA);
+      xClient = createXClient({ fetch: async (input, options) => {
+        const url = new URL(String(input));
+        if (url.hostname === 'cdn.syndication.twimg.com') return new Response(JSON.stringify({
+          id_str: url.searchParams.get('id'), text: 'A moment from X', user: { name: 'uTube Studio' },
+          mediaDetails: [1, 2].map(() => ({ type: 'video', media_url_https: 'https://pbs.twimg.com/media/utube-test.jpg', video_info: {
+            duration_millis: 1000, variants: [360, 720].map(height => ({ content_type: 'video/mp4', bitrate: height * 1000,
+              url: `https://video.twimg.com/ext_tw_video/test/vid/${height * 16 / 9}x${height}/fixture.mp4`,
+            })),
+          } })),
+        }));
+        const { setTimeout: delay } = await import('node:timers/promises');
+        await delay(Number(process.env.UTUBE_TEST_DELAY || 0), undefined, { signal: options?.signal || undefined });
+        return new Response(media, { headers: { 'Content-Type': 'video/mp4', 'Content-Length': String(media.length) } });
+      } });
       const attempts = new Map<string, number>();
       client = {
         getPlaylist: async () => ({ info: { title: 'Weekend collection' }, items: [
@@ -28,10 +44,19 @@ async function getEngine(ffmpegPath?: string) {
         } });
         },
       };
-    } else client = await createYouTubeClient();
+    } else {
+      // X previews and downloads must not depend on a YouTube connection.
+      let youtube: ReturnType<typeof createYouTubeClient> | undefined;
+      const getYouTube = () => youtube ||= createYouTubeClient().catch(error => { youtube = undefined; throw error; });
+      client = {
+        getInfo: async (id: string, options: any) => (await getYouTube()).getInfo(id, options),
+        getPlaylist: async (id: string) => (await getYouTube()).getPlaylist(id),
+      };
+    }
     return client;
   })().catch((error) => { enginePromise = undefined; throw error; });
-  return createDownloadEngine({ client: await enginePromise, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
+  const client = await enginePromise;
+  return createDownloadEngine({ client, xClient, ffmpegPath: ffmpegPath || process.env.UTUBE_FFMPEG || 'ffmpeg' });
 }
 port.on('message', async ({ data: message }) => {
   if (message.type === 'cancel') { controllers.get(message.id)?.abort(); return; }

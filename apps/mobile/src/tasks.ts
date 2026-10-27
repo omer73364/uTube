@@ -1,10 +1,15 @@
 import { AppRegistry, DeviceEventEmitter } from "react-native";
 import { downloads } from "./native";
 import { createYouTubeService } from "./youtube";
+import { createXService } from './x';
+import { createMediaService } from './media';
+import { nativeFetch } from './requests';
 import type { DownloadRequest } from "./native";
 
-export const youtube = createYouTubeService((script) =>
-  downloads.evaluate(script),
+const transport = nativeFetch((...args) => downloads.http(...args), id => downloads.cancelHttp(id));
+export const media = createMediaService(
+  createYouTubeService(script => downloads.evaluate(script)),
+  createXService((url, signal) => transport(url, { signal, headers: { 'User-Agent': 'Googlebot', Accept: 'application/json' } })),
 );
 const preparing = new Map<string, AbortController>();
 DeviceEventEmitter.addListener("utubeCancelPreparation", (id: string) =>
@@ -18,7 +23,7 @@ AppRegistry.registerHeadlessTask(
       const controller = new AbortController();
       preparing.set(job.id, controller);
       try {
-        const plan = await youtube.resolve(
+        const plan = await media.resolve(
           job.videoId,
           job.requestedQuality,
           job.mode,

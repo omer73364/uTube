@@ -16,7 +16,7 @@
     "make": "electron-forge make",
     "typecheck": "tsc --noEmit",
     "test:renderer": "node test/renderer.cjs",
-    "test:desktop": "node test/bridge.cjs && node test/ui.cjs && node test/recovery.cjs && node test/preferences.cjs && node test/history.cjs && node test/ffmpeg-navigation.cjs",
+    "test:desktop": "node test/bridge.cjs && node test/ui.cjs && node test/recovery.cjs && node test/preferences.cjs && node test/history.cjs && node test/ffmpeg-navigation.cjs && node test/x-downloads.cjs",
     "test:packaged": "node test/packaged.cjs"
   },
   "dependencies": {

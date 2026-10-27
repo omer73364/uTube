@@ -75,7 +75,7 @@ npm run desktop:make
 
 Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian packaging needs `dpkg` and `fakeroot`. Nothing is uploaded by this command. The DEB still declares FFmpeg as a system dependency; source builds also offer the optional per-user download described below.
 
-This preview has no partial-download resume or automatic updates. Windows and macOS packages have not been verified. The desktop package is private and does not change the public CLI version.
+This preview has no partial-download resume or automatic updates. macOS ARM64 and Intel packages under Rosetta have been verified locally. Windows and physical Intel Macs still need manual verification. The desktop package is private and does not change the public CLI version.
 
 ### Optional FFmpeg download
 
@@ -95,3 +95,37 @@ FFmpeg version. For example, its Linux x64 binary reports 7.0.2. The pinned asse
 manifest must be reviewed when updating providers or adopting newer builds;
 hashes verify the selected files, not the absence of software vulnerabilities.
 Desktop versions before 2.4.0 do not include this setup UI.
+
+### X / Twitter videos
+
+Paste a public `x.com` or `twitter.com` post into the same link field used for
+YouTube. Preview the title, author, thumbnail, and actual MP4 resolutions. The
+highest available X resolution is selected by default. Posts with several videos
+use the existing selection list; a `/video/2` link selects just the second video.
+Native MP4 downloads include audio and do not need FFmpeg. MP3 extraction uses
+FFmpeg, with the same queue, progress, cancel, retry, history, and file actions as
+YouTube. Portrait resolutions use the shorter edge, such as 720p for 720×900.
+
+This supports public native MP4 videos exposed by X's embedded-post endpoint.
+Private, deleted, restricted, or sign-in-only posts, photos, GIFs, live broadcasts,
+and externally hosted videos are not supported. No account or cookies are read.
+X may rate-limit requests or change this endpoint; errors remain retryable from
+the queue. Android supports the same public X post flow through its native background downloader.
+
+### Build an Intel macOS app on Apple Silicon
+
+Electron Forge can cross-package the Intel runtime from this Mac:
+
+```sh
+npm run package --workspace=@utube/desktop -- --arch=x64
+codesign --force --deep --sign - apps/desktop/out/uTube-darwin-x64/uTube.app
+npm run make --workspace=@utube/desktop -- --arch=x64 --skip-package
+node scripts/collect-release.mjs --arch=x64
+```
+
+The app is in `out/uTube-darwin-x64/`, and versioned DMG/ZIP files with SHA-256
+checksums are in `release-artifacts/` at the repository root. The collector selects
+the target architecture even when ARM64 builds are present. Use `--arch=arm64` for
+Apple Silicon. Intel apps can be smoke-tested under Rosetta on Apple Silicon;
+this does not replace testing on a physical Intel Mac. The signing command applies a local ad-hoc signature; these builds are not
+Apple-notarized or signed with a Developer ID certificate.

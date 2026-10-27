@@ -138,7 +138,7 @@ async function createWindow() {
   handle('utube:enqueue', (request: DownloadRequest) => {
     const valid = validateRequest(request);
     return queue.add(valid.items.map((item: any) => ({
-      videoId: item.id, title: valid.playlistTitle ? `#${item.index + 1}_${item.title}` : item.title,
+      videoId: item.id, thumbnail: item.thumbnail, title: valid.playlistTitle ? `#${item.index + 1}_${item.title}` : item.title,
       playlistTitle: valid.playlistTitle, audio: valid.audio, quality: valid.quality, folder,
     })));
   });

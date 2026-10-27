@@ -27,6 +27,7 @@ import {
   Library,
   Monitor,
 } from "lucide-react";
+import { safeMediaThumbnail } from "../../../../packages/core/media-source.js";
 import appLicense from "../../../../LICENSE?raw";
 import JobCard from "./JobCard";
 import Thumbnail from "./Thumbnail";
@@ -35,16 +36,6 @@ import type { Preview, Job, Settings, Preferences } from "../shared";
 
 const isPending = (job: Job) =>
   ["queued", "running", "cancelling"].includes(job.status);
-const safeThumbnail = (value?: string | null) => {
-  try {
-    const url = new URL(value || "");
-    return url.protocol === "https:" && url.hostname === "i.ytimg.com"
-      ? url.href
-      : undefined;
-  } catch {
-    return undefined;
-  }
-};
 
 export default function App() {
   const [screen, setScreen] = useState<
@@ -266,7 +257,7 @@ export default function App() {
       setPreview(data);
       setSelected((data.items || [data]).map((_, index) => index));
       setQuality(
-        data.qualities?.includes("360p")
+        data.provider !== "x" && data.qualities?.includes("360p")
           ? "360p"
           : data.qualities?.at(-1) || "360p",
       );
@@ -284,7 +275,7 @@ export default function App() {
       const items =
         preview.type === "playlist"
           ? preview.items!
-          : [{ id: preview.id, title: preview.title }];
+          : [{ id: preview.id, title: preview.title, thumbnail: preview.thumbnail || undefined }];
       await window.utube.enqueue({
         items: selected.map((index) => ({ ...items[index], index })),
         audio,
@@ -342,10 +333,10 @@ export default function App() {
     ? []
     : preview.type === "video"
       ? preview.qualities || []
-      : ["144p", "240p", "360p", "480p", "720p", "1080p"];
+      : preview.qualities || ["144p", "240p", "360p", "480p", "720p", "1080p"];
   const hasEncoder = settings?.ffmpeg !== false;
-  const requiresFFmpeg = audio || quality !== "360p";
-  const image = safeThumbnail(preview?.thumbnail);
+  const requiresFFmpeg = audio || (preview?.provider !== "x" && quality !== "360p");
+  const image = safeMediaThumbnail(preview?.thumbnail);
   const filters = [
     ["all", t("all"), jobs.length],
     ["active", t("active"), pending],
@@ -651,8 +642,8 @@ export default function App() {
                         <span>
                           {t(
                             preview.type === "playlist"
-                              ? "playlistPreview"
-                              : "videoPreview",
+                              ? preview.provider === "x" ? "xPostPreview" : "playlistPreview"
+                              : preview.provider === "x" ? "xVideoPreview" : "videoPreview",
                             { count: preview.items?.length || 0 },
                           )}
                         </span>
@@ -728,7 +719,7 @@ export default function App() {
                                 )
                               }
                             />
-                            <Thumbnail videoId={item.id} />
+                            <Thumbnail videoId={item.id} thumbnail={item.thumbnail} />
                             <span className="playlist-index">{index + 1}</span>
                             <span dir="auto">{item.title}</span>
                           </label>
@@ -872,7 +863,7 @@ export default function App() {
                         setQuery("");
                       }}
                     >
-                      <Thumbnail videoId={items[0].videoId} />
+                      <Thumbnail videoId={items[0].videoId} thumbnail={items[0].thumbnail} />
                       <span>
                         <strong dir="auto">{name}</strong>
                         <small>

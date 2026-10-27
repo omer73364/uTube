@@ -24,7 +24,7 @@ const os = require('node:os');
   try {
     app = await launch();
     let page = await app.firstWindow();
-    await expect(page.getByRole('heading', { name: 'Download from YouTube' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Download from YouTube or X' })).toBeVisible();
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('radio', { name: 'Light', exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');

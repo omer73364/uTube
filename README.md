@@ -439,3 +439,25 @@ For the CLI, run `utube --install-ffmpeg`; interactive MP3 and HD downloads also
 offer setup when it is missing. Downloads are verified and saved for uTube only,
 without administrator access or system changes. See the
 [setup guide](docs/ffmpeg-setup.md).
+
+### X / Twitter downloads (desktop, Android, and CLI)
+
+The desktop and Android link fields also accept public `x.com` and `twitter.com` video posts.
+Preview available MP4 qualities, choose videos from a multi-video post, or save
+MP3 audio with FFmpeg. Queue, cancellation, retry, history, and English/Arabic
+support work through the existing app flows. Android also accepts X links from its share menu and browser intents. Native X MP4 downloads keep the
+source video and audio without re-encoding.
+
+The CLI accepts the same links:
+
+```sh
+utube -u "https://x.com/username/status/1577855540407197696" -q 720p
+utube -u "https://twitter.com/username/status/1577855540407197696/video/1" --audio
+```
+
+Only public native MP4 videos exposed by X are supported. Private or restricted
+posts, GIFs, live broadcasts, photos, and external videos are not supported.
+See the [Android guide](apps/mobile/README.md) for background downloads and sharing,
+and the [desktop guide](apps/desktop/README.md) for limitations and Intel macOS builds.
+The desktop code supports macOS, Windows, and Linux. iOS still needs the native
+backend described in the mobile guide.

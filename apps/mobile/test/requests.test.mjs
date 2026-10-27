@@ -63,3 +63,12 @@ test("aborting lookup rejects promptly and cancels its native request", async ()
   await assert.rejects(result, /CANCELLED/);
   assert.equal(cancelled.length, 1);
 });
+
+test('provider transports use unique IDs for concurrent lookup and background preparation', async () => {
+  const ids = [];
+  const request = async id => { ids.push(id); return { url: 'https://www.youtube.com/test', status: 200, body: '{}', headers: {} }; };
+  const youtube = nativeFetch(request, () => {});
+  const x = nativeFetch(request, () => {});
+  await Promise.all([youtube('https://www.youtube.com/test'), x('https://cdn.syndication.twimg.com/tweet-result')]);
+  assert.equal(new Set(ids).size, 2);
+});

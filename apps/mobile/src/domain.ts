@@ -1,4 +1,4 @@
-import { getVideoOrListID } from "../../../packages/core/url-parser.js";
+import { parseMediaURL } from "../../../packages/core/media-source.js";
 export type MediaMode = "video" | "mp3";
 export type Stream = { url: string; size: number; itag: number };
 export type Candidate = { quality: string; video?: Stream; audio?: Stream };
@@ -14,15 +14,20 @@ export type DownloadPlan = {
 export type Format = { id: number; quality: string; url: string };
 export type Preview = {
   kind: "video";
+  provider?: 'youtube' | 'x';
+  thumbnail?: string;
   id: string;
   title: string;
   author: string;
   qualities: string[];
   audioAvailable: boolean;
 };
-export type PlaylistItem = { id: string; title: string; index: number };
+export type PlaylistItem = { id: string; title: string; index: number; thumbnail?: string };
 export type PlaylistPreview = {
   kind: "playlist";
+  provider?: 'youtube' | 'x';
+  thumbnail?: string;
+  qualities?: string[];
   id: string;
   title: string;
   items: PlaylistItem[];
@@ -30,6 +35,7 @@ export type PlaylistPreview = {
 export type Job = {
   id: string;
   videoId: string;
+  thumbnail?: string;
   title: string;
   mode: MediaMode;
   quality: string;
@@ -56,7 +62,7 @@ export type Job = {
   downgraded?: boolean;
 };
 export function videoId(input: string): string {
-  const parsed = getVideoOrListID(input.trim());
+  const parsed = parseMediaURL(input.trim());
   if (parsed.type !== "video") throw new Error("PLAYLIST_NOT_YET");
   return parsed.id;
 }

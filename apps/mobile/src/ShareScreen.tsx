@@ -14,7 +14,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { downloads } from "./native";
 import { shareRequests } from "./share";
-import { youtube } from "./tasks";
+import { media } from "./tasks";
 import { en, ar } from "./locales";
 import type { MediaMode, Preview, PlaylistPreview } from "./domain";
 import { light, dark } from "./ui/theme";
@@ -42,7 +42,7 @@ function Sheet({ url }: { url: string }) {
   const [mode, setMode] = useState<MediaMode>("video");
   const [quality, setQuality] = useState("best");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string>();
   const [attempt, setAttempt] = useState(0);
   const t = prefs.language === "ar" ? ar : en;
   const rtl = prefs.language === "ar";
@@ -64,9 +64,9 @@ function Sheet({ url }: { url: string }) {
       .then(setPrefs)
       .catch(() => {});
     const controller = new AbortController();
-    setError(false);
+    setError(undefined);
     setPreview(undefined);
-    void youtube
+    void media
       .inspect(url, controller.signal)
       .then((value) => {
         if (!controller.signal.aborted) {
@@ -83,8 +83,8 @@ function Sheet({ url }: { url: string }) {
           setVisible(50);
         }
       })
-      .catch(() => {
-        if (!controller.signal.aborted) setError(true);
+      .catch((reason) => {
+        if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "PREPARATION_FAILED");
       });
     const back = BackHandler.addEventListener("hardwareBackPress", () => {
       downloads.closeShare();
@@ -100,7 +100,7 @@ function Sheet({ url }: { url: string }) {
     if (!preview || busy || (preview.kind === "playlist" && !selection.size))
       return;
     setBusy(true);
-    setError(false);
+    setError(undefined);
     try {
       if (
         Platform.OS === "android" &&
@@ -116,8 +116,8 @@ function Sheet({ url }: { url: string }) {
       const requests = shareRequests(preview, mode, quality, selection);
       await downloads.enqueue(requests);
       downloads.closeShare();
-    } catch {
-      setError(true);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "PREPARATION_FAILED");
     } finally {
       setBusy(false);
     }
@@ -160,7 +160,7 @@ function Sheet({ url }: { url: string }) {
   const qualities =
     preview?.kind === "video"
       ? preview.qualities
-      : ["1080p", "720p", "480p", "360p"];
+      : preview?.qualities || ["1080p", "720p", "480p", "360p"];
   return (
     <View style={s.overlay}>
       <Pressable
@@ -203,6 +203,7 @@ function Sheet({ url }: { url: string }) {
                   videoId={
                     preview.kind === "video" ? preview.id : preview.items[0]?.id
                   }
+                  thumbnail={preview.thumbnail}
                   tint={p.soft}
                   accent={p.blue}
                   style={s.thumb}
@@ -346,6 +347,7 @@ function Sheet({ url }: { url: string }) {
                               </View>
                               <Thumbnail
                                 videoId={item.id}
+                                thumbnail={item.thumbnail}
                                 tint={p.soft}
                                 accent={p.blue}
                                 style={s.itemThumb}
@@ -427,7 +429,7 @@ function Sheet({ url }: { url: string }) {
                 accessibilityRole="alert"
                 style={[text, { color: p.error }]}
               >
-                {preview ? t.error : t.preparationFailed}
+                {error.includes("requires sign-in") ? t.xUnavailable : /X post has no downloadable|X video has no downloadable|selected video/.test(error) ? t.xNoVideo : error.includes("X is limiting") ? t.xRateLimited : preview ? t.error : t.preparationFailed}
               </Text>
               {!busy &&
                 button(t.retry, () =>

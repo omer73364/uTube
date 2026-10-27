@@ -20,8 +20,8 @@ import { getEngine } from "./service.js";
 import {
   availavleQualities,
   getSetting,
-  getVideoOrListID,
 } from "./heperFunctions.js";
+import { parseMediaURL, isXVideoID } from '../../../packages/core/media-source.js';
 import { askForQuality } from "./readInput.js";
 import { videoFormats } from "../../../packages/core/formats.js";
 import { createProgressFilter } from "../../../packages/core/progress.js";
@@ -45,7 +45,7 @@ export const downloadVideo = async (
   audio = false,
   { showInfo = true } = {},
 ) => {
-  await ensureFFmpeg(audio || parseInt(quality) > 360);
+  await ensureFFmpeg(audio || (!isXVideoID(item.id) && parseInt(quality) > 360));
   let display;
   let started = false;
   let formatWarning;
@@ -114,7 +114,10 @@ export const downloadVideo = async (
 };
 
 export const download = async ({ url, quality, audio = false }) => {
-  const { type, id } = getVideoOrListID(url);
+  const source = parseMediaURL(url);
+  const xPreview = source.provider === 'x' ? await task('Loading X post', () => getEngine().inspect(url)) : undefined;
+  const type = xPreview?.type === 'playlist' ? 'list' : source.type;
+  const id = xPreview?.id || source.id;
   if (type === "video") {
     const info = await task("Loading video details", () => getVideoData(id));
     videoCard({
@@ -143,7 +146,9 @@ export const download = async ({ url, quality, audio = false }) => {
     );
     return;
   }
-  const data = await task("Loading playlist", () => getListData(id));
+  const data = xPreview?.type === 'playlist'
+    ? { info: { title: xPreview.title }, items: xPreview.items }
+    : await task("Loading playlist", () => getListData(id));
   if (!data.items.length)
     throw new Error("This playlist is empty or has no accessible videos.");
   heading(data.info?.title || "Playlist");
