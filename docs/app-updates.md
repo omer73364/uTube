@@ -10,12 +10,12 @@ checks. Automatic checks are skipped for noninteractive commands, help, and
 version output; network checks time out after 1.5 seconds and offline startup
 failures stay silent. The CLI never runs npm installation automatically.
 
-**Delivery starts disabled:** `packages/core/update-config.json` intentionally
-has no production trust roots. Configure the public key, GitHub secret, and feed
-below before shipping the first updater-enabled release. Development and
-unconfigured builds remain usable. Nothing in this change publishes a release,
-changes the installed production app, or creates a production signing identity.
-Existing users need one manual installation to acquire this updater.
+**Production delivery starts with 2.6.0:** `packages/core/update-config.json`
+contains the production public trust root. The matching private metadata key is
+kept outside Git and supplied to the publishing workflow through an Actions
+secret. The signed feed is renewed daily. Existing users need one manual
+installation of 2.6.0 to acquire this updater. Development builds without trust
+roots remain usable without update delivery.
 
 ## User experience
 

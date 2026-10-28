@@ -1,6 +1,6 @@
 {
   "name": "utube-cli",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Download public videos and audio from YouTube, X, Instagram, and Facebook",
   "main": "index.js",
   "type": "module",

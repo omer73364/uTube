@@ -1,7 +1,7 @@
 {
   "name": "@utube/desktop",
   "productName": "uTube",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Public videos and audio from YouTube, X, Instagram, and Facebook",
   "private": true,
   "main": ".vite/build/main.cjs",

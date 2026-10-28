@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.6.0 — 2026-10-29
+
+- Add signed in-app update checks, verified installer downloads, progress, cancellation, and installer handoff on desktop and Android, with English/Arabic notices and release information.
+- Add signed provider-status notices so unavailable services can pause new work while other providers continue.
+- Notify CLI users about newer npm releases at startup, through the menu, and with `utube --check-updates`.
+- Show download sizes in quality choices across all apps, including header-based size checks for Facebook and Instagram when metadata does not include them.
+- Simplify mobile update settings, match desktop/mobile themes, and offer stopping the current download only while a transfer is active.
+- Configure the production update trust root and signed feed; existing users need one manual installation to receive future in-app updates.
+
 ## 2.5.0 — 2026-10-28
 
 - Add public Facebook videos and Reels across desktop, Android, and CLI, including share/fb.watch links, MP3 conversion, SD/HD choices and fallback, thumbnails, and Android sharing.
