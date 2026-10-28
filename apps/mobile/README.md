@@ -293,3 +293,29 @@ interrupt it; unfinished work remains available to retry. Provider shutdown noti
 hold only the affected service's queued jobs. Production delivery is disabled until
 its trust roots and publishing secret are configured. See the
 [app update guide](../../docs/app-updates.md).
+
+## Sizes beside every quality
+
+The quality picker and Android share sheet display an estimated size beside every
+quality before selection, including Best available. Estimates include audio for
+HD videos. MP3 has its own 192 kbps output-size estimate. Partial selected-video
+totals show `+ ?`, and missing source metadata is labelled Size unavailable.
+The main preview and share sheet use the same calculation. Size information comes
+from preview metadata. Facebook and Instagram also check MP4 response headers for file lengths without downloading video bodies. These checks accept only validated CDN links and never follow redirects; failed checks leave sizes unavailable. Some sources and playlist entries still lack size information.
+
+### Verify quality sizes on an emulator
+
+The fixture entry uses the real App and ShareScreen with deterministic metadata;
+it blocks downloads. It is not part of normal builds. From `apps/mobile/android`:
+
+```sh
+ENTRY_FILE=test/quality-size-ui-entry.js ./gradlew :app:assemblePrototype -PreactNativeArchitectures=arm64-v8a
+adb -s emulator-5554 install -r -t app/build/outputs/apk/prototype/app-prototype.apk
+python3 ../test/ui/quality-size-ui.py
+# Restore the real application bundle after the fixture check:
+./gradlew :app:assemblePrototype -PreactNativeArchitectures=arm64-v8a
+```
+
+The UI check inspects every row before selection in both the normal picker and
+share sheet. Set `ANDROID_SERIAL` when using another emulator. It saves screenshots
+under `/tmp/utube-android-*-each-quality.png`.

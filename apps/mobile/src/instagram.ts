@@ -1,9 +1,11 @@
+import { populateMediaSizes } from '../../../packages/core/media-size.js';
+import { buildSizeEstimates } from '../../../packages/core/file-size.js';
 import { parseMediaURL, isInstagramVideoID } from '../../../packages/core/media-source.js';
 import { fetchInstagramPost, instagramVideoMetadata } from '../../../packages/core/instagram-metadata.js';
 import { bounded } from './requests.ts';
 import type { Preview, PlaylistPreview, MediaMode, DownloadPlan } from './domain.ts';
 
-type Request = (url: string, options: RequestInit) => Promise<{ status: number; text(): Promise<string> }>;
+type Request = (url: string, options: RequestInit) => Promise<{ status: number; headers?: { get(name: string): string | null }; text(): Promise<string> }>;
 
 /** Uses the existing cancellable native metadata transport; media stays in Android's service. */
 export function createInstagramService(request: Request) {
@@ -29,6 +31,7 @@ export function createInstagramService(request: Request) {
       const parsed = parseMediaURL(url);
       if (parsed.provider !== 'instagram' || !parsed.postId) throw new Error('Enter a valid YouTube or Instagram post URL.');
       const data = await post(parsed.postId, signal);
+      await populateMediaSizes(data, (index: number) => instagramVideoMetadata(parsed.postId!, index, data), request, { signal });
       const infos: ReturnType<typeof instagramVideoMetadata>[] = data.media.map((_: unknown, index: number) => instagramVideoMetadata(parsed.postId!, index + 1, data));
       const index = (parsed.selectedVideo || 1) - 1;
       const info = infos[index];
@@ -36,13 +39,13 @@ export function createInstagramService(request: Request) {
       if (infos.length === 1 || parsed.selectedVideo) return {
         kind: 'video', provider: 'instagram', id: `ig-${parsed.postId}-${index + 1}`,
         title: info.basic_info.title, author: info.basic_info.author,
-        thumbnail: info.basic_info.thumbnail[0]?.url, qualities: choices([info]), audioAvailable: true,
+        thumbnail: info.basic_info.thumbnail[0]?.url, qualities: choices([info]), audioAvailable: true, sizeEstimates: buildSizeEstimates(info),
       };
       return {
         kind: 'playlist', provider: 'instagram', id: `ig-${parsed.postId}-1`,
         title: `${info.basic_info.author} — Instagram post ${parsed.postId}`, qualities: choices(infos),
         thumbnail: info.basic_info.thumbnail[0]?.url,
-        items: infos.map((entry, i) => ({ id: `ig-${parsed.postId}-${i + 1}`, index: i + 1, title: entry.basic_info.title, thumbnail: entry.basic_info.thumbnail[0]?.url })),
+        items: infos.map((entry, i) => ({ id: `ig-${parsed.postId}-${i + 1}`, index: i + 1, title: entry.basic_info.title, thumbnail: entry.basic_info.thumbnail[0]?.url, sizeEstimates: buildSizeEstimates(entry) })),
       };
     },
     async resolve(id: string, quality: string, mode: MediaMode, signal?: AbortSignal): Promise<DownloadPlan> {

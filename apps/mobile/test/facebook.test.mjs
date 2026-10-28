@@ -25,3 +25,12 @@ test('mobile Facebook rejects foreign redirects and cancels even if the transpor
   const service=createFacebookService(async()=>new Promise(()=>{}));const controller=new AbortController();
   const pending=service.inspect(url,controller.signal);controller.abort();await assert.rejects(pending,/CANCELLED/);
 });
+
+test('mobile Facebook preview shows SD and HD lengths from header-only requests',async()=>{
+  const service=createFacebookService(async(target,options)=>options.method==='HEAD'
+    ? {status:200,headers:new Headers({'content-type':'video/mp4','content-length':target.includes('hd.mp4')?'6000000':'2000000'}),text:async()=>''}
+    : response(video()));
+  const preview=await service.inspect(url);
+  assert.equal(preview.sizeEstimates.video.SD,2000000);
+  assert.equal(preview.sizeEstimates.video.HD,6000000);
+});

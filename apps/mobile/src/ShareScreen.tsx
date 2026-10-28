@@ -1,4 +1,6 @@
 import { updateCopy } from '../../../packages/core/update-copy.js';
+
+import { qualitySizeLabel } from '../../../packages/core/file-size.js';
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -19,6 +21,7 @@ import { media } from "./tasks";
 import { en, ar } from "./locales";
 import type { MediaMode, Preview, PlaylistPreview } from "./domain";
 import { light, dark } from "./ui/theme";
+import FileSizeEstimate from './ui/FileSizeEstimate';
 import { Thumbnail } from "./ui/Thumbnail";
 import { Icon } from "./ui/Icon";
 
@@ -158,6 +161,7 @@ function Sheet({ url }: { url: string }) {
       </Text>
     </Pressable>
   );
+  const sizeItems = !preview ? [] : preview.kind === 'playlist' ? preview.items.filter(item => selection.has(item.index)) : [preview];
   const qualities =
     preview?.kind === "video"
       ? preview.qualities
@@ -239,7 +243,7 @@ function Sheet({ url }: { url: string }) {
                   <Text style={[text, s.label]}>{t.quality}</Text>
                   <View style={[s.options, row]}>
                     {button(
-                      t.best,
+                      `${t.best} · ${qualitySizeLabel(sizeItems, "best", prefs.language)}`,
                       () => setQuality("best"),
                       quality === "best",
                       busy,
@@ -247,7 +251,7 @@ function Sheet({ url }: { url: string }) {
                     {qualities
                       .filter((q) => q !== "best")
                       .map((q) =>
-                        button(q, () => setQuality(q), quality === q, busy),
+                        button(`${q} · ${qualitySizeLabel(sizeItems, q, prefs.language)}`, () => setQuality(q), quality === q, busy),
                       )}
                   </View>
                 </>
@@ -378,6 +382,10 @@ function Sheet({ url }: { url: string }) {
                   )}
                 </View>
               )}
+              {(mode === 'mp3' || preview.kind === 'playlist') && <FileSizeEstimate
+                items={preview.kind === 'playlist' ? preview.items.filter(item => selection.has(item.index)) : [preview]}
+                audio={mode === 'mp3'} quality={quality} language={prefs.language} colors={p}
+              />}
               <Pressable
                 accessibilityRole="button"
                 disabled={

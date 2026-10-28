@@ -49,6 +49,8 @@ single command. Install it with [npm](#-cli).
 ## ✨ Why uTube?
 
 - 🎞️ **Video or audio.** Download MP4 with sound, or convert audio to 192 kbps MP3.
+- 📏 **Compare sizes first.** Each quality choice shows its estimated file size
+  in the CLI, desktop app, and Android app. Missing sizes are marked clearly.
 - 🎯 **Quality first.** Try the requested resolution across available streams;
   if it cannot be saved, fall back to the best working lower resolution.
 - 📚 **Whole playlists.** Select everything or just the videos you want,

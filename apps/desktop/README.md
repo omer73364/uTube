@@ -2,6 +2,14 @@
 
 A local desktop preview built with Electron, React, and the shared uTube download engine. Paste a video or playlist URL, choose MP4 or MP3, select playlist items, and follow downloads in the queue. Failed and cancelled jobs can be retried.
 
+Every option in the video-quality picker includes its estimated file size before
+you select it, for example `1080p · HD — ≈ 24 MB`. HD sizes include companion
+audio. MP3 output has a separate estimate based on its 192 kbps encoding rate.
+When selecting multiple videos, known sizes are summed and unknown sizes are
+marked with `+ ?`; missing metadata is never treated as zero. Sources that do not
+provide enough metadata show Size unavailable, including some YouTube playlists.
+Estimates use preview metadata and may differ from the final saved file. Facebook and Instagram additionally use bounded, header-only requests to their validated MP4 links to read file lengths; failed lookups leave sizes unavailable.
+
 The desktop shares mobile’s red accents, rounded thumbnail cards, and warm dark theme. **Home** previews a link before showing format options; **Library** contains saved videos and audio, grouped by playlist; **Downloads** shows transfer progress and history. Bottom navigation keeps all three screens within reach. In **Settings**, choose light, dark, or system appearance and switch between English and العربية. Arabic mirrors the interface from right to left; links and file paths keep their natural direction. Preferences are saved between launches.
 
 Search the library by video or playlist name. Search Downloads by title or filter it to active, completed, or attention-needed downloads. Press Ctrl+L (Command+L on macOS) to return to the link input from any page. Each thumbnail card has a three-dot options menu. Completed downloads offer **Open file** and **Show in folder**; active downloads can be cancelled, and failed or cancelled items can be retried. Format and quality appear beneath the title. The content area scrolls without a permanent scrollbar track. Files open in your system's default media application; moved or deleted files produce a clear error.

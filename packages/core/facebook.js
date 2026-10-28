@@ -1,3 +1,4 @@
+import { populateMediaSizes } from './media-size.js';
 import { fetchFacebookPost, facebookVideoMetadata } from './facebook-metadata.js';
 import { isFacebookVideoID } from './media-source.js';
 import { checkAbort } from './cancellation.js';
@@ -11,7 +12,7 @@ const httpError = (status) => {
 /** Native public-post support: no account, cookies, or external downloader required. */
 export function createFacebookClient({ fetch: fetcher = globalThis.fetch } = {}) {
   async function getPost(postId, { signal } = {}) {
-    return fetchFacebookPost(postId, async (url, options) => {
+    const post = await fetchFacebookPost(postId, async (url, options) => {
       checkAbort(signal);
       const response = await fetcher(url, { ...options, redirect: 'manual', credentials: 'omit',
         signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(25000)]) });
@@ -33,6 +34,7 @@ export function createFacebookClient({ fetch: fetcher = globalThis.fetch } = {})
       }
       return { status: response.status, headers: response.headers, text: async () => text };
     }, { signal });
+    return populateMediaSizes(post, index => facebookVideoMetadata(postId, index, post), fetcher, { signal });
   }
 
   function videoInfo(postId, index, post, { signal } = {}) {

@@ -1,3 +1,5 @@
+import { populateMediaSizes } from '../../../packages/core/media-size.js';
+import { buildSizeEstimates } from '../../../packages/core/file-size.js';
 import { parseMediaURL, isFacebookVideoID } from '../../../packages/core/media-source.js';
 import { fetchFacebookPost, facebookVideoMetadata } from '../../../packages/core/facebook-metadata.js';
 import { qualityValue } from '../../../packages/core/formats.js';
@@ -30,6 +32,7 @@ export function createFacebookService(request: Request) {
       const parsed = parseMediaURL(url);
       if (parsed.provider !== 'facebook' || !parsed.postId) throw new Error('Enter a valid YouTube or Facebook post URL.');
       const data = await post(parsed.postId, signal);
+      await populateMediaSizes(data, (index: number) => facebookVideoMetadata(parsed.postId!, index, data), request, { signal });
       const infos: ReturnType<typeof facebookVideoMetadata>[] = data.media.map((_: unknown, index: number) => facebookVideoMetadata(parsed.postId!, index + 1, data));
       const index = (parsed.selectedVideo || 1) - 1;
       const info = infos[index];
@@ -37,13 +40,13 @@ export function createFacebookService(request: Request) {
       if (infos.length === 1 || parsed.selectedVideo) return {
         kind: 'video', provider: 'facebook', id: `fb-${data.id}-${index + 1}`,
         title: info.basic_info.title, author: info.basic_info.author,
-        thumbnail: info.basic_info.thumbnail[0]?.url, qualities: choices([info]), audioAvailable: true,
+        thumbnail: info.basic_info.thumbnail[0]?.url, qualities: choices([info]), audioAvailable: true, sizeEstimates: buildSizeEstimates(info),
       };
       return {
         kind: 'playlist', provider: 'facebook', id: `fb-${data.id}-1`,
         title: `${info.basic_info.author} — Facebook post ${parsed.postId}`, qualities: choices(infos),
         thumbnail: info.basic_info.thumbnail[0]?.url,
-        items: infos.map((entry, i) => ({ id: `fb-${data.id}-${i + 1}`, index: i + 1, title: entry.basic_info.title, thumbnail: entry.basic_info.thumbnail[0]?.url })),
+        items: infos.map((entry, i) => ({ id: `fb-${data.id}-${i + 1}`, index: i + 1, title: entry.basic_info.title, thumbnail: entry.basic_info.thumbnail[0]?.url, sizeEstimates: buildSizeEstimates(entry) })),
       };
     },
     async resolve(id: string, quality: string, mode: MediaMode, signal?: AbortSignal): Promise<DownloadPlan> {

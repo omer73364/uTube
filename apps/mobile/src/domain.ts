@@ -1,3 +1,4 @@
+import type { SizeEstimates } from '../../../packages/core/file-size.js';
 import { parseMediaURL } from "../../../packages/core/media-source.js";
 export type MediaMode = "video" | "mp3";
 export type Stream = { url: string; size: number; itag: number };
@@ -13,6 +14,7 @@ export type DownloadPlan = {
 };
 export type Format = { id: number; quality: string; url: string };
 export type Preview = {
+  sizeEstimates?: SizeEstimates;
   kind: "video";
   provider?: 'youtube' | 'x' | 'instagram' | 'facebook';
   thumbnail?: string;
@@ -22,7 +24,7 @@ export type Preview = {
   qualities: string[];
   audioAvailable: boolean;
 };
-export type PlaylistItem = { id: string; title: string; index: number; thumbnail?: string };
+export type PlaylistItem = { sizeEstimates?: SizeEstimates; id: string; title: string; index: number; thumbnail?: string };
 export type PlaylistPreview = {
   kind: "playlist";
   provider?: 'youtube' | 'x' | 'instagram' | 'facebook';

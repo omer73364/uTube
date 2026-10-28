@@ -111,7 +111,7 @@ export function facebookVideoMetadata(_key, index, post) {
     const quality = Number.isInteger(edge) && edge >= 100 && edge <= 9999 ? `${edge}p` : ['SD','HD'].includes(variant.quality) ? variant.quality : undefined;
     if (!quality) return [];
     seen.add(url);
-    return [{itag:seen.size,url,width:Number(variant.width)||0,height:Number(variant.height)||0,quality_label:quality,mime_type:'video/mp4',has_video:true,has_audio:true,bitrate:0}];
+    return [{itag:seen.size,url,width:Number(variant.width)||0,height:Number(variant.height)||0,quality_label:quality,estimated_content_length:post.mediaSizes?.[url],mime_type:'video/mp4',has_video:true,has_audio:true,bitrate:0}];
   });
   formats.sort((a,b) => qualityValue(b.quality_label) - qualityValue(a.quality_label));
   if (!formats.length) throw new Error('This Facebook video has no downloadable MP4 streams. Live videos and streaming-only videos are not supported.');

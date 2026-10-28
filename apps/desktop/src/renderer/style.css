@@ -1505,3 +1505,13 @@ select:disabled {
 .update-heading p { margin: 5px 0 0; color: var(--muted); }
 .update-icon { display: grid; place-items: center; flex: 0 0 44px; height: 44px; border-radius: 14px; background: var(--accent-soft, var(--surface)); color: var(--accent); }
 .updates-panel .ffmpeg-setup-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+.file-size-estimate {
+  display: grid;
+  gap: 6px;
+  padding-block: 14px;
+  margin-block-start: 4px;
+  border-block-start: 1px solid var(--line);
+}
+.file-size-estimate > span, .file-size-estimate small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.file-size-estimate strong { font-size: 16px; font-variant-numeric: tabular-nums; }

@@ -1,8 +1,10 @@
+import type { SizeEstimates } from '../../../packages/core/file-size.js';
 import type { Language } from './locales';
 export type Preview = {
+  sizeEstimates?: SizeEstimates;
   type: 'video' | 'playlist'; provider?: 'youtube' | 'x' | 'instagram' | 'facebook'; id: string; title: string; author?: string;
   duration?: number; thumbnail?: string | null; qualities?: string[];
-  items?: { id: string; title: string; thumbnail?: string }[];
+  items?: { id: string; title: string; thumbnail?: string; sizeEstimates?: SizeEstimates }[];
 };
 export type Job = {
   id: string; videoId: string; thumbnail?: string; title: string; audio: boolean; quality?: string;

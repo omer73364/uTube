@@ -18,7 +18,8 @@
     "test:renderer": "node test/renderer.cjs",
     "test:desktop": "node test/bridge.cjs && node test/ui.cjs && node test/recovery.cjs && node test/preferences.cjs && node test/history.cjs && node test/ffmpeg-navigation.cjs && node test/x-downloads.cjs && node test/instagram-downloads.cjs && node test/facebook-downloads.cjs",
     "test:packaged": "node test/packaged.cjs",
-    "test:updates": "node test/updates-ui.cjs"
+    "test:updates": "node test/updates-ui.cjs",
+    "test:file-size": "node test/file-size-ui.cjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",

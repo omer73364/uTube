@@ -25,7 +25,8 @@
     "mobile:test": "npm run test --workspace=@utube/mobile",
     "mobile:build": "npm run build:android --workspace=@utube/mobile",
     "mobile:release": "npm run build:release --workspace=@utube/mobile",
-    "desktop:test:updates": "npm run test:updates --workspace=@utube/desktop"
+    "desktop:test:updates": "npm run test:updates --workspace=@utube/desktop",
+    "desktop:test:file-size": "npm run test:file-size --workspace=@utube/desktop"
   },
   "homepage": "https://omer73364.github.io/uTube/",
   "bugs": {
