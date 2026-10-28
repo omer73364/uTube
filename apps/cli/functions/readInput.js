@@ -1,3 +1,4 @@
+import { qualitySizeLabel } from '../../../packages/core/file-size.js';
 import { installFFmpeg, mediaTools, offerFFmpegAtStartup } from "./ffmpeg.js";
 import inquirer from "./prompts.js";
 import { welcome } from "./welcome.js";
@@ -6,13 +7,16 @@ import { version } from "../../../version.js";
 import { getSetting, setDownloadFolder } from "./heperFunctions.js";
 import { parseMediaURL as getVideoOrListID } from '../../../packages/core/media-source.js';
 
-export const askForQuality = async (qualities) => {
+export const qualityChoices = (qualities, items = []) => [...qualities].reverse().map((quality, index) => ({
+  name: `${quality.padEnd(9)}${qualitySizeLabel(items, quality).padEnd(24)}${index === 0 ? muted("Best available") : ""}`,
+  value: quality,
+}));
+
+export const askForQuality = async (qualities, items = []) => {
   if (!qualities.length) throw new Error("No downloadable video formats available.");
   if (!interactive()) throw new Error("Choose a quality with -q, for example -q 720p.");
-  const choices = [...qualities].reverse().map((quality, index) => ({
-    name: `${quality.padEnd(9)}${index === 0 ? muted("Best available") : ""}`, value: quality,
-  }));
-  const { quality } = await inquirer.prompt([{ ...promptOptions, name: "quality", type: "list", choices, message: "Video quality", loop: false }]);
+  const choices = qualityChoices(qualities, items);
+  const { quality } = await inquirer.prompt([{ ...promptOptions, name: "quality", type: "list", choices, message: "Video quality · estimated file size", loop: false }]);
   return quality;
 };
 

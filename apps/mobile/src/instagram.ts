@@ -1,3 +1,4 @@
+import { buildSizeEstimates } from '../../../packages/core/file-size.js';
 import { parseMediaURL, isInstagramVideoID } from '../../../packages/core/media-source.js';
 import { fetchInstagramPost, instagramVideoMetadata } from '../../../packages/core/instagram-metadata.js';
 import { bounded } from './requests.ts';
@@ -36,13 +37,13 @@ export function createInstagramService(request: Request) {
       if (infos.length === 1 || parsed.selectedVideo) return {
         kind: 'video', provider: 'instagram', id: `ig-${parsed.postId}-${index + 1}`,
         title: info.basic_info.title, author: info.basic_info.author,
-        thumbnail: info.basic_info.thumbnail[0]?.url, qualities: choices([info]), audioAvailable: true,
+        thumbnail: info.basic_info.thumbnail[0]?.url, qualities: choices([info]), audioAvailable: true, sizeEstimates: buildSizeEstimates(info),
       };
       return {
         kind: 'playlist', provider: 'instagram', id: `ig-${parsed.postId}-1`,
         title: `${info.basic_info.author} — Instagram post ${parsed.postId}`, qualities: choices(infos),
         thumbnail: info.basic_info.thumbnail[0]?.url,
-        items: infos.map((entry, i) => ({ id: `ig-${parsed.postId}-${i + 1}`, index: i + 1, title: entry.basic_info.title, thumbnail: entry.basic_info.thumbnail[0]?.url })),
+        items: infos.map((entry, i) => ({ id: `ig-${parsed.postId}-${i + 1}`, index: i + 1, title: entry.basic_info.title, thumbnail: entry.basic_info.thumbnail[0]?.url, sizeEstimates: buildSizeEstimates(entry) })),
       };
     },
     async resolve(id: string, quality: string, mode: MediaMode, signal?: AbortSignal): Promise<DownloadPlan> {

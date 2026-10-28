@@ -1,3 +1,4 @@
+import { buildSizeEstimates, describeSize, summarizeSizes } from '../../../packages/core/file-size.js';
 import { ensureFFmpeg } from "./ffmpeg.js";
 import path from "node:path";
 import inquirer from "./prompts.js";
@@ -65,6 +66,7 @@ export const downloadVideo = async (
       views: info?.basic_info?.view_count,
       audio,
       quality,
+      size: info ? describeSize(summarizeSizes([{ sizeEstimates: buildSizeEstimates(info) }], audio, quality)).value : undefined,
       folder: path.resolve(getSetting("downloadFolder", process.cwd())),
       id: item.id,
     });
@@ -127,6 +129,7 @@ export const download = async ({ url, quality, audio = false }) => {
       views: info.basic_info?.view_count,
       audio,
       quality,
+      size: audio || quality ? describeSize(summarizeSizes([{ sizeEstimates: buildSizeEstimates(info) }], audio, quality)).value : undefined,
       folder: getSetting("downloadFolder", process.cwd()),
       id,
     });
@@ -135,6 +138,7 @@ export const download = async ({ url, quality, audio = false }) => {
         availavleQualities(
           videoFormats(info).map((format) => format.quality_label),
         ),
+        [{ sizeEstimates: buildSizeEstimates(info) }],
       );
     await downloadVideo(
       { id, title: info.basic_info?.title },
@@ -202,10 +206,12 @@ export const download = async ({ url, quality, audio = false }) => {
     const info = await task("Loading available qualities", () =>
       getVideoData(data.items[videos[0]].id),
     );
+    note("Quality sizes below are estimates for the first selected video; playlist file sizes vary.");
     quality = await askForQuality(
       availavleQualities(
         videoFormats(info).map((format) => format.quality_label),
       ),
+      [{ sizeEstimates: buildSizeEstimates(info) }],
     );
   }
   const errors = [];

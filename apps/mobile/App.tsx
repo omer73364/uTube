@@ -1,3 +1,4 @@
+import { qualitySizeLabel } from '../../packages/core/file-size.js';
 import React, {
   useCallback,
   useEffect,
@@ -39,6 +40,7 @@ import { media } from "./src/tasks";
 import { validMediaID } from "../../packages/core/media-source.js";
 import { en, ar } from "./src/locales";
 import { Icon, type IconName } from "./src/ui/Icon";
+import FileSizeEstimate from './src/ui/FileSizeEstimate';
 import { Thumbnail } from "./src/ui/Thumbnail";
 import { light, dark as darkPalette } from "./src/ui/theme";
 
@@ -460,6 +462,7 @@ function Screen() {
     setError("");
     setNotice("");
   };
+  const sizeItems = !preview ? [] : preview.kind === 'playlist' ? preview.items.filter(item => selection.has(item.id)) : [preview];
   const qualities =
     preview?.kind === "video"
       ? preview.qualities
@@ -1143,6 +1146,10 @@ function Screen() {
                 {preview.kind === "playlist" ? (
                   <View style={{ height: 12 }} />
                 ) : undefined}
+                {(mode === 'mp3' || preview.kind === 'playlist') && <FileSizeEstimate
+                  items={preview.kind === 'playlist' ? preview.items.filter(item => selection.has(item.id)) : [preview]}
+                  audio={mode === 'mp3'} quality={quality} language={language} colors={c}
+                />}
                 {button(
                   busy === "queue"
                     ? t.starting
@@ -1523,6 +1530,9 @@ function Screen() {
                 ]}
               >
                 {value === "best" ? t.best : value}
+              </Text>
+              <Text style={{ color: c.muted, fontSize: 13, marginHorizontal: 12, fontVariant: ["tabular-nums"] }}>
+                {qualitySizeLabel(sizeItems, value, language)}
               </Text>
               {quality === value && (
                 <Icon name="check" color={c.blue} size={20} />
