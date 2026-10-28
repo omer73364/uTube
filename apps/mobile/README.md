@@ -291,7 +291,7 @@ quality before selection, including Best available. Estimates include audio for
 HD videos. MP3 has its own 192 kbps output-size estimate. Partial selected-video
 totals show `+ ?`, and missing source metadata is labelled Size unavailable.
 The main preview and share sheet use the same calculation. Size information comes
-from existing preview metadata; some sources and playlist entries lack it.
+from preview metadata. Facebook and Instagram also check MP4 response headers for file lengths without downloading video bodies. These checks accept only validated CDN links and never follow redirects; failed checks leave sizes unavailable. Some sources and playlist entries still lack size information.
 
 ### Verify quality sizes on an emulator
 

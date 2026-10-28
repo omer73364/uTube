@@ -38,6 +38,7 @@ test('Facebook selects the requested video instead of recommended videos and kee
 test('Facebook safely resolves share redirects and refuses login or external redirects',async()=>{
   const calls=[];
   const p=await engine(async(target,options)=>{
+    if(options.method === 'HEAD') return new Response(null,{status:405});
     calls.push(target);assert.equal(options.redirect,'manual');
     return calls.length===1?new Response(null,{status:302,headers:{Location:url}}):new Response(page(video()));
   }).inspect(share);

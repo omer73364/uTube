@@ -1,3 +1,4 @@
+import { populateMediaSizes } from '../../../packages/core/media-size.js';
 import { buildSizeEstimates } from '../../../packages/core/file-size.js';
 import { parseMediaURL, isFacebookVideoID } from '../../../packages/core/media-source.js';
 import { fetchFacebookPost, facebookVideoMetadata } from '../../../packages/core/facebook-metadata.js';
@@ -31,6 +32,7 @@ export function createFacebookService(request: Request) {
       const parsed = parseMediaURL(url);
       if (parsed.provider !== 'facebook' || !parsed.postId) throw new Error('Enter a valid YouTube or Facebook post URL.');
       const data = await post(parsed.postId, signal);
+      await populateMediaSizes(data, (index: number) => facebookVideoMetadata(parsed.postId!, index, data), request, { signal });
       const infos: ReturnType<typeof facebookVideoMetadata>[] = data.media.map((_: unknown, index: number) => facebookVideoMetadata(parsed.postId!, index + 1, data));
       const index = (parsed.selectedVideo || 1) - 1;
       const info = infos[index];

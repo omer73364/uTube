@@ -10,7 +10,7 @@ const safeBytes = value => {
   return number === undefined ? undefined : Math.ceil(number);
 };
 function streamBytes(format, duration) {
-  const length = safeBytes(format?.content_length);
+  const length = safeBytes(format?.content_length) || safeBytes(format?.estimated_content_length);
   if (length !== undefined) return length;
   const bitrate = positive(format?.average_bitrate) || positive(format?.bitrate);
   return bitrate && duration ? safeBytes(bitrate * duration / 8) : undefined;

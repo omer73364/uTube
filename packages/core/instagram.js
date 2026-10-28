@@ -1,3 +1,4 @@
+import { populateMediaSizes } from './media-size.js';
 import { fetchInstagramPost, instagramVideoMetadata } from './instagram-metadata.js';
 import { isInstagramVideoID } from './media-source.js';
 import { checkAbort } from './cancellation.js';
@@ -11,7 +12,7 @@ const httpError = (status) => {
 /** Native public-post support: no account, cookies, or external downloader required. */
 export function createInstagramClient({ fetch: fetcher = globalThis.fetch } = {}) {
   async function getPost(postId, { signal } = {}) {
-    return fetchInstagramPost(postId, async (url, options) => {
+    const post = await fetchInstagramPost(postId, async (url, options) => {
       checkAbort(signal);
       const response = await fetcher(url, { ...options, redirect: 'error', credentials: 'omit',
         signal: AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(25000)]) });
@@ -33,6 +34,7 @@ export function createInstagramClient({ fetch: fetcher = globalThis.fetch } = {}
       }
       return { status: response.status, text: async () => text };
     }, { signal });
+    return populateMediaSizes(post, index => instagramVideoMetadata(postId, index, post), fetcher, { signal });
   }
 
   function videoInfo(postId, index, post, { signal } = {}) {

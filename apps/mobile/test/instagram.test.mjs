@@ -26,7 +26,7 @@ test('mobile Instagram routes share links and retry IDs without connecting to Yo
 
 test('mobile Instagram carousel selection preserves video IDs and refreshes signed URLs', async () => {
   let calls = 0;
-  const service = createInstagramService(async () => {calls++;return response(product({carousel_media:[video(360),video(720)]}));});
+  const service = createInstagramService(async (_url, options) => {if (options?.method !== 'HEAD') calls++;return response(product({carousel_media:[video(360),video(720)]}));});
   const preview = await service.inspect(url);
   const [request] = shareRequests(preview,'video','best',new Set([2]));
   assert.equal(request.videoId,`ig-${code}-2`);
@@ -40,4 +40,13 @@ test('mobile Instagram cancellation and unavailable posts fail clearly', async (
   const pending = service.inspect(url,controller.signal);controller.abort();
   await assert.rejects(pending,/CANCELLED/);
   await assert.rejects(createInstagramService(async () => ({status:403,text:async () => ''})).inspect(url),/requires sign-in/);
+});
+
+test('mobile Instagram preview reads size headers for each carousel item', async () => {
+  const service = createInstagramService(async (target, options) => options.method === 'HEAD'
+    ? { status: 200, headers: new Headers({ 'content-type': 'video/mp4', 'content-length': target.includes('360') ? '1000000' : '3000000' }), text: async () => '' }
+    : response(product({ carousel_media: [video(360), video(720)] })));
+  const preview = await service.inspect(url);
+  assert.equal(preview.items[0].sizeEstimates.video['360p'], 1000000);
+  assert.equal(preview.items[1].sizeEstimates.video['720p'], 3000000);
 });

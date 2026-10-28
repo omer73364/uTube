@@ -85,7 +85,7 @@ export function instagramVideoMetadata(code, index, post) {
     if (!url || !Number.isInteger(width) || !Number.isInteger(height) || Math.min(width, height) < 100 || Math.max(width, height) > 9999 || seen.has(url)) return [];
     seen.add(url);
     return [{ itag: seen.size, url, width, height: Math.min(width, height), quality_label: `${Math.min(width, height)}p`,
-      mime_type: 'video/mp4', has_video: true, has_audio: true, bitrate: 0 }];
+      estimated_content_length: post.mediaSizes?.[url], mime_type: 'video/mp4', has_video: true, has_audio: true, bitrate: 0 }];
   });
   if (!formats.length) throw new Error('This Instagram video has no downloadable MP4 streams.');
   const thumbnail = safeMediaThumbnail(media.image_versions2?.candidates?.[0]?.url || media.display_url);

@@ -8,7 +8,7 @@ audio. MP3 output has a separate estimate based on its 192 kbps encoding rate.
 When selecting multiple videos, known sizes are summed and unknown sizes are
 marked with `+ ?`; missing metadata is never treated as zero. Sources that do not
 provide enough metadata show Size unavailable, including some YouTube playlists.
-Estimates use existing preview metadata and may differ from the final saved file.
+Estimates use preview metadata and may differ from the final saved file. Facebook and Instagram additionally use bounded, header-only requests to their validated MP4 links to read file lengths; failed lookups leave sizes unavailable.
 
 The desktop shares mobile’s red accents, rounded thumbnail cards, and warm dark theme. **Home** previews a link before showing format options; **Library** contains saved videos and audio, grouped by playlist; **Downloads** shows transfer progress and history. Bottom navigation keeps all three screens within reach. In **Settings**, choose light, dark, or system appearance and switch between English and العربية. Arabic mirrors the interface from right to left; links and file paths keep their natural direction. Preferences are saved between launches.
 

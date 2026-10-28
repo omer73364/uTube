@@ -1,6 +1,6 @@
 import { safeMediaThumbnail } from './media-source.js';
 
-/** @typedef {{itag: number, url: string, width: number, height: number, quality_label: string, mime_type: string, has_video: boolean, has_audio: boolean, bitrate: number, content_length?: number}} XFormat */
+/** @typedef {{itag: number, url: string, width: number, height: number, quality_label: string, mime_type: string, has_video: boolean, has_audio: boolean, bitrate: number, content_length?: number, estimated_content_length?: number}} XFormat */
 /** @typedef {{data: {id_str: string, text?: string, user?: {name?: string, screen_name?: string}}, media: {media_url_https?: string, video_info: {duration_millis?: number, variants: {url?: string, content_type?: string, bitrate?: number}[]}}[]}} XPost */
 /** @typedef {{provider: string, basic_info: {title: string, author: string, duration: number, thumbnail: {url?: string}[]}, streaming_data: {formats: XFormat[]}}} XMetadata */
 

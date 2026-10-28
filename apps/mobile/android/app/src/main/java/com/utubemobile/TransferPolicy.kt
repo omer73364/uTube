@@ -28,6 +28,9 @@ object TransferPolicy {
     return uri
   }
 
+  fun sizeProbeUrl(uri: URI): Boolean = uri.scheme == "https" && uri.userInfo == null &&
+    uri.port == -1 && instagramHost(uri.host) && uri.path.endsWith(".mp4")
+
   fun metadataUrl(value: String): URI {
     val uri = URI(value)
     require(
@@ -35,7 +38,7 @@ object TransferPolicy {
         (uri.host in listOf("www.youtube.com", "youtube.com", "music.youtube.com",
           "www.youtube-nocookie.com", "youtubei.googleapis.com") ||
           (uri.host == "cdn.syndication.twimg.com" && uri.path == "/tweet-result") ||
-          (uri.host == "www.instagram.com" && (Regex("^/p/[A-Za-z0-9_-]{5,32}/$").matches(uri.path) || uri.path == "/api/graphql")) || facebookPage(uri))
+          (uri.host == "www.instagram.com" && (Regex("^/p/[A-Za-z0-9_-]{5,32}/$").matches(uri.path) || uri.path == "/api/graphql")) || facebookPage(uri) || sizeProbeUrl(uri))
     ) { "Invalid metadata URL." }
     return uri
   }
