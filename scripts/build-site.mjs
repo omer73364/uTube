@@ -21,5 +21,11 @@ await fs.copyFile(
   path.join(root, "apps/desktop/assets/icon.svg"),
   path.join(output, "assets/icon.svg"),
 );
+// Preserve the signed app-update feed across ordinary website deployments.
+try {
+  await fs.access(path.join(root, "website/updates/manifest.json"));
+  await fs.mkdir(path.join(output, "updates"), { recursive: true });
+  await fs.copyFile(path.join(root, "website/updates/manifest.json"), path.join(output, "updates/manifest.json"));
+} catch (error) { if (error.code !== 'ENOENT') throw error; }
 await fs.writeFile(path.join(output, ".nojekyll"), "");
 console.log(`Static website built: ${output}`);

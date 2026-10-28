@@ -282,7 +282,11 @@ and `-u`. Playlist selection requires an interactive terminal.
 
 Help, version, and folder settings work offline. Settings are stored in
 `$XDG_CONFIG_HOME/utube-cli/settings.json`, or `~/.config/utube-cli/settings.json`.
-Update published versions with `npm install -g utube-cli@latest`.
+The interactive CLI shows a notice when npm has a newer version, including
+the command `npm install -g utube-cli@latest`. Automatic checks are cached for
+24 hours and quietly skip offline failures. Choose **Check for updates** in
+the menu or run `utube --check-updates` to check immediately. Updating remains
+a command you run yourself.
 
 </details>
 
@@ -343,7 +347,7 @@ uTube version, exact error, and a public example URL. Include Node.js for CLI
 or development issues, and the Android version for mobile issues.
 
 Current limits include no partial-download resume, authenticated/private-video
-downloads, or automatic updates. Live-stream recording is unverified. Linux is
+downloads. In-app updates use verified installers and require [configured delivery](docs/app-updates.md); system confirmation is still required. Live-stream recording is unverified. Linux is
 the best-tested desktop platform; Windows, macOS, and Android devices need
 broader testing.
 

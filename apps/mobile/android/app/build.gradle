@@ -151,3 +151,12 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+// Bundle public update trust roots. Private signing keys never enter the APK.
+def updateAssets = layout.buildDirectory.dir("generated/updateAssets")
+tasks.register("copyUpdateConfig", Copy) {
+    from("../../../../packages/core/update-config.json")
+    into(updateAssets)
+}
+android.sourceSets.main.assets.srcDir(updateAssets.get().asFile)
+tasks.named("preBuild").configure { dependsOn("copyUpdateConfig") }

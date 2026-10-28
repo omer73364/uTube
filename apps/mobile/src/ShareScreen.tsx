@@ -1,3 +1,5 @@
+import { updateCopy } from '../../../packages/core/update-copy.js';
+
 import { qualitySizeLabel } from '../../../packages/core/file-size.js';
 import React, { useEffect, useState } from "react";
 import {
@@ -436,7 +438,7 @@ function Sheet({ url }: { url: string }) {
                 accessibilityRole="alert"
                 style={[text, { color: p.error }]}
               >
-                {error.includes("Facebook") ? error.includes("limiting") ? t.facebookRateLimited : /no downloadable/.test(error) ? t.facebookNoVideo : t.facebookUnavailable : error.includes("Instagram") ? error.includes("limiting") ? t.instagramRateLimited : /no downloadable|selected.*unavailable/.test(error) ? t.instagramNoVideo : t.instagramUnavailable : error.includes("requires sign-in") ? t.xUnavailable : /X post has no downloadable|X video has no downloadable|selected video/.test(error) ? t.xNoVideo : error.includes("X is limiting") ? t.xRateLimited : preview ? t.error : t.preparationFailed}
+                {error.includes("SERVICE_UNAVAILABLE") ? updateCopy[prefs.language].serviceBlocked : error.includes("UPDATE_INSTALLING") ? updateCopy[prefs.language].updateBusy : error.includes("Facebook") ? error.includes("limiting") ? t.facebookRateLimited : /no downloadable/.test(error) ? t.facebookNoVideo : t.facebookUnavailable : error.includes("Instagram") ? error.includes("limiting") ? t.instagramRateLimited : /no downloadable|selected.*unavailable/.test(error) ? t.instagramNoVideo : t.instagramUnavailable : error.includes("requires sign-in") ? t.xUnavailable : /X post has no downloadable|X video has no downloadable|selected video/.test(error) ? t.xNoVideo : error.includes("X is limiting") ? t.xRateLimited : preview ? t.error : t.preparationFailed}
               </Text>
               {!busy &&
                 button(t.retry, () =>

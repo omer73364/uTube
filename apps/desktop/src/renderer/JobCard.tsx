@@ -10,6 +10,7 @@ import {
   Play,
   EllipsisVertical,
 } from "lucide-react";
+import { updateCopy } from '../../../../packages/core/update-copy.js';
 import Thumbnail from "./Thumbnail";
 import type { Job, Preferences } from "../shared";
 import { translator, localizeError, type TextKey } from "../locales";
@@ -115,7 +116,7 @@ export default function JobCard({
           ) : (
             <Clock3 size={13} />
           )}
-          <span>{label}</span>
+          <span>{job.holdReason ? updateCopy[language][job.holdReason === "update" ? "heldUpdate" : "held"] : label}</span>
           {running && job.total && <span>{percent}%</span>}
         </div>
         {(running || job.status === "cancelling") && (

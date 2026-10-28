@@ -29,6 +29,8 @@ import {
 } from "lucide-react";
 import { safeMediaThumbnail } from "../../../../packages/core/media-source.js";
 import appLicense from "../../../../LICENSE?raw";
+import Updates from './Updates';
+
 import { describeSize, summarizeSizes, qualitySizeLabel } from '../../../../packages/core/file-size.js';
 import JobCard from "./JobCard";
 import Thumbnail from "./Thumbnail";
@@ -518,6 +520,7 @@ export default function App() {
             </button>
           </div>
         )}
+        {screen !== "settings" && <Updates language={language} hasCurrentDownload={jobs.some(job => ["running", "cancelling"].includes(job.status))} />}
         {notice !== undefined && (
           <div className="alert notice" role="status">
             <CheckCircle2 size={18} />
@@ -1048,6 +1051,7 @@ export default function App() {
                 </div>
               )}
             </div>
+            <Updates language={language} full hasCurrentDownload={jobs.some(job => ["running", "cancelling"].includes(job.status))} />
             <div className="settings-section">
               <h2>{t("about")}</h2>
               <button

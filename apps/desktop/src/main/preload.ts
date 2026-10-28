@@ -1,11 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { DesktopAPI, Job } from '../shared';
+import type { DesktopAPI, Job, UpdateState } from '../shared';
 async function invoke(channel: string, ...args: unknown[]) {
   const response = await ipcRenderer.invoke(channel, ...args);
   if (!response.ok) throw new Error(response.error);
   return response.value;
 }
 const api: DesktopAPI = {
+  updates: () => invoke('utube:updates'),
+  checkUpdates: () => invoke('utube:check-updates'),
+  downloadUpdate: () => invoke('utube:download-update'),
+  cancelUpdate: () => invoke('utube:cancel-update'),
+  installUpdate: (interrupt) => invoke('utube:install-update', interrupt),
+  onUpdates: (listener) => {
+    const handler = (_event: unknown, state: UpdateState) => listener(state);
+    ipcRenderer.on('utube:updates-changed', handler);
+    return () => ipcRenderer.removeListener('utube:updates-changed', handler);
+  },
   openRepository: () => invoke('utube:open-repository'),
   installFFmpeg: () => invoke('utube:install-ffmpeg'),
   cancelFFmpeg: () => invoke('utube:cancel-ffmpeg'),

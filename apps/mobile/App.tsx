@@ -36,6 +36,8 @@ import {
   type Preview,
   type PlaylistPreview,
 } from "./src/domain";
+import Updates from './src/ui/Updates';
+import { updateCopy } from '../../packages/core/update-copy.js';
 import { media } from "./src/tasks";
 import { validMediaID } from "../../packages/core/media-source.js";
 import { en, ar } from "./src/locales";
@@ -180,6 +182,8 @@ function Screen() {
   }, [refresh, active.length]);
   function message(value: unknown) {
     const detail = value instanceof Error ? value.message : String(value);
+    if (detail.includes('SERVICE_UNAVAILABLE')) return updateCopy[language].serviceBlocked;
+    if (detail.includes('UPDATE_INSTALLING')) return updateCopy[language].updateBusy;
     if (/REQUEST_TIMEOUT|timed out|timeout/i.test(detail)) return t.timeout;
     if (detail.includes("DOWNLOAD_BUSY")) return t.downloadBusy;
     if (detail.includes("QUEUE_FULL")) return t.queueFull;
@@ -522,7 +526,7 @@ function Screen() {
         <View style={s.mediaRow}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`${job.title}, ${t[job.status]}`}
+            accessibilityLabel={`${job.title}, ${job.holdReason ? updateCopy[language][job.holdReason === "update" ? "heldUpdate" : "held"] : t[job.status]}`}
             onPress={() =>
               job.status === "saved"
                 ? void action(() => downloads.open(job.id))
@@ -572,7 +576,7 @@ function Screen() {
               textAlign: "auto",
             }}
           >
-            {t[job.status]}
+            {job.holdReason ? updateCopy[language][job.holdReason === "update" ? "heldUpdate" : "held"] : t[job.status]}
           </Text>
           {activeJob && fraction !== undefined && (
             <Text
@@ -841,6 +845,7 @@ function Screen() {
             {iconButton("close", t.close, () => setNotice(""))}
           </View>
         )}
+        <Updates language={language} full={tab === "settings"} colors={c} hasCurrentDownload={jobs.some(job => activeStates.has(job.status) && job.status !== "queued")} placement="banner" />
         {tab === "download" && (
           <>
             {!preview && (
@@ -1423,6 +1428,7 @@ function Screen() {
               {settingsRow("folder", t.location, "Downloads / uTube")}
               {settingsRow("trash", t.clear, t.keepFiles, clear, true)}
             </View>
+            <Updates language={language} full colors={c} hasCurrentDownload={jobs.some(job => activeStates.has(job.status) && job.status !== "queued")} placement="settings" />
             <View style={[s.settingsCard, card, { marginTop: 22 }]}>
               {settingsRow(
                 "library",

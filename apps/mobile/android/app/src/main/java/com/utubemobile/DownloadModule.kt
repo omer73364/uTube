@@ -25,6 +25,19 @@ class DownloadModule(private val context: ReactApplicationContext) :
     super.invalidate()
   }
 
+  private fun updateResult(promise: Promise): (String?, Exception?) -> Unit = { value, error ->
+    if (error == null) promise.resolve(value) else promise.reject("UPDATE_FAILED", error.message, error)
+  }
+  @ReactMethod fun updates(promise: Promise) { promise.resolve(UpdateCenter.get(context).snapshot()) }
+  @ReactMethod fun checkUpdates(promise: Promise) = UpdateCenter.get(context).check(updateResult(promise))
+  @ReactMethod fun downloadUpdate(promise: Promise) = UpdateCenter.get(context).download(updateResult(promise))
+  @ReactMethod fun cancelUpdate(promise: Promise) { UpdateCenter.get(context).cancel(); promise.resolve(null) }
+  @ReactMethod fun installUpdate(interrupt: Boolean, promise: Promise) = UpdateCenter.get(context).install(interrupt, updateResult(promise))
+  @ReactMethod fun assertService(id: String, promise: Promise) {
+    try { UpdateCenter.get(context).assertAvailable(id); promise.resolve(null) }
+    catch (e: Exception) { promise.reject("SERVICE_UNAVAILABLE", e.message, e) }
+  }
+
   @ReactMethod
   fun http(
     id: String,
@@ -60,6 +73,7 @@ class DownloadModule(private val context: ReactApplicationContext) :
       require(json.length <= 2 * 1024 * 1024)
       val requests = JSONArray(json)
       for (i in 0 until requests.length()) {
+        UpdateCenter.get(context).assertAvailable(requests.getJSONObject(i).getString("videoId"))
         val retry = requests.getJSONObject(i).optString("retryId")
         check(retry.isBlank() || !DownloadService.isActive(retry)) { "DOWNLOAD_BUSY" }
       }

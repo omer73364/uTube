@@ -1,3 +1,4 @@
+import { updateCopy } from '../../../packages/core/update-copy.js';
 export const languages = [
   { code: "en", name: "English", dir: "ltr" },
   { code: "ar", name: "العربية", dir: "rtl" },
@@ -414,6 +415,8 @@ export function localizeError(value: unknown, language: Language) {
       : typeof value === "string"
         ? value
         : t("genericError");
+  if (text.includes('SERVICE_UNAVAILABLE')) return updateCopy[language].serviceBlocked;
+  if (text.includes('UPDATE_INSTALLING')) return updateCopy[language].updateBusy;
   if (language === "en") return text;
   const direct = (Object.keys(en) as TextKey[]).find((key) => en[key] === text);
   if (direct) return t(direct);

@@ -1490,6 +1490,22 @@ select:disabled {
   margin-bottom: 0;
 }
 
+.updates-panel { display: block; }
+.update-content { min-width: 0; width: 100%; }
+.update-content h3 { margin: 0 0 8px; }
+.update-content p { margin: 8px 0; }
+.update-content progress { width: 100%; margin-block: 12px; accent-color: var(--accent, #dd3b20); }
+.update-notes { white-space: pre-wrap; overflow-wrap: anywhere; }
+.service-notice { margin-block: 12px; padding-inline-start: 12px; border-inline-start: 3px solid var(--accent); }
+.update-confirm { position: fixed; inset: 0; margin: auto; z-index: 100; max-width: min(560px, 90vw); box-shadow: 0 0 0 100vmax #0009; }
+
+.update-heading { display: flex; align-items: center; gap: 14px; margin-block-end: 16px; }
+.update-heading > div { min-width: 0; }
+.update-heading h3 { margin: 0; }
+.update-heading p { margin: 5px 0 0; color: var(--muted); }
+.update-icon { display: grid; place-items: center; flex: 0 0 44px; height: 44px; border-radius: 14px; background: var(--accent-soft, var(--surface)); color: var(--accent); }
+.updates-panel .ffmpeg-setup-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
 .file-size-estimate {
   display: grid;
   gap: 6px;

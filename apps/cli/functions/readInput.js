@@ -1,3 +1,5 @@
+import { checkForCLIUpdate } from './updates.js';
+
 import { qualitySizeLabel } from '../../../packages/core/file-size.js';
 import { installFFmpeg, mediaTools, offerFFmpegAtStartup } from "./ffmpeg.js";
 import inquirer from "./prompts.js";
@@ -30,9 +32,14 @@ export const home = async () => {
         { name: "♫  Download audio (MP3)", value: "audio" },
         { name: "▣  Change download folder", value: "folder" },
         ...(!await mediaTools.resolve() ? [{ name: "↓  Download FFmpeg (MP3 & HD video)", value: "ffmpeg" }] : []),
+        { name: "↻  Check for updates", value: "updates" },
         { name: "↗  Exit", value: "exit" },
       ],
     }]);
+    if (action === "updates") {
+      await checkForCLIUpdate({ force: true, manual: true });
+      continue;
+    }
     if (action === "ffmpeg") {
       if (await mediaTools.resolve()) success("FFmpeg is already available.");
       else await installFFmpeg();
@@ -60,7 +67,7 @@ export const askForURL = async () => {
 export const readArgs = async () => {
   const args = process.argv.slice(2);
   const values = {};
-  const flags = new Set(["-v", "--version", "-h", "--help", "--get-download-folder", "-a", "--audio", "--install-ffmpeg"]);
+  const flags = new Set(["-v", "--version", "-h", "--help", "--get-download-folder", "-a", "--audio", "--install-ffmpeg", "--check-updates"]);
   const valued = new Set(["-u", "-q", "--set-download-folder"]);
   for (let i = 0; i < args.length; i++) {
     const key = args[i];
@@ -79,6 +86,7 @@ Run utube without arguments to open the interactive menu.
   -u <url>                     YouTube video/playlist, public X post, Instagram Reel, or Facebook video URL
   -q <quality>                 Quality, for example 720p (Facebook also accepts SD/HD)
   -a, --audio                  Download audio as MP3 (requires FFmpeg)
+  --check-updates              Check npm for a newer CLI version
   --install-ffmpeg             Download FFmpeg for uTube (MP3 and HD video)
   -v, --version                Show version
   --set-download-folder <path> Remember a download folder
@@ -88,6 +96,7 @@ Run utube without arguments to open the interactive menu.
 Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
     return null;
   }
+  if (values["--check-updates"]) { await checkForCLIUpdate({ force: true, manual: true }); return null; }
   if (values["--install-ffmpeg"]) { await installFFmpeg(); return null; }
   if (values["--set-download-folder"]) {
     setDownloadFolder(values["--set-download-folder"]);
@@ -99,7 +108,7 @@ Example: utube -u "https://youtu.be/jNQXAC9IVRw" -q 360p`);
   let audio = Boolean(values["-a"] || values["--audio"]);
   if (audio && values["-q"]) throw new Error("-q selects video resolution. Omit it when using --audio.");
   const session = args.length === 0 && interactive();
-  if (interactive()) { welcome(); await offerFFmpegAtStartup(); }
+  if (interactive()) { welcome(); await checkForCLIUpdate(); await offerFFmpegAtStartup(); }
   if (session) {
     const action = await home();
     if (action === "exit") return null;

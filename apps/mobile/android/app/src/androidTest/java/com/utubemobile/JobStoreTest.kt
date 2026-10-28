@@ -118,4 +118,17 @@ class JobStoreTest {
       file.delete()
     }
   }
+  @Test
+  fun unavailableProviderDoesNotBlockHealthyJobsOrLoseQueuedEntries() {
+    val store = JobStore(context, "test-${UUID.randomUUID()}-")
+    store.recover()
+    val requests = JSONArray().put(request("ig-ABCDE-1")).put(request("jNQXAC9IVRw"))
+    val ids = store.enqueueBatch(requests)
+    assertEquals(ids.getString(1), store.next { id -> id.startsWith("ig-") }!!.getString("id"))
+    assertEquals("queued", store.get(ids.getString(0)).getString("status"))
+    assertEquals(2, store.all().size)
+    // Removing the restriction exposes the original queued item again.
+    assertEquals(ids.getString(0), store.next { false }!!.getString("id"))
+  }
+
 }

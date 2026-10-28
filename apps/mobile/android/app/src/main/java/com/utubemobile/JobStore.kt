@@ -85,15 +85,17 @@ class JobStore(private val context: Context, private val scope: String = "") {
       }
     }
 
-  fun next(): JSONObject? =
-    synchronized(lock) {
-      db
-        .rawQuery(
-          "SELECT payload FROM jobs WHERE status='queued' ORDER BY created,rowid LIMIT 1",
-          null,
-        )
-        .use { cursor -> if (cursor.moveToFirst()) JSONObject(cursor.getString(0)) else null }
+  fun next(isBlocked: (String) -> Boolean = { id -> UpdateCenter.get(context).blocked(UpdatePolicy.provider(id)) }): JSONObject? = synchronized(lock) {
+    val updates = UpdateCenter.get(context)
+    if (updates.pauseQueue) return@synchronized null
+    db.rawQuery("SELECT payload FROM jobs WHERE status='queued' ORDER BY created,rowid", null).use { cursor ->
+      while (cursor.moveToNext()) {
+        val job = JSONObject(cursor.getString(0))
+        if (!isBlocked(job.getString("videoId"))) return@synchronized job
+      }
+      null
     }
+  }
 
   fun edit(id: String, change: (JSONObject) -> Unit) =
     synchronized(lock) {
@@ -245,6 +247,11 @@ class JobStore(private val context: Context, private val scope: String = "") {
       val job = JSONObject(record.toString())
       job.remove("candidates")
       job.remove("pendingUri")
+      if (job.optString("status") == "queued") {
+        val updates = UpdateCenter.get(context)
+        if (updates.pauseQueue) job.put("holdReason", "update")
+        else if (updates.blocked(UpdatePolicy.provider(job.getString("videoId")))) job.put("holdReason", "service")
+      }
       if (job.has("legacyId") && job.optString("status") != "cancelled") {
         manager.query(DownloadManager.Query().setFilterById(job.getLong("legacyId"))).use { cursor
           ->

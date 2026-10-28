@@ -6,11 +6,13 @@ export class DownloadQueue {
   #jobs = [];
   #active;
   #closed = false;
+  #paused = false;
+  #availability = () => undefined;
   #idle = Promise.resolve();
   /** @param {(job: any, options: any) => Promise<any>} run
    * @param {(jobs: any[]) => void} [notify] */
   constructor(run, notify = () => {}) { this.run = run; this.notify = notify; }
-  snapshot() { return this.#jobs.map(({ controller, ...job }) => ({ ...job })); }
+  snapshot() { return this.#jobs.map(({ controller, ...job }) => ({ ...job, holdReason: job.status === 'queued' ? (this.#paused ? 'update' : this.#availability(job.videoId)) : undefined })); }
   #emit() { this.notify(this.snapshot()); }
   restore(jobs) {
     if (this.#jobs.length || this.#active || this.#closed) throw new Error('History can only be restored to a new queue.');
@@ -18,6 +20,14 @@ export class DownloadQueue {
       ? { ...job, status: 'cancelled', interrupted: true, loaded: 0, total: undefined, stage: undefined, speed: undefined, eta: undefined }
       : { ...job, loaded: 0 });
     this.#emit();
+  }
+  setAvailability(check) { this.#availability = check; this.#emit(); this.#pump(); }
+  pause() { this.#paused = true; this.#emit(); }
+  resume() { this.#paused = false; this.#emit(); this.#pump(); }
+  async prepareUpdate(interrupt = false) {
+    this.pause();
+    if (interrupt && this.#active) { this.#active.interrupted = true; this.cancel(this.#active.id); }
+    await this.#idle;
   }
   add(items) {
     if (this.#closed) throw new Error('The download queue is shutting down.');
@@ -42,6 +52,10 @@ export class DownloadQueue {
     Object.assign(job, { status: 'queued', interrupted: false, error: undefined, note: undefined, stage: undefined, loaded: 0, total: undefined, actualQuality: undefined, completedAt: undefined, speed: undefined, eta: undefined });
     this.#emit(); this.#pump();
   }
+  interruptQueued() {
+    for (const job of this.#jobs) if (job.status === 'queued') { job.interrupted = true; job.status = 'cancelled'; }
+    this.#emit();
+  }
   hasPending() { return this.#jobs.some((job) => ['queued', 'running', 'cancelling'].includes(job.status)); }
   async shutdown() {
     this.#closed = true;
@@ -50,8 +64,8 @@ export class DownloadQueue {
   }
   whenIdle() { return this.#idle; }
   #pump() {
-    if (this.#active || this.#closed) return;
-    const job = this.#jobs.find((item) => item.status === 'queued');
+    if (this.#active || this.#closed || this.#paused) return;
+    const job = this.#jobs.find((item) => item.status === 'queued' && !this.#availability(item.videoId));
     if (!job) return;
     this.#active = job;
     job.controller = new AbortController();

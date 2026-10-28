@@ -6,6 +6,7 @@ on:
     paths:
       - 'website/**'
       - 'scripts/build-site.mjs'
+      - 'website/updates/**'
       - 'docs/images/**'
       - 'apps/desktop/assets/icon.svg'
       - '.github/workflows/website-pages.yml'

@@ -8,6 +8,10 @@ import { validateURL, validateRequest, validateJobID } from './validation.mjs';
 import type { DownloadRequest, Job, Preferences } from '../shared';
 import { translator, languages } from '../locales';
 import { createFFmpegManager } from '../../../../packages/core/ffmpeg.js';
+import { UpdateManager } from './updates.mjs';
+import { parseMediaURL } from '../../../../packages/core/media-source.js';
+import updateConfig from '../../../../packages/core/update-config.json';
+import { providerForID, isServiceBlocked } from '../../../../packages/core/update-policy.js';
 import squirrelStartup from 'electron-squirrel-startup';
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string;
@@ -40,6 +44,27 @@ const queue = new DownloadQueue(
     if (history) void history.save(jobs).catch(() => reportHistoryError('Download history could not be saved. Check available disk space and permissions.'));
   },
 );
+const updates = new UpdateManager({
+  config: updateConfig, directory: path.join(app.getPath('userData'), 'updates'), version: app.getVersion(),
+  kind: process.platform === 'linux' ? (process.env.APPIMAGE ? 'AppImage' : 'deb') : process.platform === 'darwin' ? 'dmg' : 'exe',
+  notify: (state: any) => {
+    queue.setAvailability((id: string) => state.services.find((rule: any) => rule.provider === providerForID(id) && isServiceBlocked(rule))?.provider);
+    if (window && !window.isDestroyed()) window.webContents.send('utube:updates-changed', state);
+  },
+});
+let updateInstall = false;
+let cancelUpdateInstall = false;
+let cancelUpdateWait: (() => void) | undefined;
+function cancelPendingUpdate() {
+  if (!updateInstall) return;
+  cancelUpdateInstall = true; cancelUpdateWait?.();
+  updates.emit({ phase: 'ready' }); queue.resume();
+}
+let updateTimer: ReturnType<typeof setInterval> | undefined;
+function assertProvider(provider: string) {
+  if (updateInstall) throw new Error('UPDATE_INSTALLING');
+  if (updates.snapshot().services.some((rule: any) => rule.provider === provider && isServiceBlocked(rule))) throw new Error('SERVICE_UNAVAILABLE');
+}
 const prefsFile = () => path.join(app.getPath('userData'), 'settings.json');
 function saveSettings(patch: Partial<Preferences> & { folder?: string }) {
   const pending = writes.then(async () => {
@@ -92,12 +117,49 @@ async function createWindow() {
     window.webContents.send('utube:theme-changed', nativeTheme.shouldUseDarkColors);
   });
   const appearance = () => ({ ...preferences, resolvedTheme: nativeTheme.shouldUseDarkColors ? 'dark' as const : 'light' as const });
+  handle('utube:updates', () => updates.snapshot());
+  handle('utube:check-updates', () => updates.check());
+  handle('utube:download-update', () => updates.download());
+  handle('utube:cancel-update', () => {
+    updates.cancel();
+    cancelPendingUpdate();
+  });
+  handle('utube:install-update', async (interrupt: boolean) => {
+    if (typeof interrupt !== 'boolean' || updateInstall || updates.snapshot().phase !== 'ready') throw new Error('Update is not ready.');
+    updateInstall = true; cancelUpdateInstall = false;
+    try {
+      const file = await updates.verifiedFile();
+      if (cancelUpdateInstall) return;
+      // A portable AppImage needs a user-controlled replacement, not a restart.
+      if (updates.release?.kind === 'AppImage') {
+        await fs.chmod(file, 0o755); shell.showItemInFolder(file); return;
+      }
+      updates.emit({ phase: 'waiting', error: undefined });
+      await Promise.race([queue.prepareUpdate(interrupt), new Promise<void>(resolve => { cancelUpdateWait = resolve; })]);
+      if (cancelUpdateInstall) return;
+      queue.interruptQueued();
+      await history.flush(); await writes;
+      if (toolInstall) throw new Error('Wait for FFmpeg setup to finish.');
+      updates.emit({ phase: 'installing' });
+      const error = await shell.openPath(file);
+      if (error) throw new Error(error);
+      // The platform installer owns replacement. Persist interrupted queue entries
+      // before releasing the running executable; downloaded media is untouched.
+      await queue.shutdown(); await history.flush(); await writes;
+      bridge.dispose(); updates.dispose(); if (updateTimer) clearInterval(updateTimer);
+      closing = true; window.close();
+    } catch (error) {
+      updates.emit({ phase: updates.file ? 'ready' : 'available', error: 'install' });
+      queue.resume(); throw error;
+    } finally { updateInstall = false; cancelUpdateWait = undefined; }
+  });
   handle('utube:open-repository', () => shell.openExternal('https://github.com/omer73364/uTube'));
   handle('utube:settings', async () => {
     const ffmpeg = await hasFFmpeg();
     return { folder, ...appearance(), version: app.getVersion(), ffmpeg, historyError, ffmpegSetupSupported: mediaTools.supported, ffmpegInstalling: Boolean(toolInstall), ffmpegProgress: toolProgress };
   });
   handle('utube:install-ffmpeg', async () => {
+    if (updateInstall) throw new Error('UPDATE_INSTALLING');
     if (toolInstall) throw new Error('FFmpeg setup is already running.');
     toolInstall = new AbortController();
     toolProgress = { loaded: 0, total: 0 };
@@ -134,9 +196,13 @@ async function createWindow() {
     if (result.canceled || !result.filePaths[0]) return null;
     await saveSettings({ folder: result.filePaths[0] }); return folder;
   });
-  handle('utube:inspect', (url: string) => bridge.call('inspect', { url: validateURL(url) }, { signal: AbortSignal.timeout(30000) }));
+  handle('utube:inspect', (url: string) => {
+    const valid = validateURL(url); assertProvider(parseMediaURL(valid).provider);
+    return bridge.call('inspect', { url: valid }, { signal: AbortSignal.timeout(30000) });
+  });
   handle('utube:enqueue', (request: DownloadRequest) => {
     const valid = validateRequest(request);
+    for (const item of valid.items) assertProvider(providerForID(item.id));
     return queue.add(valid.items.map((item: any) => ({
       videoId: item.id, thumbnail: item.thumbnail, title: valid.playlistTitle ? `#${item.index + 1}_${item.title}` : item.title,
       playlistTitle: valid.playlistTitle, audio: valid.audio, quality: valid.quality, folder,
@@ -144,7 +210,11 @@ async function createWindow() {
   });
   handle('utube:jobs', () => queue.snapshot());
   handle('utube:cancel', (id: string) => queue.cancel(validateJobID(id)));
-  handle('utube:retry', (id: string) => queue.retry(validateJobID(id)));
+  handle('utube:retry', (id: string) => {
+    const valid = validateJobID(id), job = queue.snapshot().find((item: any) => item.id === valid);
+    if (job) assertProvider(providerForID(job.videoId));
+    queue.retry(valid);
+  });
   handle('utube:open-file', async (id: string) => {
     const job = queue.snapshot().find((entry: any) => entry.id === validateJobID(id)) as unknown as Job | undefined;
     if (!job?.path || !['saved', 'skipped'].includes(job.status)) throw new Error('This download is not ready to open.');
@@ -164,6 +234,7 @@ async function createWindow() {
     event.preventDefault();
     if (closeRequested) return;
     closeRequested = true;
+    cancelPendingUpdate();
     void (async () => {
       const t = translator(preferences.language);
       if (queue.hasPending()) {
@@ -174,6 +245,7 @@ async function createWindow() {
       });
       if (response !== 1) { closeRequested = false; return; }
       }
+      updates.dispose(); if (updateTimer) clearInterval(updateTimer);
       toolInstall?.abort();
       const deadline = setTimeout(() => bridge.dispose(), 5000);
       try {
@@ -185,6 +257,16 @@ async function createWindow() {
       } finally { clearTimeout(deadline); bridge.dispose(); closing = true; window.close(); }
     })();
   });
+  await updates.initialize();
+  if (app.isPackaged) {
+    void updates.check();
+    let lastCheck = Date.now();
+    updateTimer = setInterval(() => {
+      updates.refreshServices();
+      if (Date.now() - lastCheck >= 6 * 60 * 60 * 1000) { lastCheck = Date.now(); void updates.check(); }
+    }, 30000);
+    updateTimer.unref();
+  }
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) await window.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   else await window.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
 }

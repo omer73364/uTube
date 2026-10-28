@@ -284,6 +284,16 @@ Paste a public Facebook video, Reel, share link, or `fb.watch` link. Choose SD/H
 flow. Private/login-restricted videos, live streams, photos, and streaming-only
 videos are not supported.
 
+## App updates and service availability
+
+Settings offers signed update checks, APK download progress, cancellation and the
+Android installer. APKs must match the installed app's signing certificate and
+have a newer version code. Installation can wait for the current transfer or
+interrupt it; unfinished work remains available to retry. Provider shutdown notices
+hold only the affected service's queued jobs. Production delivery is disabled until
+its trust roots and publishing secret are configured. See the
+[app update guide](../../docs/app-updates.md).
+
 ## Sizes beside every quality
 
 The quality picker and Android share sheet display an estimated size beside every

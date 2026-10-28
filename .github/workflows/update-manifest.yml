@@ -1,0 +1,75 @@
+name: Publish app updates and service status
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Optional stable release tag (v2.6.0). Leave empty to update service status only.'
+        type: string
+      android_version_code:
+        description: 'Android version code if this release includes APKs'
+        type: string
+      hours:
+        description: 'Manifest validity in hours (1–168). Renew before expiry.'
+        default: '168'
+        type: string
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || vars.UTUBE_UPDATES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Download published installers when requested
+        if: inputs.release_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+          mkdir -p /tmp/utube-update-artifacts
+          gh release download "$RELEASE_TAG" --dir /tmp/utube-update-artifacts
+      - name: Generate and sign data-only manifest
+        env:
+          UTUBE_UPDATE_PRIVATE_KEY: ${{ secrets.UTUBE_UPDATE_PRIVATE_KEY }}
+          UPDATE_KEY_ID: ${{ vars.UTUBE_UPDATE_KEY_ID || 'production-1' }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          VERSION_CODE: ${{ inputs.android_version_code }}
+          VALID_HOURS: ${{ inputs.hours || '168' }}
+        run: |
+          args=(--previous website/updates/manifest.json --hours "$VALID_HOURS")
+          if [[ -n "$RELEASE_TAG" ]]; then
+            args+=(--artifacts /tmp/utube-update-artifacts --version "${RELEASE_TAG#v}" --version-code "$VERSION_CODE")
+          fi
+          node scripts/create-update-manifest.mjs "${args[@]}"
+          node scripts/sign-update-manifest.mjs --input /tmp/utube-update-draft.json --output website/updates/manifest.json --key-id "$UPDATE_KEY_ID"
+      - name: Keep the manifest for future website deployments
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add website/updates/manifest.json
+          git commit -m 'Publish signed app update and service status manifest'
+          git push origin HEAD:main
+      - uses: actions/configure-pages@v5
+      - run: node scripts/build-site.mjs
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: website/dist
+      - name: Deploy verified manifest with website
+        id: deployment
+        uses: actions/deploy-pages@v4
