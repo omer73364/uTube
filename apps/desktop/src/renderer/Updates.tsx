@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Download, RefreshCw, CheckCircle2 } from 'lucide-react';
 import type { UpdateState } from '../shared';
 import { updateCopy } from '../../../../packages/core/update-copy.js';
 
-export default function Updates({ language, full = false }: { language: 'en' | 'ar'; full?: boolean }) {
+export default function Updates({ language, full = false, hasCurrentDownload = false }: { language: 'en' | 'ar'; full?: boolean; hasCurrentDownload?: boolean }) {
   const [state, setState] = useState<UpdateState>();
   const [hidden, setHidden] = useState<string>();
   const [confirm, setConfirm] = useState(false);
@@ -29,13 +30,12 @@ export default function Updates({ language, full = false }: { language: 'en' | '
   return <section className={full ? 'settings-section updates-panel' : 'alert updates-panel'} aria-label={copy.title}>
     <div className="update-content">
       {(full || state.release) && <>
-        <h3>{copy.title}{state.release && <> · <bdi>v{state.release.version}</bdi></>}</h3>
-        <p role="status">{status}</p>
+        <div className="update-heading"><span className="update-icon">{state.phase === "current" ? <CheckCircle2 size={22} /> : <Download size={22} />}</span><div><h3>{copy.title}{state.release && <> · <bdi>v{state.release.version}</bdi></>}</h3><p role="status">{status}</p></div></div>
         {state.error && <p role="alert">{state.error === 'check' ? copy.checkError : state.error === 'download' ? copy.downloadError : copy.installError}</p>}
         {full && state.release?.notes[language] && <details><summary>{copy.notes}</summary><p className="update-notes" dir="auto">{state.release.notes[language]}</p></details>}
         {state.phase === 'downloading' && <progress aria-label={copy.downloading} max={state.total} value={state.loaded} />}
         <div className="ffmpeg-setup-actions">
-          {full && <button className="secondary" disabled={busy || state.phase === 'unconfigured'} onClick={() => action(window.utube.checkUpdates())}>{copy.check}</button>}
+          {full && <button className="secondary" disabled={busy || state.phase === 'unconfigured'} onClick={() => action(window.utube.checkUpdates())}><RefreshCw size={16} />{copy.check}</button>}
           {state.release && ['available', 'error'].includes(state.phase) && <button className="primary" onClick={() => action(window.utube.downloadUpdate())}>{copy.download}</button>}
           {state.phase === 'ready' && <button className="primary" onClick={() => setConfirm(true)}>{state.release?.kind === 'AppImage' ? copy.showFile : copy.install}</button>}
           {['downloading', 'waiting'].includes(state.phase) && <button className="secondary" onClick={() => action(window.utube.cancelUpdate())}>{copy.cancel}</button>}
@@ -45,6 +45,6 @@ export default function Updates({ language, full = false }: { language: 'en' | '
       {notices.map(rule => <div key={rule.provider} className="service-notice" role="status"><strong>{rule.provider === 'x' ? 'X' : rule.provider.charAt(0).toUpperCase() + rule.provider.slice(1)}</strong><p dir="auto">{rule.message[language]}</p>{rule.fixedVersion && <small>{copy.fixedIn} · <bdi>v{rule.fixedVersion}</bdi></small>}</div>)}
       {full && !state.statusVerified && state.phase !== 'unconfigured' && <p>{copy.unknown}</p>}
     </div>
-    {confirm && <dialog ref={prompt} onCancel={() => setConfirm(false)} className="about-dialog update-confirm" aria-labelledby="update-confirm-title"><h2 id="update-confirm-title">{copy.ready}</h2><p>{state.release?.kind === 'AppImage' ? copy.portableHelp : copy.installerHelp}</p><div className="ffmpeg-setup-actions"><button className="primary" onClick={() => { setConfirm(false); action(window.utube.installUpdate(false)); }}>{portable ? copy.showFile : copy.finish}</button>{!portable && <button className="secondary" onClick={() => { setConfirm(false); action(window.utube.installUpdate(true)); }}>{copy.interrupt}</button>}<button className="secondary" onClick={() => setConfirm(false)}>{copy.later}</button></div></dialog>}
+    {confirm && <dialog ref={prompt} onCancel={() => setConfirm(false)} className="about-dialog update-confirm" aria-labelledby="update-confirm-title"><h2 id="update-confirm-title">{copy.ready}</h2><p>{state.release?.kind === 'AppImage' ? copy.portableHelp : copy.installerHelp}</p><div className="ffmpeg-setup-actions"><button className="primary" onClick={() => { setConfirm(false); action(window.utube.installUpdate(false)); }}>{portable ? copy.showFile : hasCurrentDownload ? copy.finish : copy.install}</button>{!portable && hasCurrentDownload && <button className="secondary" onClick={() => { setConfirm(false); action(window.utube.installUpdate(true)); }}>{copy.interrupt}</button>}<button className="secondary" onClick={() => setConfirm(false)}>{copy.later}</button></div></dialog>}
   </section>;
 }

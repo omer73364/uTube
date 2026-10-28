@@ -842,7 +842,7 @@ function Screen() {
             {iconButton("close", t.close, () => setNotice(""))}
           </View>
         )}
-        <Updates language={language} full={tab === "settings"} colors={c} />
+        <Updates language={language} full={tab === "settings"} colors={c} hasCurrentDownload={jobs.some(job => activeStates.has(job.status) && job.status !== "queued")} placement="banner" />
         {tab === "download" && (
           <>
             {!preview && (
@@ -1421,6 +1421,7 @@ function Screen() {
               {settingsRow("folder", t.location, "Downloads / uTube")}
               {settingsRow("trash", t.clear, t.keepFiles, clear, true)}
             </View>
+            <Updates language={language} full colors={c} hasCurrentDownload={jobs.some(job => activeStates.has(job.status) && job.status !== "queued")} placement="settings" />
             <View style={[s.settingsCard, card, { marginTop: 22 }]}>
               {settingsRow(
                 "library",

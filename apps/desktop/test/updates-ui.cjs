@@ -13,12 +13,13 @@ const path = require('node:path');
     let state = { phase: 'available', loaded: 0, total: 100, statusVerified: true,
       services: [{ provider: 'instagram', state: 'unavailable', message: { en: 'Instagram downloads are temporarily unavailable.', ar: 'تنزيلات إنستغرام غير متاحة مؤقتًا.' } }],
       release: { version: '2.6.0', kind: 'dmg', notes: { en: 'Restores Instagram downloads.', ar: 'استعادة تنزيلات إنستغرام.' } } };
-    let listener = () => {}, installed;
-    contextBridge.exposeInMainWorld('__updatesTest', { installed: () => installed, phase: phase => { state = { ...state, phase }; listener(state); } });
+    let listener = () => {}, jobsListener = () => {}, installed;
+    let jobs = [{ id: 'held', videoId: 'ig-ABCDE-1', title: 'Held video', status: 'queued', holdReason: 'instagram', loaded: 0, audio: false }];
+    contextBridge.exposeInMainWorld('__updatesTest', { installed: () => installed, phase: phase => { state = { ...state, phase }; listener(state); }, running: active => { jobs = active ? [{ id: 'running', videoId: 'jNQXAC9IVRw', title: 'Current download', status: 'running', loaded: 1, audio: false }] : [{ id: 'held', videoId: 'ig-ABCDE-1', title: 'Held video', status: 'queued', loaded: 0, audio: false }]; jobsListener(jobs); } });
     contextBridge.exposeInMainWorld('utube', {
-      settings: async () => prefs, jobs: async () => [{ id: 'held', videoId: 'ig-ABCDE-1', title: 'Held video', status: 'queued', holdReason: 'instagram', loaded: 0, audio: false }],
+      settings: async () => prefs, jobs: async () => jobs,
       preferences: async patch => { prefs = { ...prefs, ...patch }; return prefs; },
-      onJobs: () => () => {}, onTheme: () => () => {}, onHistoryError: () => () => {},
+      onJobs: fn => { jobsListener = fn; return () => {}; }, onTheme: () => () => {}, onHistoryError: () => () => {},
       updates: async () => state, onUpdates: fn => { listener = fn; return () => {}; },
       checkUpdates: async () => state,
       downloadUpdate: async () => { state = { ...state, phase: 'downloading', loaded: 50 }; listener(state); return state; },
@@ -42,14 +43,25 @@ const path = require('node:path');
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Download update', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Check for updates', exact: true }).scrollIntoViewIfNeeded();
     await expect(page.getByRole('button', { name: 'Check for updates', exact: true })).toBeVisible();
+    const order = await page.locator('.settings-card').innerText();
+    expect(order.indexOf('App updates')).toBeLessThan(order.indexOf('About'));
+    expect(order.indexOf('App updates')).toBeGreaterThan(order.indexOf('FFmpeg'));
     await page.evaluate(() => window.__updatesTest.phase('ready'));
     await page.getByRole('button', { name: 'Open installer', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Stop download and install', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('dialog').getByRole('button', { name: 'Open installer', exact: true })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.screenshot({ path: '/tmp/utube-update-settings.png', fullPage: true });
+    await page.evaluate(() => window.__updatesTest.running(true));
     await page.getByRole('button', { name: 'Open installer', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Stop download and install', exact: true })).toBeVisible();
+    await page.evaluate(() => window.__updatesTest.running(false));
+    await expect(page.getByRole('button', { name: 'Stop download and install', exact: true })).toHaveCount(0);
+    await page.evaluate(() => window.__updatesTest.running(true));
     await page.getByRole('button', { name: 'Install after current download', exact: true }).click();
     await expect.poll(() => page.evaluate(() => window.__updatesTest.installed())).toBe(false);
     await expect(page.getByText(/Waiting for the current download/)).toBeVisible();

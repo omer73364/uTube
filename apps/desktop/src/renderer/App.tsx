@@ -516,7 +516,7 @@ export default function App() {
             </button>
           </div>
         )}
-        {screen !== "settings" && <Updates language={language} />}
+        {screen !== "settings" && <Updates language={language} hasCurrentDownload={jobs.some(job => ["running", "cancelling"].includes(job.status))} />}
         {notice !== undefined && (
           <div className="alert notice" role="status">
             <CheckCircle2 size={18} />
@@ -906,7 +906,6 @@ export default function App() {
         )}
         {screen === "settings" && (
           <section className="card settings-card">
-            <Updates language={language} full />
             <div className="settings-section">
               <h2>{t("appearance")}</h2>
               <div
@@ -1040,6 +1039,7 @@ export default function App() {
                 </div>
               )}
             </div>
+            <Updates language={language} full hasCurrentDownload={jobs.some(job => ["running", "cancelling"].includes(job.status))} />
             <div className="settings-section">
               <h2>{t("about")}</h2>
               <button

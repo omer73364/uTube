@@ -34,6 +34,7 @@ export function Icon({
 }) {
   // Pre-rendered continuous paths avoid seams between rotated native Views.
   const artwork = {
+    retry: require("./assets/retry.png"),
     github: require("./assets/github.png"),
     settings: require("./assets/settings.png"),
     sun: require("./assets/sun.png"),
@@ -236,17 +237,6 @@ export function Icon({
             [12, 15, 12, 3],
             [8, 7, 12, 3],
             [12, 3, 16, 7],
-          ])}
-        </>
-      );
-      break;
-    case "retry":
-      shape = (
-        <>
-          {box(5, 5, 15, 15, 8)}
-          {lines([
-            [3, 3, 3, 10],
-            [3, 10, 10, 10],
           ])}
         </>
       );

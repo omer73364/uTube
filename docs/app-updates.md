@@ -2,7 +2,13 @@
 
 Desktop and Android share a signed, data-only feed at
 `https://omer73364.github.io/uTube/updates/manifest.json`. The feed describes
-installers and provider availability. CLI updates continue through npm.
+installers and provider availability. CLI updates continue through npm. The
+interactive CLI checks npm at startup, caches successful checks for 24 hours,
+and shows the installed/latest versions plus `npm install -g utube-cli@latest`
+when newer. The menu and `utube --check-updates` support immediate manual
+checks. Automatic checks are skipped for noninteractive commands, help, and
+version output; network checks time out after 1.5 seconds and offline startup
+failures stay silent. The CLI never runs npm installation automatically.
 
 **Delivery starts disabled:** `packages/core/update-config.json` intentionally
 has no production trust roots. Configure the public key, GitHub secret, and feed
