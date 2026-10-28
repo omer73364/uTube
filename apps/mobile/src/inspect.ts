@@ -1,3 +1,4 @@
+import { buildSizeEstimates } from '../../../packages/core/file-size.js';
 import type { Innertube } from "youtubei.js";
 import { videoFormats, audioFormats } from "../../../packages/core/formats.js";
 import {
@@ -36,6 +37,7 @@ export async function inspectVideo(id: string, yt: Client): Promise<Preview> {
           author: String(info.basic_info.author || ""),
           qualities,
           audioAvailable,
+          sizeEstimates: buildSizeEstimates(info),
         };
       error = new Error(info.playability_status?.reason || "NO_FORMATS");
     } catch (e) {

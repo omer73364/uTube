@@ -1,3 +1,4 @@
+import { buildSizeEstimates } from './file-size.js';
 import { checkAbort, withAbort, abortError } from "./cancellation.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -104,13 +105,14 @@ export function createDownloadEngine({ client, xClient = createXClient(), instag
         const preview = {
           type: 'video', provider, id: chosen.id, title: info.basic_info.title,
           author: info.basic_info.author, duration: info.basic_info.duration,
+          sizeEstimates: buildSizeEstimates(info),
           thumbnail: info.basic_info.thumbnail[0]?.url,
           qualities: availavleQualities(videoFormats(info).map(format => format.quality_label)),
         };
         if (videos.length === 1 || selectedVideo) return preview;
         return { ...preview, type: 'playlist', title: `${info.basic_info.author} — ${label} post ${postId}`,
           qualities: availavleQualities(videos.flatMap(video => videoFormats(video.info).map(format => format.quality_label))),
-          items: videos.map(video => ({ id: video.id, title: video.info.basic_info.title, thumbnail: video.info.basic_info.thumbnail[0]?.url })),
+          items: videos.map(video => ({ id: video.id, title: video.info.basic_info.title, thumbnail: video.info.basic_info.thumbnail[0]?.url, sizeEstimates: buildSizeEstimates(video.info) })),
         };
       }
       if (type === "list") {
@@ -122,6 +124,7 @@ export function createDownloadEngine({ client, xClient = createXClient(), instag
         type: "video", id, title: String(info.basic_info?.title || id),
         author: String(info.basic_info?.author || ""),
         duration: info.basic_info?.duration || 0,
+        sizeEstimates: buildSizeEstimates(info),
         thumbnail: info.basic_info?.thumbnail?.at(-1)?.url || null,
         qualities: availavleQualities(videoFormats(info).map((format) => format.quality_label)),
       };

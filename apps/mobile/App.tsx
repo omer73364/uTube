@@ -39,6 +39,7 @@ import { media } from "./src/tasks";
 import { validMediaID } from "../../packages/core/media-source.js";
 import { en, ar } from "./src/locales";
 import { Icon, type IconName } from "./src/ui/Icon";
+import FileSizeEstimate from './src/ui/FileSizeEstimate';
 import { Thumbnail } from "./src/ui/Thumbnail";
 import { light, dark as darkPalette } from "./src/ui/theme";
 
@@ -1143,6 +1144,10 @@ function Screen() {
                 {preview.kind === "playlist" ? (
                   <View style={{ height: 12 }} />
                 ) : undefined}
+                <FileSizeEstimate
+                  items={preview.kind === 'playlist' ? preview.items.filter(item => selection.has(item.id)) : [preview]}
+                  audio={mode === 'mp3'} quality={quality} language={language} colors={c}
+                />
                 {button(
                   busy === "queue"
                     ? t.starting

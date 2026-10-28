@@ -18,6 +18,7 @@ import { media } from "./tasks";
 import { en, ar } from "./locales";
 import type { MediaMode, Preview, PlaylistPreview } from "./domain";
 import { light, dark } from "./ui/theme";
+import FileSizeEstimate from './ui/FileSizeEstimate';
 import { Thumbnail } from "./ui/Thumbnail";
 import { Icon } from "./ui/Icon";
 
@@ -377,6 +378,10 @@ function Sheet({ url }: { url: string }) {
                   )}
                 </View>
               )}
+              <FileSizeEstimate
+                items={preview.kind === 'playlist' ? preview.items.filter(item => selection.has(item.index)) : [preview]}
+                audio={mode === 'mp3'} quality={quality} language={prefs.language} colors={p}
+              />
               <Pressable
                 accessibilityRole="button"
                 disabled={

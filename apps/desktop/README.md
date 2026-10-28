@@ -2,6 +2,14 @@
 
 A local desktop preview built with Electron, React, and the shared uTube download engine. Paste a video or playlist URL, choose MP4 or MP3, select playlist items, and follow downloads in the queue. Failed and cancelled jobs can be retried.
 
+Before downloading, the preview shows an estimated file size for the selected
+quality or MP3 format. HD estimates include the audio track; MP3 estimates use
+its 192 kbps output rate. Changing quality, format, or selected carousel videos
+updates the estimate immediately. Missing source metadata is shown as Size
+unavailable; partial selection totals identify unknown files. Ordinary YouTube
+playlist entries do not include stream metadata, so their sizes may be unavailable.
+Estimates use the existing preview metadata and do not fetch media or start a download.
+
 The desktop shares mobile’s red accents, rounded thumbnail cards, and warm dark theme. **Home** previews a link before showing format options; **Library** contains saved videos and audio, grouped by playlist; **Downloads** shows transfer progress and history. Bottom navigation keeps all three screens within reach. In **Settings**, choose light, dark, or system appearance and switch between English and العربية. Arabic mirrors the interface from right to left; links and file paths keep their natural direction. Preferences are saved between launches.
 
 Search the library by video or playlist name. Search Downloads by title or filter it to active, completed, or attention-needed downloads. Press Ctrl+L (Command+L on macOS) to return to the link input from any page. Each thumbnail card has a three-dot options menu. Completed downloads offer **Open file** and **Show in folder**; active downloads can be cancelled, and failed or cancelled items can be retried. Format and quality appear beneath the title. The content area scrolls without a permanent scrollbar track. Files open in your system's default media application; moved or deleted files produce a clear error.
@@ -44,6 +52,7 @@ In another terminal, from the repository root:
 
 ```sh
 npm run test:renderer --workspace=@utube/desktop
+UTUBE_RENDERER_URL=http://127.0.0.1:4184 npm run desktop:test:file-size
 ```
 
 This opens a disposable Electron window with sample records and a simulated

@@ -283,3 +283,14 @@ Paste a public Facebook video, Reel, share link, or `fb.watch` link. Choose SD/H
 (or a resolution when available) and save MP4 or MP3 through the existing download
 flow. Private/login-restricted videos, live streams, photos, and streaming-only
 videos are not supported.
+
+## File sizes before downloading
+
+The preview and Android share sheet show an estimated size for the chosen quality
+or MP3 format before starting a download. Changing quality, format, or selected
+videos updates it immediately. HD estimates include audio, and MP3 uses the app's
+192 kbps encoding rate. Actual saved sizes can vary when another stream is used.
+Missing metadata is shown as Size unavailable. Partial totals identify how many
+selected videos have known sizes; unknown sizes never count as zero. This uses
+existing preview metadata without extra media requests. Ordinary YouTube playlist
+entries may lack the stream metadata needed for size estimates.

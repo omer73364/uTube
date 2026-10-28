@@ -96,3 +96,15 @@ test('mobile X lookup and background preparation cancel even when transport igno
     assert.equal(transportSignal.aborted, true);
   }
 });
+
+test('mobile X previews carry bitrate size estimates for single videos and selected carousel items', async () => {
+  const service = createXService(async () => response(post([
+    media([variant(1280, 720, 800000)]), media([variant(640, 360, 400000)]),
+  ])));
+  const preview = await service.inspect(url);
+  assert.equal(preview.items[0].sizeEstimates.video['720p'], 100000);
+  assert.equal(preview.items[1].sizeEstimates.video['360p'], 50000);
+  const single = await service.inspect(`${url}/video/2`);
+  assert.equal(single.sizeEstimates.video['360p'], 50000);
+  assert.equal(single.sizeEstimates.mp3, 24000);
+});
