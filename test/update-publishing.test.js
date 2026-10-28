@@ -25,7 +25,8 @@ test('publishing computes real artifact digests and signs a feed trusted by the 
   assert.equal(data.releases.find(release => release.platform === 'android').versionCode, 6);
   const privateFile = path.join(directory, 'metadata key.pem');
   await run('scripts/sign-update-manifest.mjs', '--generate-key', privateFile, '--key-id', 'test');
-  assert.equal((await fs.stat(privateFile)).mode & 0o077, 0);
+  // Windows exposes synthetic POSIX mode bits; permissions there use ACLs.
+  if (process.platform !== 'win32') assert.equal((await fs.stat(privateFile)).mode & 0o077, 0);
   const config = { keys: JSON.parse(await fs.readFile(`${privateFile}.public.json`, 'utf8')) };
   const configFile = path.join(directory, 'config.json'); await fs.writeFile(configFile, JSON.stringify(config));
   const output = path.join(directory, 'feed.json');

@@ -59,13 +59,13 @@ test('invalid and future-dated cache entries are ignored', async t => {
 test('actual --check-updates command prints the upgrade command while --version stays clean', async t => {
   const { execFile } = await import('node:child_process');
   const { promisify } = await import('node:util');
-  const { fileURLToPath } = await import('node:url');
+  const { fileURLToPath, pathToFileURL } = await import('node:url');
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'utube-cli-update-command-'));
   t.after(() => fs.rm(directory, { recursive: true, force: true }));
   const bootstrap = path.join(directory, 'registry.mjs');
   await fs.writeFile(bootstrap, "globalThis.fetch = async () => new Response(JSON.stringify({name:'utube-cli',version:'99.0.0'}));\n");
   const root = fileURLToPath(new URL('../', import.meta.url));
-  const run = (...args) => promisify(execFile)(process.execPath, ['--import', bootstrap, path.join(root, 'index.js'), ...args], { env: { ...process.env, XDG_CONFIG_HOME: directory } });
+  const run = (...args) => promisify(execFile)(process.execPath, ['--import', pathToFileURL(bootstrap).href, path.join(root, 'index.js'), ...args], { env: { ...process.env, XDG_CONFIG_HOME: directory } });
   const result = await run('--check-updates');
   assert.ok(result.stdout.includes(`v${version} → v99.0.0`));
   assert.match(result.stdout, /npm install -g utube-cli@latest/);
