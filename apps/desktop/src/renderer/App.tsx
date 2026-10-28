@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { safeMediaThumbnail } from "../../../../packages/core/media-source.js";
 import appLicense from "../../../../LICENSE?raw";
+import { describeSize, summarizeSizes, qualitySizeLabel } from '../../../../packages/core/file-size.js';
 import JobCard from "./JobCard";
 import Thumbnail from "./Thumbnail";
 import { languages, translator, localizeError } from "../locales";
@@ -334,6 +335,8 @@ export default function App() {
     : preview.type === "video"
       ? preview.qualities || []
       : preview.qualities || ["144p", "240p", "360p", "480p", "720p", "1080p"];
+  const sizeItems = !preview ? [] : preview.type === 'playlist' ? selected.map(index => preview.items?.[index]).filter(Boolean) : [preview];
+  const sizeDescription = preview ? describeSize(summarizeSizes(sizeItems, audio, quality), language) : undefined;
   const hasEncoder = settings?.ffmpeg !== false;
   const requiresFFmpeg = audio || ((!preview?.provider || preview.provider === "youtube") && quality !== "360p");
   const image = safeMediaThumbnail(preview?.thumbnail);
@@ -740,6 +743,7 @@ export default function App() {
                           <option key={value} value={value}>
                             {value}
                             {parseInt(value) >= 720 ? " · HD" : ""}
+                            {preview ? ` — ${qualitySizeLabel(sizeItems, value, language)}` : ""}
                           </option>
                         ))}
                         {!preview && (
@@ -762,6 +766,13 @@ export default function App() {
                   )}
                   {preview && !audio && !qualities.length && (
                     <p className="inline-note">{t("noQualities")}</p>
+                  )}
+                  {sizeDescription && (audio || preview?.type === "playlist") && (
+                    <div className="file-size-estimate" role="status" aria-live="polite">
+                      <span>{sizeDescription.label}</span>
+                      <strong><bdi>{sizeDescription.value}</bdi></strong>
+                      {sizeDescription.help && <small>{sizeDescription.help}</small>}
+                    </div>
                   )}
                   <button
                     className="button primary download-button"

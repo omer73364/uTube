@@ -181,6 +181,7 @@ export const videoCard = ({
   views,
   audio,
   quality,
+  size,
   folder,
   id,
 }) => {
@@ -196,6 +197,7 @@ export const videoCard = ({
         ? "MP3 · 192 kbps"
         : `MP4${quality ? ` · ${quality}` : " · choose quality below"}`,
     ],
+    ...(size ? [["Est. size", size]] : []),
     ["Save to", folder],
     ...(id && /^[\w-]{11}$/.test(id)
       ? [["Watch", `https://youtu.be/${id}`]]

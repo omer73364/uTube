@@ -147,3 +147,17 @@ test("MP3 can extract a combined stream after audio-only candidates fail", async
   assert.equal(plan.candidates[0].audio.url, audio.url);
   assert.match(plan.candidates[1].audio.url, /q=360p/);
 });
+
+test('mobile preview exposes final-file sizes for progressive MP4, adaptive HD and MP3 without deciphering', async () => {
+  const preview = await inspectVideo(id, client(async () => ({
+    basic_info: { title: 'Video', duration: 60 },
+    streaming_data: {
+      formats: [format('360p', { content_length: '1000000' })],
+      adaptive_formats: [format('1080p', { has_audio: false, content_length: '5000000' }),
+        { has_video: false, has_audio: true, url: 'https://rr1.googlevideo.com/audio', mime_type: 'audio/mp4', content_length: '1000000', bitrate: 128000 }],
+    },
+  })));
+  assert.equal(preview.sizeEstimates.video['360p'], 1000000);
+  assert.equal(preview.sizeEstimates.video['1080p'], 6000000);
+  assert.equal(preview.sizeEstimates.mp3, 1440000);
+});
