@@ -1,3 +1,4 @@
+import type { UpdateState } from '../../../packages/core/update-types';
 import { NativeModules } from "react-native";
 import {
   playerResult,
@@ -16,6 +17,12 @@ export type DownloadRequest = {
   retryId?: string;
 };
 interface Bridge {
+  updates(): Promise<string>;
+  checkUpdates(): Promise<string>;
+  downloadUpdate(): Promise<string>;
+  cancelUpdate(): Promise<void>;
+  installUpdate(interrupt: boolean): Promise<string>;
+  assertService(id: string): Promise<void>;
   http(
     id: string,
     url: string,
@@ -59,6 +66,12 @@ interface Bridge {
 }
 const bridge = NativeModules.UTubeDownloads as Bridge;
 export const downloads = {
+  updates: async (): Promise<UpdateState> => JSON.parse(await bridge.updates()),
+  checkUpdates: async (): Promise<UpdateState> => JSON.parse(await bridge.checkUpdates()),
+  downloadUpdate: async (): Promise<UpdateState> => JSON.parse(await bridge.downloadUpdate()),
+  cancelUpdate: () => bridge.cancelUpdate(),
+  installUpdate: async (interrupt: boolean): Promise<UpdateState> => JSON.parse(await bridge.installUpdate(interrupt)),
+  assertService: (id: string) => bridge.assertService(id),
   http: (...args: Parameters<Bridge["http"]>) => bridge.http(...args),
   cancelHttp: (id: string) => bridge.cancelHttp(id),
   sha1: (input: string) => bridge.sha1(input),

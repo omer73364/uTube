@@ -341,7 +341,7 @@ uTube version, exact error, and a public example URL. Include Node.js for CLI
 or development issues, and the Android version for mobile issues.
 
 Current limits include no partial-download resume, authenticated/private-video
-downloads, or automatic updates. Live-stream recording is unverified. Linux is
+downloads. In-app updates use verified installers and require [configured delivery](docs/app-updates.md); system confirmation is still required. Live-stream recording is unverified. Linux is
 the best-tested desktop platform; Windows, macOS, and Android devices need
 broader testing.
 

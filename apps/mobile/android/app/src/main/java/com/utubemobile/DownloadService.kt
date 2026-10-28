@@ -31,12 +31,18 @@ class DownloadService : Service() {
       }
     }
 
+    fun hasActive() = current?.activeId != null
+    fun interruptForUpdate() { current?.activeId?.let { id ->
+      current?.updateInterrupted = id
+      cancel(id)
+    } }
     fun isActive(id: String) = current?.activeId == id
   }
 
   private val executor = Executors.newSingleThreadExecutor()
   private val main = Handler(Looper.getMainLooper())
   private lateinit var store: JobStore
+  @Volatile private var updateInterrupted: String? = null
   @Volatile private var stopping = false
   @Volatile private var activeId: String? = null
   @Volatile private var connection: HttpURLConnection? = null
@@ -242,7 +248,9 @@ class DownloadService : Service() {
     executor.execute {
       try {
         while (!stopping) {
-          val job = store.next() ?: break
+          val job = synchronized(UpdateCenter.queueLock) {
+            store.next()?.also { activeId = it.getString("id") }
+          } ?: break
           execute(job)
         }
       } finally {
@@ -441,7 +449,7 @@ class DownloadService : Service() {
     } catch (e: Exception) {
       pendingUri?.let { runCatching { contentResolver.delete(it, null, null) } }
       val status =
-        if (stopping) "interrupted"
+        if (stopping || updateInterrupted == id) "interrupted"
         else if (
           cancelled.contains(id) ||
             runCatching { store.get(id).optString("status") }.getOrNull() == "cancelled"
@@ -459,6 +467,7 @@ class DownloadService : Service() {
       temp.deleteRecursively()
       connection = null
       activeId = null
+      if (updateInterrupted == id) updateInterrupted = null
       cancelled.remove(id)
     }
   }

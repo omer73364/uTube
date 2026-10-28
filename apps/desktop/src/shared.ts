@@ -8,7 +8,7 @@ export type Job = {
   id: string; videoId: string; thumbnail?: string; title: string; audio: boolean; quality?: string;
   status: 'queued' | 'running' | 'cancelling' | 'saved' | 'skipped' | 'failed' | 'cancelled';
   stage?: string; loaded: number; total?: number; speed?: number; eta?: number; note?: string; actualQuality?: string;
-  path?: string; error?: string;
+  path?: string; error?: string; holdReason?: string;
   playlistTitle?: string; createdAt?: number; completedAt?: number; interrupted?: boolean;
 };
 export type DownloadRequest = {
@@ -18,7 +18,15 @@ export type DownloadRequest = {
 export type Preferences = { theme: 'light' | 'dark' | 'system'; language: Language };
 export type Appearance = Preferences & { resolvedTheme: 'light' | 'dark' };
 export type Settings = Appearance & { folder: string; version: string; ffmpeg: boolean; ffmpegSetupSupported?: boolean; ffmpegInstalling?: boolean; ffmpegProgress?: { loaded: number; total: number }; historyError?: string };
+import type { UpdateState } from '../../../packages/core/update-types';
+export type { UpdateState, ServiceNotice } from '../../../packages/core/update-types';
 export type DesktopAPI = {
+  updates(): Promise<UpdateState>;
+  checkUpdates(): Promise<UpdateState>;
+  downloadUpdate(): Promise<UpdateState>;
+  cancelUpdate(): Promise<void>;
+  installUpdate(interrupt: boolean): Promise<void>;
+  onUpdates(listener: (state: UpdateState) => void): () => void;
   installFFmpeg(): Promise<{ ffmpeg: boolean }>;
   cancelFFmpeg(): Promise<void>;
   openFFmpegSource(): Promise<void>;

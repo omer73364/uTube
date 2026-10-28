@@ -75,7 +75,7 @@ npm run desktop:make
 
 Linux ZIP and Debian previews are written under `apps/desktop/out/make/`. Debian packaging needs `dpkg` and `fakeroot`. Nothing is uploaded by this command. The DEB still declares FFmpeg as a system dependency; source builds also offer the optional per-user download described below.
 
-This preview has no partial-download resume or automatic updates. macOS ARM64 and Intel packages under Rosetta have been verified locally. Windows and physical Intel Macs still need manual verification. The desktop package is private and does not change the public CLI version.
+This preview has no partial-download resume. In-app update checks and verified installer downloads require configured production delivery; see [app updates](../../docs/app-updates.md). macOS ARM64 and Intel packages under Rosetta have been verified locally. Windows and physical Intel Macs still need manual verification. The desktop package is private and does not change the public CLI version.
 
 ### Optional FFmpeg download
 
@@ -143,3 +143,13 @@ Paste a public Facebook video, Reel, share link, or `fb.watch` link. Choose SD/H
 (or a resolution when available) and save MP4 or MP3 through the existing download
 flow. Private/login-restricted videos, live streams, photos, and streaming-only
 videos are not supported.
+
+### App updates and service availability
+
+Settings offers update checks, bilingual release notes, verified installer downloads,
+and cancellation. Install after current download preserves the remaining queue;
+Stop download and install interrupts the current transfer. System installers still
+require confirmation. Portable AppImages use a verified replacement file.
+Signed provider notices can hold one service's queued jobs while other providers
+continue. Production delivery must be configured before shipping; see the
+[update and publishing guide](../../docs/app-updates.md).

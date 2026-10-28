@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { safeMediaThumbnail } from "../../../../packages/core/media-source.js";
 import appLicense from "../../../../LICENSE?raw";
+import Updates from './Updates';
 import JobCard from "./JobCard";
 import Thumbnail from "./Thumbnail";
 import { languages, translator, localizeError } from "../locales";
@@ -515,6 +516,7 @@ export default function App() {
             </button>
           </div>
         )}
+        {screen !== "settings" && <Updates language={language} />}
         {notice !== undefined && (
           <div className="alert notice" role="status">
             <CheckCircle2 size={18} />
@@ -904,6 +906,7 @@ export default function App() {
         )}
         {screen === "settings" && (
           <section className="card settings-card">
+            <Updates language={language} full />
             <div className="settings-section">
               <h2>{t("appearance")}</h2>
               <div

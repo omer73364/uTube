@@ -1,3 +1,4 @@
+import { parseMediaURL } from '../../../packages/core/media-source.js';
 import { AppRegistry, DeviceEventEmitter } from "react-native";
 import { downloads } from "./native";
 import { createYouTubeService } from "./youtube";
@@ -9,12 +10,19 @@ import { nativeFetch } from './requests';
 import type { DownloadRequest } from "./native";
 
 const transport = nativeFetch((...args) => downloads.http(...args), id => downloads.cancelHttp(id));
-export const media = createMediaService(
+const services = createMediaService(
   createYouTubeService(script => downloads.evaluate(script)),
   createXService((url, signal) => transport(url, { signal, headers: { 'User-Agent': 'Googlebot', Accept: 'application/json' } })),
   createInstagramService((url, options) => transport(url, options)),
   createFacebookService((url, options) => transport(url, options)),
 );
+export const media = {
+  ...services,
+  async inspect(url: string, signal?: AbortSignal) {
+    await downloads.assertService(parseMediaURL(url).id);
+    return services.inspect(url, signal);
+  },
+};
 const preparing = new Map<string, AbortController>();
 DeviceEventEmitter.addListener("utubeCancelPreparation", (id: string) =>
   preparing.get(id)?.abort(),

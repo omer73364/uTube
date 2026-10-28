@@ -59,6 +59,7 @@ export type Job = {
   total?: number;
   fraction?: number;
   error?: string;
+  holdReason?: string;
   downgraded?: boolean;
 };
 export function videoId(input: string): string {
@@ -94,6 +95,7 @@ export function playerResult(input: string): {
   id: string;
   value?: Record<string, string>;
   error?: string;
+  holdReason?: string;
 } {
   if (input.length > 32768) throw new Error("INVALID_PLAYER_RESULT");
   const data: unknown = JSON.parse(input);

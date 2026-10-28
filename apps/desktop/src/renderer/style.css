@@ -1489,3 +1489,12 @@ select:disabled {
 .ffmpeg-startup-dialog .ffmpeg-setup-actions {
   margin-bottom: 0;
 }
+
+.updates-panel { display: block; }
+.update-content { min-width: 0; width: 100%; }
+.update-content h3 { margin: 0 0 8px; }
+.update-content p { margin: 8px 0; }
+.update-content progress { width: 100%; margin-block: 12px; accent-color: var(--accent, #dd3b20); }
+.update-notes { white-space: pre-wrap; overflow-wrap: anywhere; }
+.service-notice { margin-block: 12px; padding-inline-start: 12px; border-inline-start: 3px solid #dd3b20; }
+.update-confirm { position: fixed; inset: 0; margin: auto; z-index: 100; max-width: min(560px, 90vw); box-shadow: 0 0 0 100vmax #0009; }
