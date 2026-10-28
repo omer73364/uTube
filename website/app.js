@@ -1,4 +1,4 @@
-const desktopVersions = { linux: "2.5.0", windows: "2.5.0", macos: "2.5.0" };
+const desktopVersions = { linux: "2.6.0", windows: "2.6.0", macos: "2.6.0" };
 const arabic = {
   skip: "انتقل إلى المحتوى",
   home: "uTube — الصفحة الرئيسية",
@@ -11,7 +11,7 @@ const arabic = {
   screenshotDialog: "صورة التطبيق",
   closeScreenshot: "إغلاق الصورة",
   navCli: "سطر الأوامر",
-  release: "متاح الآن لأندرويد · 2.5.0",
+  release: "متاح الآن لأندرويد · 2.6.0",
   heroFirst: "uTube",
   heroSecond: "لتنزيل الفيديو والصوت",
   heroDescription:
@@ -33,7 +33,7 @@ const arabic = {
     "ابحث في تنزيلاتك السابقة، وافتح الملفات المحفوظة، وأعد محاولة التنزيلات المتوقفة. يبقى السجل محفوظًا على جهازك.",
   downloadTitle: "تنزيل uTube لسطح المكتب",
   downloadIntro: "اختر نظام جهازك، ثم نزّل ملف التثبيت المناسب.",
-  versionLine: "الإصدار 2.5.0 · سطح المكتب",
+  versionLine: "الإصدار 2.6.0 · سطح المكتب",
   releaseNotes: "ملاحظات الإصدار",
   osLabel: "نظام التشغيل",
   unsigned:
@@ -101,7 +101,7 @@ const arabic = {
   androidDownload: "تنزيل لأندرويد",
   androidUniversal: "نسخة لجميع الأجهزة المدعومة. تريد ملفًا أصغر؟",
   androidOtherVersions: "عرض النسخ الأخرى ←",
-  androidRequirements: "الإصدار 2.5.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
+  androidRequirements: "الإصدار 2.6.0 · أندرويد 10 أو أحدث · ARM64 وx86-64",
   androidNotes: "التثبيت والتحقق من الملفات وملاحظات الإصدار ↗",
   mobileCaption: "لقطة من هاتف أندرويد",
   mobileScreenshot:
@@ -195,7 +195,7 @@ const formats = {
 function renderDownloads() {
   document.querySelector('[data-i18n="versionLine"]').textContent = t(
     "versionLine",
-  ).replace("2.5.0", desktopVersions[platform]);
+  ).replace("2.6.0", desktopVersions[platform]);
   document.querySelector("#desktop-release-notes").href =
     `https://github.com/omer73364/uTube/releases/tag/v${desktopVersions[platform]}`;
   const links = document.querySelector("#download-links");
