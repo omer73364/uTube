@@ -160,7 +160,7 @@ See the [desktop guide](apps/desktop/README.md) for recovery behavior and develo
 
 ## 📱 Android app
 
-**Download, install, go.** Get the signed APK from **[GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.6.0)**. It needs Android 10 or newer, and no computer or Metro server.
+**Download, install, go.** Get the signed APK from **[GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.6.0)**. It needs Android 10 or newer.
 
 The main APK covers both ARM64 and x86-64; smaller CPU-specific APKs are on the same page. Allow your browser or file manager to install it when Android asks. iOS is not implemented.
 
