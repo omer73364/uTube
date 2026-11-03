@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "website/dist");
 await fs.mkdir(path.join(output, "assets"), { recursive: true });
-for (const file of ["index.html", "style.css", "app.js"])
+for (const file of ["index.html", "privacy.html", "style.css", "app.js"])
   await fs.copyFile(path.join(root, "website", file), path.join(output, file));
 for (const file of [
   "desktop-light.png",
