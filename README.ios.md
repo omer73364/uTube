@@ -8,7 +8,8 @@ Linux laptop alone cannot build this Xcode project.
 
 ### Install from source on your iPhone
 
-1. On your Mac, install Xcode, Node.js 22.13+, and CocoaPods. Open Xcode once to
+1. On your Mac, install Xcode, Node.js 22.13+, and CocoaPods 1.16.2 (matching
+   `Podfile.lock`). Open Xcode once to
    finish installing its tools, then sign in under **Xcode → Settings → Accounts**
    (called **Apple Accounts** in some versions).
 2. Clone the repository and install dependencies:
@@ -17,7 +18,7 @@ Linux laptop alone cannot build this Xcode project.
    git clone https://github.com/omer73364/uTube.git
    cd uTube
    npm ci
-   (cd apps/mobile/ios && pod install)
+   (cd apps/mobile/ios && pod _1.16.2_ install)
    open apps/mobile/ios/uTube.xcworkspace
    ```
 

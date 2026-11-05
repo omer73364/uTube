@@ -11,7 +11,7 @@ signed IPA, and App Store distribution, see [Install iOS](../../../README.ios.md
 
 ## Build and run
 
-Use macOS, Xcode **26+**, CocoaPods, and the repository's Node version. Xcode 27
+Use macOS, Xcode **26+**, CocoaPods **1.16.2** (matching `Podfile.lock`), and the repository's Node version. Xcode 27
 was used for initial verification. The deployment target is iOS 16. Native
 processing uses AVFoundation and a pinned, source-built LAME Swift package.
 No external FFmpeg executable is needed on an iPhone.
@@ -20,7 +20,7 @@ From the repository root:
 
 ```sh
 npm ci
-(cd apps/mobile/ios && pod install)
+(cd apps/mobile/ios && pod _1.16.2_ install)
 npm run mobile:build:ios
 ```
 
