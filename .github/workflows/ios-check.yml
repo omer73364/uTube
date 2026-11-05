@@ -35,7 +35,7 @@ jobs:
         working-directory: apps/mobile/ios
         run: |
           gem install --user-install cocoapods -v 1.16.2 --no-document
-          ruby -r rubygems -e 'load Gem.bin_path("cocoapods", "pod", "1.16.2")' -- install --deployment
+          ruby -r rubygems -e 'gem "cocoapods", "1.16.2"; load Gem.bin_path("cocoapods", "pod", "1.16.2")' -- install --deployment
       - name: Build standalone Release simulator app and Share Extension
         run: npm run mobile:build:ios
       - name: Boot an available iPhone simulator
