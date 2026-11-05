@@ -7,7 +7,7 @@ Facebook videos; quality and size previews; selected playlist items; video and
 English/Arabic and light/dark/system appearance.
 
 For a step-by-step iPhone installation walkthrough and the status of TestFlight,
-signed IPA, and App Store distribution, see [Install iOS](../../../README.md#-ios-app).
+signed IPA, and App Store distribution, see [Install iOS](../../../README.ios.md).
 
 ## Build and run
 
@@ -125,7 +125,7 @@ the live YouTube sample above has a lower native resolution.
 ## Signing and distribution
 
 To install on a physical iPhone/iPad, use the source-install steps in the
-[root README](../../../README.md#-ios-app). Select **Release** for the Xcode
+[installation guide](../../../README.ios.md). Select **Release** for the Xcode
 scheme’s Run action before installing if the app should work after disconnecting
 the Mac. Debug development builds normally depend on a reachable Metro server.
 The unsigned simulator output from `mobile:build:ios` is not an iPhone installer.
