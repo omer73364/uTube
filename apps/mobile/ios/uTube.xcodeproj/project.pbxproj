@@ -1,0 +1,844 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09FDFA7264D5CE5D0E778CFD /* update-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 240DF01DAE40B1891FA68A01 /* update-config.json */; };
+		0A6F7EB5476691C820FF3CAA /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = CAAA027D4B2F30526EF670FA /* ThirdPartyNotices.txt */; };
+		1AE3059C8D248438EBC17964 /* LiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB3A4900479EB39B3FB57CE /* LiveTests.swift */; };
+		1C777E4A740E9C046EE08E84 /* UTubeDownloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CFCA65ACE65CAC804C5B4A /* UTubeDownloads.swift */; };
+		2BB043902D9C0B4D7E858EB9 /* ContinuedWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D96824A7D7E9FA59A4DC81 /* ContinuedWork.swift */; };
+		397BC2D0B721E07FE41B01C4 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC319BCAE0F9FFC0E7CABABE /* SmokeTests.swift */; };
+		46B027F51D15519D97BEFF3E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 66669B0616EEA35524FC36EC /* PrivacyInfo.xcprivacy */; };
+		4852296C7503577577167BE4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F818E381523D3D4ED0404687 /* Images.xcassets */; };
+		4D9092212CF2937D97057145 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E991C9110783FDEEA04228F6 /* PrivacyInfo.xcprivacy */; };
+		541565B98A4F42E2CAC24E7F /* ServiceCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE3ED71E1B3424E167F6F3 /* ServiceCenter.swift */; };
+		55414A92121E8079DA7B50CB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4188CC46AC7BFC7CA400201 /* SceneDelegate.swift */; };
+		64FB81E122B986A225E8B21B /* uTubeShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 420791F87A8D53A857CA2792 /* uTubeShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		789ACDCD71EC496018796898 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8389A44F7F7FB1B76F0EF871 /* Localizable.strings */; };
+		83182F44CDA0B96DD1D23BA4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FE75BF893A1B4EC12EE20730 /* LaunchScreen.storyboard */; };
+		9173E955477446993521148F /* UTubeDownloadsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BF928C20774A4F8CBD21E9 /* UTubeDownloadsBridge.m */; };
+		9481324A4305BF1E9A415F7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B2B437A6C949DA9E776439 /* Foundation.framework */; };
+		95266265ED75A36D0A46265A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA368BA2721F45726EFA565 /* AppDelegate.swift */; };
+		9796A04DE6CA70693CD21568 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B2B437A6C949DA9E776439 /* Foundation.framework */; };
+		9FC756BF443055AC36FEEB52 /* DownloadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E008A9CEF6282F402E8896 /* DownloadCoordinator.swift */; };
+		AC066D1D0F52993F2783E832 /* PlayerRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2F040BADD7E7C7EAA4A1C0 /* PlayerRuntime.swift */; };
+		BB964984C42BADC99726CCAD /* libPods-uTube.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CB01988AC17F12DC8B04A2C /* libPods-uTube.a */; };
+		DFF9E567A0565BD561EC5772 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B2B437A6C949DA9E776439 /* Foundation.framework */; };
+		EBAD1317DBE123D6DC8F0E18 /* UTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1652518295C26345C1ACD16B /* UTubeKit */; };
+		F53CD4B0A5CBDD53B68881C5 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515BECD2648E5640CFA238E2 /* ShareViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		362A3E26D002805BF432EDA1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56652A6A74D1001C5124EC85 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A382719FF41EB4F0754AE63;
+			remoteInfo = uTubeShare;
+		};
+		70428FBD4F46C85CF94FA8DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56652A6A74D1001C5124EC85 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ED7BD3450496EB7AA279A8BD;
+			remoteInfo = uTube;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9EEC7125D91FA71B5349D3B9 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				64FB81E122B986A225E8B21B /* uTubeShare.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		240DF01DAE40B1891FA68A01 /* update-config.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; name = "update-config.json"; path = "../../../packages/core/update-config.json"; sourceTree = "<group>"; };
+		2B2F040BADD7E7C7EAA4A1C0 /* PlayerRuntime.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PlayerRuntime.swift; sourceTree = "<group>"; };
+		2CB01988AC17F12DC8B04A2C /* libPods-uTube.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-uTube.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		420791F87A8D53A857CA2792 /* uTubeShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = uTubeShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		466BEAC368FC286A426C9F6A /* ShareExtension.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		515BECD2648E5640CFA238E2 /* ShareViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		51E008A9CEF6282F402E8896 /* DownloadCoordinator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DownloadCoordinator.swift; sourceTree = "<group>"; };
+		60BF928C20774A4F8CBD21E9 /* UTubeDownloadsBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = UTubeDownloadsBridge.m; sourceTree = "<group>"; };
+		66669B0616EEA35524FC36EC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		718F893BB22EB73CF4FB7FD4 /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		72D96824A7D7E9FA59A4DC81 /* ContinuedWork.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContinuedWork.swift; sourceTree = "<group>"; };
+		7DA368BA2721F45726EFA565 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		80CFCA65ACE65CAC804C5B4A /* UTubeDownloads.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UTubeDownloads.swift; sourceTree = "<group>"; };
+		84B2B437A6C949DA9E776439 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		9B141281E39830F32404B9AA /* Pods-uTube.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-uTube.release.xcconfig"; path = "Target Support Files/Pods-uTube/Pods-uTube.release.xcconfig"; sourceTree = "<group>"; };
+		A41F61C3592E881E77151FDA /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC319BCAE0F9FFC0E7CABABE /* SmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		B199716ED2AFC6056F6973F6 /* uTube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = uTube.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1FE3ED71E1B3424E167F6F3 /* ServiceCenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ServiceCenter.swift; sourceTree = "<group>"; };
+		B945F7E2E4CCA41BEE091E67 /* uTubeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = uTubeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF18A6E6AE3DC95C5E6AFBAC /* uTube.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = uTube.entitlements; sourceTree = "<group>"; };
+		C4188CC46AC7BFC7CA400201 /* SceneDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		CAAA027D4B2F30526EF670FA /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = ThirdPartyNotices.txt; sourceTree = "<group>"; };
+		CE8F29715C1397FBCB419025 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E301E55D367F6FDAF2B12C62 /* Pods-uTube.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-uTube.debug.xcconfig"; path = "Target Support Files/Pods-uTube/Pods-uTube.debug.xcconfig"; sourceTree = "<group>"; };
+		E991C9110783FDEEA04228F6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EB1BA2DC5E91B0F6E7B193A7 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F818E381523D3D4ED0404687 /* Images.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FAB3A4900479EB39B3FB57CE /* LiveTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiveTests.swift; sourceTree = "<group>"; };
+		FE75BF893A1B4EC12EE20730 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		41FE9E82E18043CA51F6D29A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9796A04DE6CA70693CD21568 /* Foundation.framework in Frameworks */,
+				EBAD1317DBE123D6DC8F0E18 /* UTubeKit in Frameworks */,
+				BB964984C42BADC99726CCAD /* libPods-uTube.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		74B77DAB5A4E34A968A7647B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9481324A4305BF1E9A415F7D /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F96F065B4FA4E450E9A225F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DFF9E567A0565BD561EC5772 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0D33C0119EA09C2AD98EA7E6 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				84B2B437A6C949DA9E776439 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		0D814A3EDFA7E780B079ED6C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9B141281E39830F32404B9AA /* Pods-uTube.release.xcconfig */,
+				E301E55D367F6FDAF2B12C62 /* Pods-uTube.debug.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		183C2D7670121C43FF09F6C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B199716ED2AFC6056F6973F6 /* uTube.app */,
+				420791F87A8D53A857CA2792 /* uTubeShare.appex */,
+				B945F7E2E4CCA41BEE091E67 /* uTubeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		19CE5790A1488DFE18016B65 /* uTube */ = {
+			isa = PBXGroup;
+			children = (
+				7DA368BA2721F45726EFA565 /* AppDelegate.swift */,
+				72D96824A7D7E9FA59A4DC81 /* ContinuedWork.swift */,
+				51E008A9CEF6282F402E8896 /* DownloadCoordinator.swift */,
+				F818E381523D3D4ED0404687 /* Images.xcassets */,
+				A41F61C3592E881E77151FDA /* Info.plist */,
+				FE75BF893A1B4EC12EE20730 /* LaunchScreen.storyboard */,
+				2B2F040BADD7E7C7EAA4A1C0 /* PlayerRuntime.swift */,
+				66669B0616EEA35524FC36EC /* PrivacyInfo.xcprivacy */,
+				C4188CC46AC7BFC7CA400201 /* SceneDelegate.swift */,
+				CAAA027D4B2F30526EF670FA /* ThirdPartyNotices.txt */,
+				80CFCA65ACE65CAC804C5B4A /* UTubeDownloads.swift */,
+				60BF928C20774A4F8CBD21E9 /* UTubeDownloadsBridge.m */,
+				BF18A6E6AE3DC95C5E6AFBAC /* uTube.entitlements */,
+				B1FE3ED71E1B3424E167F6F3 /* ServiceCenter.swift */,
+			);
+			path = uTube;
+			sourceTree = "<group>";
+		};
+		5E72189944C0E47B85BD1439 /* uTubeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				AC319BCAE0F9FFC0E7CABABE /* SmokeTests.swift */,
+				FAB3A4900479EB39B3FB57CE /* LiveTests.swift */,
+			);
+			path = uTubeUITests;
+			sourceTree = "<group>";
+		};
+		6D14B7E6CE187DC3CBF4310F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0D33C0119EA09C2AD98EA7E6 /* iOS */,
+				2CB01988AC17F12DC8B04A2C /* libPods-uTube.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B691F98C09FEBCD64E055030 /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				CE8F29715C1397FBCB419025 /* Info.plist */,
+				E991C9110783FDEEA04228F6 /* PrivacyInfo.xcprivacy */,
+				466BEAC368FC286A426C9F6A /* ShareExtension.entitlements */,
+				515BECD2648E5640CFA238E2 /* ShareViewController.swift */,
+				8389A44F7F7FB1B76F0EF871 /* Localizable.strings */,
+			);
+			path = ShareExtension;
+			sourceTree = "<group>";
+		};
+		BFE2FD7319E651EDCAFB875F = {
+			isa = PBXGroup;
+			children = (
+				183C2D7670121C43FF09F6C4 /* Products */,
+				6D14B7E6CE187DC3CBF4310F /* Frameworks */,
+				19CE5790A1488DFE18016B65 /* uTube */,
+				B691F98C09FEBCD64E055030 /* ShareExtension */,
+				5E72189944C0E47B85BD1439 /* uTubeUITests */,
+				0D814A3EDFA7E780B079ED6C /* Pods */,
+				240DF01DAE40B1891FA68A01 /* update-config.json */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4A382719FF41EB4F0754AE63 /* uTubeShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1550681F54A01D25DCD20052 /* Build configuration list for PBXNativeTarget "uTubeShare" */;
+			buildPhases = (
+				0DB60A9807F2DEE41E30145B /* Sources */,
+				8F96F065B4FA4E450E9A225F /* Frameworks */,
+				23E34B7A91863CD0FD4DBCE7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = uTubeShare;
+			productName = uTubeShare;
+			productReference = 420791F87A8D53A857CA2792 /* uTubeShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		ED7BD3450496EB7AA279A8BD /* uTube */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9DBEE8127A0F5A1A1184FF51 /* Build configuration list for PBXNativeTarget "uTube" */;
+			buildPhases = (
+				DE1CE226313BCE1F73FE4EA7 /* [CP] Check Pods Manifest.lock */,
+				3860FA97AED6667F782F1C60 /* Sources */,
+				41FE9E82E18043CA51F6D29A /* Frameworks */,
+				5765F651C7809BE439BB2309 /* Resources */,
+				9EEC7125D91FA71B5349D3B9 /* Embed App Extensions */,
+				403A1B66DE5E6461B1F49E74 /* Bundle React Native code and images */,
+				0E5F26463F857371731453C4 /* [CP] Embed Pods Frameworks */,
+				F63AD2FADAF6A893ED415109 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BA9AC102FF4240D399E4F758 /* PBXTargetDependency */,
+			);
+			name = uTube;
+			packageProductDependencies = (
+				1652518295C26345C1ACD16B /* UTubeKit */,
+			);
+			productName = uTube;
+			productReference = B199716ED2AFC6056F6973F6 /* uTube.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F548F88312221FE7B085F4ED /* uTubeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 342A66DFF71EA8D835A1D5A8 /* Build configuration list for PBXNativeTarget "uTubeUITests" */;
+			buildPhases = (
+				17B386E376BDA948321648C6 /* Sources */,
+				74B77DAB5A4E34A968A7647B /* Frameworks */,
+				188F41685756A4C6215AA948 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1CA7C0294149B7781D95514F /* PBXTargetDependency */,
+			);
+			name = uTubeUITests;
+			productName = uTubeUITests;
+			productReference = B945F7E2E4CCA41BEE091E67 /* uTubeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		56652A6A74D1001C5124EC85 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = DE2899D80D66763CC8C1ACA6 /* Build configuration list for PBXProject "uTube" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ar,
+			);
+			mainGroup = BFE2FD7319E651EDCAFB875F;
+			packageReferences = (
+				D197D60A24EF2BEB03E79B02 /* XCLocalSwiftPackageReference "UTubeKit" */,
+			);
+			productRefGroup = 183C2D7670121C43FF09F6C4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED7BD3450496EB7AA279A8BD /* uTube */,
+				4A382719FF41EB4F0754AE63 /* uTubeShare */,
+				F548F88312221FE7B085F4ED /* uTubeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		188F41685756A4C6215AA948 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		23E34B7A91863CD0FD4DBCE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D9092212CF2937D97057145 /* PrivacyInfo.xcprivacy in Resources */,
+				789ACDCD71EC496018796898 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5765F651C7809BE439BB2309 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4852296C7503577577167BE4 /* Images.xcassets in Resources */,
+				83182F44CDA0B96DD1D23BA4 /* LaunchScreen.storyboard in Resources */,
+				46B027F51D15519D97BEFF3E /* PrivacyInfo.xcprivacy in Resources */,
+				0A6F7EB5476691C820FF3CAA /* ThirdPartyNotices.txt in Resources */,
+				09FDFA7264D5CE5D0E778CFD /* update-config.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0E5F26463F857371731453C4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-uTube/Pods-uTube-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermesvm.framework/hermesvm",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermesvm.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-uTube/Pods-uTube-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		403A1B66DE5E6461B1F49E74 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nexport PROJECT_ROOT=\"$PROJECT_DIR/..\"\nexport REACT_NATIVE_PATH=\"$PROJECT_DIR/../../../node_modules/react-native\"\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n/bin/sh -c \"\\\"$WITH_ENVIRONMENT\\\" \\\"$REACT_NATIVE_XCODE\\\"\"\n";
+		};
+		DE1CE226313BCE1F73FE4EA7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-uTube-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F63AD2FADAF6A893ED415109 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-uTube/Pods-uTube-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-timing/React-timing_privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-timing_privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-uTube/Pods-uTube-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0DB60A9807F2DEE41E30145B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F53CD4B0A5CBDD53B68881C5 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17B386E376BDA948321648C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				397BC2D0B721E07FE41B01C4 /* SmokeTests.swift in Sources */,
+				1AE3059C8D248438EBC17964 /* LiveTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3860FA97AED6667F782F1C60 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95266265ED75A36D0A46265A /* AppDelegate.swift in Sources */,
+				2BB043902D9C0B4D7E858EB9 /* ContinuedWork.swift in Sources */,
+				9FC756BF443055AC36FEEB52 /* DownloadCoordinator.swift in Sources */,
+				AC066D1D0F52993F2783E832 /* PlayerRuntime.swift in Sources */,
+				55414A92121E8079DA7B50CB /* SceneDelegate.swift in Sources */,
+				1C777E4A740E9C046EE08E84 /* UTubeDownloads.swift in Sources */,
+				9173E955477446993521148F /* UTubeDownloadsBridge.m in Sources */,
+				541565B98A4F42E2CAC24E7F /* ServiceCenter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1CA7C0294149B7781D95514F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = uTube;
+			target = ED7BD3450496EB7AA279A8BD /* uTube */;
+			targetProxy = 70428FBD4F46C85CF94FA8DB /* PBXContainerItemProxy */;
+		};
+		BA9AC102FF4240D399E4F758 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = uTubeShare;
+			target = 4A382719FF41EB4F0754AE63 /* uTubeShare */;
+			targetProxy = 362A3E26D002805BF432EDA1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8389A44F7F7FB1B76F0EF871 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EB1BA2DC5E91B0F6E7B193A7 /* en */,
+				718F893BB22EB73CF4FB7FD4 /* ar */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		09919CBAB4CBBE708367F5E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 69N64AH97M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.omer73364.utube.mobile.share;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				UTUBE_APP_GROUP = group.io.github.omer73364.utube.mobile;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4377F662CD26E6E5331EB00A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				DEVELOPMENT_TEAM = 69N64AH97M;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.omer73364.utube.mobile.uitests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = uTube;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		53CA4CF450859AC8E5AA1BBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 69N64AH97M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.6.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.omer73364.utube.mobile.share;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				UTUBE_APP_GROUP = group.io.github.omer73364.utube.mobile;
+			};
+			name = Debug;
+		};
+		871AC53B0C848063275E9183 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E301E55D367F6FDAF2B12C62 /* Pods-uTube.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = uTube/uTube.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 69N64AH97M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = uTube/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.6.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.omer73364.utube.mobile;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				UTUBE_APP_GROUP = group.io.github.omer73364.utube.mobile;
+			};
+			name = Debug;
+		};
+		BAD13DAC0D8E728294E16ADE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				PODFILE_DIR = "$(SRCROOT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				USE_HERMES = true;
+			};
+			name = Debug;
+		};
+		C41A90D1543336D4804FFC2A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9B141281E39830F32404B9AA /* Pods-uTube.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = uTube/uTube.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 69N64AH97M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = uTube/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.6.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.omer73364.utube.mobile;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				UTUBE_APP_GROUP = group.io.github.omer73364.utube.mobile;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D5AD9CEB856D72F8FD75C92D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				PODFILE_DIR = "$(SRCROOT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/react-native";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				USE_HERMES = true;
+			};
+			name = Release;
+		};
+		E03BE32713826E3C6B0E2E7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				DEVELOPMENT_TEAM = 69N64AH97M;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.omer73364.utube.mobile.uitests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = uTube;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1550681F54A01D25DCD20052 /* Build configuration list for PBXNativeTarget "uTubeShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09919CBAB4CBBE708367F5E0 /* Release */,
+				53CA4CF450859AC8E5AA1BBF /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		342A66DFF71EA8D835A1D5A8 /* Build configuration list for PBXNativeTarget "uTubeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4377F662CD26E6E5331EB00A /* Release */,
+				E03BE32713826E3C6B0E2E7B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9DBEE8127A0F5A1A1184FF51 /* Build configuration list for PBXNativeTarget "uTube" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C41A90D1543336D4804FFC2A /* Release */,
+				871AC53B0C848063275E9183 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DE2899D80D66763CC8C1ACA6 /* Build configuration list for PBXProject "uTube" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BAD13DAC0D8E728294E16ADE /* Debug */,
+				D5AD9CEB856D72F8FD75C92D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D197D60A24EF2BEB03E79B02 /* XCLocalSwiftPackageReference "UTubeKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = UTubeKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1652518295C26345C1ACD16B /* UTubeKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UTubeKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 56652A6A74D1001C5124EC85 /* Project object */;
+}

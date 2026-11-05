@@ -161,3 +161,18 @@ test('mobile preview exposes final-file sizes for progressive MP4, adaptive HD a
   assert.equal(preview.sizeEstimates.video['1080p'], 6000000);
   assert.equal(preview.sizeEstimates.mp3, 1440000);
 });
+
+test('iOS MP3 prefers native MP4 audio within the original language before higher bitrate WebM', async () => {
+  const audio = (mime, bitrate, original, suffix) => format(undefined, {
+    has_video: false, mime_type: mime, bitrate, is_original: original,
+    url: `https://rr1.googlevideo.com/${suffix}`,
+  });
+  const mp4 = audio('audio/mp4', 128000, true, 'aac');
+  const webm = audio('audio/webm', 256000, true, 'opus');
+  const dubbed = audio('audio/mp4', 192000, false, 'dub');
+  const yt = client(async () => info([], [webm, dubbed, mp4]));
+  const ios = await resolveVideo(id, yt, 'best', 'mp3', async () => {}, { preferMP4Audio: true });
+  assert.deepEqual(ios.candidates.map(item => item.audio.url), [mp4.url, webm.url, dubbed.url]);
+  const android = await resolveVideo(id, yt, 'best', 'mp3', async () => {});
+  assert.equal(android.candidates[0].audio.url, webm.url);
+});

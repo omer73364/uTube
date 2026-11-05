@@ -26,6 +26,6 @@ const expected = path
 assert.deepEqual(
   [...roots],
   [expected],
-  "The Android bundle must contain only the mobile app's React instance",
+  "The mobile bundle must contain only the mobile app's React instance",
 );
-console.log("Android bundle uses one React instance: " + expected);
+console.log("Mobile bundle uses one React instance: " + expected);

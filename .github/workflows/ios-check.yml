@@ -1,0 +1,60 @@
+name: iOS build and tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/core/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/ios-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: xcodebuild -version
+      - run: npm ci
+      - run: npm run mobile:check
+      - run: npm run mobile:test
+      - name: Test native queue, media processing, and signed service policy
+        run: npm run mobile:test:ios:native
+      - name: Install locked iOS dependencies
+        working-directory: apps/mobile/ios
+        run: |
+          gem install --user-install cocoapods -v 1.16.2 --no-document
+          ruby -r rubygems -e 'gem "cocoapods", "1.16.2"; load Gem.bin_path("cocoapods", "pod", "1.16.2")' -- install --deployment
+      - name: Build standalone Release simulator app and Share Extension
+        run: npm run mobile:build:ios
+      - name: Boot an available iPhone simulator
+        run: |
+          device=$(xcrun simctl list devices available --json | python3 -c 'import json,sys; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for runtime, rows in devices.items() if "iOS-26" in runtime for d in rows if d["name"].startswith("iPhone")))')
+          xcrun simctl boot "$device"
+          xcrun simctl bootstatus "$device" -b
+          echo "UTUBE_IOS_DESTINATION=platform=iOS Simulator,id=$device" >> "$GITHUB_ENV"
+      - name: Test Release startup, settings, navigation, and relaunch
+        run: npm run mobile:test:ios
+      - name: Build unsigned ARM64 iPhone app and Share Extension
+        working-directory: apps/mobile
+        run: >-
+          xcodebuild -workspace ios/uTube.xcworkspace -scheme uTube
+          -configuration Release -destination 'generic/platform=iOS'
+          -derivedDataPath build/ios-device CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-test-results
+          path: apps/mobile/build/ios-derived/Logs/Test/*.xcresult
+          if-no-files-found: ignore

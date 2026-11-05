@@ -59,7 +59,7 @@ object UpdatePolicy {
       for (name in listOf("minVersion", "maxVersion", "fixedVersion")) if (rule.has(name)) compare(rule.getString(name), "0.0.0")
       if (rule.has("platforms")) {
         val platforms = rule.getJSONArray("platforms"); require(platforms.length() > 0)
-        for (j in 0 until platforms.length()) require(platforms.getString(j) in setOf("android", "darwin", "win32", "linux"))
+        for (j in 0 until platforms.length()) require(platforms.getString(j) in setOf("android", "darwin", "win32", "linux", "ios"))
       }
     }
     val targets = mutableSetOf<String>()

@@ -1,5 +1,5 @@
 import { parseMediaURL } from '../../../packages/core/media-source.js';
-import { AppRegistry, DeviceEventEmitter } from "react-native";
+import { AppRegistry, AppState, DeviceEventEmitter, NativeEventEmitter, NativeModules, Platform } from "react-native";
 import { downloads } from "./native";
 import { createYouTubeService } from "./youtube";
 import { createFacebookService } from './facebook';
@@ -24,36 +24,46 @@ export const media = {
   },
 };
 const preparing = new Map<string, AbortController>();
-DeviceEventEmitter.addListener("utubeCancelPreparation", (id: string) =>
-  preparing.get(id)?.abort(),
-);
-AppRegistry.registerHeadlessTask(
-  "uTubeResolve",
-  () =>
-    async ({ request }: { request: string }) => {
-      const job = JSON.parse(request) as DownloadRequest & { id: string };
-      const controller = new AbortController();
-      preparing.set(job.id, controller);
-      try {
-        const plan = await media.resolve(
-          job.videoId,
-          job.requestedQuality,
-          job.mode,
-          controller.signal,
-        );
-        await downloads.prepared(job.id, plan, null);
-      } catch (error) {
-        await downloads
-          .prepared(
-            job.id,
-            null,
-            error instanceof Error
-              ? error.message.slice(0, 180)
-              : "PREPARATION_FAILED",
-          )
-          .catch(() => {});
-      } finally {
-        preparing.delete(job.id);
-      }
-    },
-);
+const events = Platform.OS === "ios" ? new NativeEventEmitter<{
+  utubeCancelPreparation: [string];
+  utubePrepare: [{ request: string }];
+}>(NativeModules.UTubeDownloads) : null;
+const cancelPreparation = (id: string) => preparing.get(id)?.abort();
+if (events) events.addListener("utubeCancelPreparation", cancelPreparation);
+else DeviceEventEmitter.addListener("utubeCancelPreparation", cancelPreparation);
+const resolveRequest = async ({ request }: { request: string }) => {
+  const job = JSON.parse(request) as DownloadRequest & { id: string };
+  if (preparing.has(job.id)) return;
+  const controller = new AbortController();
+  preparing.set(job.id, controller);
+  try {
+    const plan = await media.resolve(
+      job.videoId,
+      job.requestedQuality,
+      job.mode,
+      controller.signal,
+    );
+    await downloads.prepared(job.id, plan, null);
+  } catch (error) {
+    await downloads
+      .prepared(
+        job.id,
+        null,
+        error instanceof Error
+          ? error.message.slice(0, 180)
+          : "PREPARATION_FAILED",
+      )
+      .catch(() => {});
+  } finally {
+    preparing.delete(job.id);
+  }
+};
+if (events) {
+  events.addListener("utubePrepare", (payload: { request: string }) => { void resolveRequest(payload); });
+  AppState.addEventListener("change", state => {
+    if (state === "active") void downloads.resume().catch(() => {});
+  });
+  void downloads.resume().catch(() => {});
+} else {
+  AppRegistry.registerHeadlessTask("uTubeResolve", () => resolveRequest);
+}

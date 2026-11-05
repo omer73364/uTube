@@ -16,7 +16,7 @@ Use the desktop app, the Android app, or a friendly terminal.
 [![Android](https://img.shields.io/badge/Android-2.6.0-dd3b20?style=for-the-badge&logo=android&logoColor=white&labelColor=292225)](#-android-app)
 [![License](https://img.shields.io/badge/license-MIT-dd3b20?style=for-the-badge&labelColor=292225)](LICENSE)
 
-[🌐 Website](https://omer73364.github.io/uTube/) · [⚡ Quick start](#-quick-start) · [🌍 Supported sites](#-supported-sites) · [🖥️ Desktop](#-desktop-app) · [📱 Android](#-android-app) · [💻 CLI](#-cli) · [🛟 Help](#-troubleshooting)
+[🌐 Website](https://omer73364.github.io/uTube/) · [⚡ Quick start](#-quick-start) · [🌍 Supported sites](#-supported-sites) · [🖥️ Desktop](#-desktop-app) · [📱 Android](#-android-app) · [🍎 iOS](#-ios-app) · [💻 CLI](#-cli) · [🛟 Help](#-troubleshooting)
 
 <br>
 
@@ -162,7 +162,7 @@ See the [desktop guide](apps/desktop/README.md) for recovery behavior and develo
 
 **Download, install, go.** Get the signed APK from **[GitHub Releases](https://github.com/omer73364/uTube/releases/tag/v2.6.0)**. It needs Android 10 or newer.
 
-The main APK covers both ARM64 and x86-64; smaller CPU-specific APKs are on the same page. Allow your browser or file manager to install it when Android asks. iOS is not implemented.
+The main APK covers both ARM64 and x86-64; smaller CPU-specific APKs are on the same page. Allow your browser or file manager to install it when Android asks. For iPhone and iPad installation, see [iOS](#-ios-app).
 
 > [!IMPORTANT]
 > If you used an older prototype signed with the development key, save anything you need from its history and uninstall it first.
@@ -180,6 +180,16 @@ The main APK covers both ARM64 and x86-64; smaller CPU-specific APKs are on the 
 Files are saved in **Downloads / uTube** through Android's media storage. The queue allows up to 1,000 unfinished downloads, and a playlist batch up to 1,000 videos. Android may stop background work after a force-stop, restart, or system limit; interrupted downloads stay available to retry, but partial transfers don't resume.
 
 Want to build or run it yourself? See [Development](#-development) and the [mobile guide](apps/mobile/README.md).
+
+<br>
+
+## 🍎 iOS app
+
+**iOS 16+ · Available from source.** See the [iPhone and iPad installation guide](README.ios.md) for Xcode setup, signing, and installation options.
+
+No App Store listing, TestFlight invitation, or signed IPA is published yet. The
+[iOS development guide](apps/mobile/ios/README.md) covers builds, background behavior,
+and verification limits.
 
 <br>
 

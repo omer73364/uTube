@@ -209,3 +209,11 @@ test('pre-install queue persistence can be retried safely if opening an installe
   queue.retry(queue.snapshot()[0].id); await queue.whenIdle();
   assert.equal(queue.snapshot()[0].status, 'saved');
 });
+
+test('iOS service notices are authenticated targets without allowing iOS executable installers', () => {
+  const data = manifest({ services: [{ ...rule, platforms: ['ios'] }] });
+  assert.equal(validateManifest(data, now), data);
+  assert.ok(isServiceBlocked(serviceStatus(data, 'instagram', 'ios', '2.5.0', now)));
+  assert.equal(serviceStatus(data, 'instagram', 'android', '2.5.0', now), undefined);
+  assert.throws(() => validateManifest(manifest({ releases: [{ ...release, platform: 'ios', kind: 'ipa' }] }), now));
+});

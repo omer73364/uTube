@@ -193,11 +193,14 @@ MP4 or encodes MP3, then Android's MediaStore publishes the completed file.
 Partial output stays hidden and is removed on failure or cancellation. Opening
 and sharing files use owned content URIs and temporary read grants.
 
-## Remaining platform work
+## iOS
 
-Android is the implemented platform. iOS still needs a native transfer/media
-backend, Xcode project integration, signing, and testing on macOS and an iPhone.
-An Android build does not verify iOS behavior.
+The iOS implementation reuses the mobile interface and provider parsers with a
+native SQLite queue, URLSession transfers, AVFoundation MP4 processing, LAME MP3
+encoding, Files export, and a Share Extension. See the [iOS build and verification
+guide](ios/README.md) for simulator commands, background behavior, platform
+differences, and device signing. Physical-device and distribution validation are
+separate from simulator checks.
 
 The release builds `uTube-android-2.5.0.apk`, `uTube-android-2.5.0-arm64-v8a.apk`, and `uTube-android-2.5.0-x86_64.apk`
 for smaller downloads. The universal APK remains the website's main download.
