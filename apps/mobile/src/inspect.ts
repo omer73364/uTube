@@ -52,6 +52,7 @@ export async function resolveVideo(
   quality: string,
   mode: MediaMode,
   ensurePlayer: () => Promise<void>,
+  options: { preferMP4Audio?: boolean } = {},
 ): Promise<DownloadPlan> {
   // Transfer requests include the current player's signature timestamp.
   await ensurePlayer();
@@ -109,6 +110,7 @@ export async function resolveVideo(
           (a, b) =>
             Number(!!a.audio?.has_video) - Number(!!b.audio?.has_video) ||
             Number(!!b.audio?.is_original) - Number(!!a.audio?.is_original) ||
+            (options.preferMP4Audio ? Number(!!b.audio?.mime_type?.startsWith("audio/mp4")) - Number(!!a.audio?.mime_type?.startsWith("audio/mp4")) : 0) ||
             (b.audio?.bitrate || 0) - (a.audio?.bitrate || 0),
         )
       : quality === "best"

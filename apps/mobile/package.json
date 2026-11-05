@@ -10,7 +10,11 @@
     "test": "node --experimental-strip-types --test test/*.test.mjs",
     "test:bundle": "node scripts/check-bundle.cjs",
     "build:android": "cd android && ./gradlew assemblePrototype && node ../scripts/check-bundle.cjs",
-    "build:release": "node scripts/build-release.cjs"
+    "build:release": "node scripts/build-release.cjs",
+    "ios": "react-native run-ios --scheme uTube",
+    "build:ios": "node scripts/build-ios.cjs",
+    "test:ios": "node scripts/build-ios.cjs --test",
+    "test:ios:native": "swift test --package-path ios/UTubeKit --configuration release"
   },
   "dependencies": {
     "@ungap/structured-clone": "^1.4.0",
@@ -28,6 +32,7 @@
     "@babel/runtime": "^7.25.0",
     "@react-native-community/cli": "20.2.0",
     "@react-native-community/cli-platform-android": "20.2.0",
+    "@react-native-community/cli-platform-ios": "20.2.0",
     "@react-native/babel-preset": "0.88.0",
     "@react-native/metro-config": "0.88.0",
     "@react-native/typescript-config": "0.88.0",
@@ -37,7 +42,7 @@
   "engines": {
     "node": ">= 22.11.0"
   },
-  "description": "Public videos and audio from YouTube, X, Instagram, and Facebook for Android",
+  "description": "Public videos and audio from YouTube, X, Instagram, and Facebook for Android and iOS",
   "license": "MIT",
   "androidVersionCode": 6
 }

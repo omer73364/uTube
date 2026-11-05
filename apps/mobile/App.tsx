@@ -971,6 +971,8 @@ function Screen() {
                   {(["video", "mp3"] as const).map((value) => (
                     <Pressable
                       key={value}
+                      testID={`mode-${value}`}
+                      accessibilityLabel={t[value]}
                       accessibilityRole="radio"
                       accessibilityState={{ checked: mode === value }}
                       onPress={() => setMode(value)}
@@ -1172,7 +1174,7 @@ function Screen() {
                     { color: c.muted, textAlign: "center", marginTop: 12 },
                   ]}
                 >
-                  {t.savedIn}
+                  {Platform.OS === "ios" ? (language === "ar" ? "يُحفظ في تطبيق الملفات / uTube" : "Saved in Files / uTube") : t.savedIn}
                 </Text>
               </View>
             ) : (
@@ -1425,7 +1427,7 @@ function Screen() {
               {t.storage}
             </Text>
             <View style={[s.settingsCard, card]}>
-              {settingsRow("folder", t.location, "Downloads / uTube")}
+              {settingsRow("folder", t.location, Platform.OS === "ios" ? (language === "ar" ? "الملفات / على الـ iPhone / uTube" : "Files / On My iPhone / uTube") : "Downloads / uTube")}
               {settingsRow("trash", t.clear, t.keepFiles, clear, true)}
             </View>
             <Updates language={language} full colors={c} hasCurrentDownload={jobs.some(job => activeStates.has(job.status) && job.status !== "queued")} placement="settings" />
@@ -1461,6 +1463,8 @@ function Screen() {
           ).map((item) => (
             <Pressable
               key={item.key}
+              testID={`tab-${item.key}`}
+              accessibilityLabel={item.label}
               accessibilityRole="tab"
               accessibilityState={{ selected: tab === item.key }}
               onPress={() => navigate(item.key)}

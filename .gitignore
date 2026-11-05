@@ -23,3 +23,11 @@ node_modules
 /.private/
 *.jks
 *.p12
+
+# iOS generated dependencies and local signing/build state
+/apps/mobile/ios/Pods/
+/apps/mobile/ios/build/
+/apps/mobile/ios/UTubeKit/.build/
+/apps/mobile/ios/UTubeKit/.swiftpm/
+**/xcuserdata/
+/apps/mobile/ios/.xcode.env.local

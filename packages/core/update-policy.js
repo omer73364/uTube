@@ -30,7 +30,7 @@ export function validateManifest(data, now = Date.now()) {
   const message = (value) => value && typeof value.en === 'string' && typeof value.ar === 'string' && value.en.length <= 4000 && value.ar.length <= 4000;
   for (const rule of data.services) {
     if (!providers.includes(rule.provider) || !serviceStates.includes(rule.state) || !message(rule.message) ||
-        (rule.platforms !== undefined && (!Array.isArray(rule.platforms) || !rule.platforms.length || rule.platforms.some(p => !['darwin', 'win32', 'linux', 'android'].includes(p))))) throw new Error('Invalid service status.');
+        (rule.platforms !== undefined && (!Array.isArray(rule.platforms) || !rule.platforms.length || rule.platforms.some(p => !['darwin', 'win32', 'linux', 'android', 'ios'].includes(p))))) throw new Error('Invalid service status.');
     for (const field of ['minVersion', 'maxVersion', 'fixedVersion']) if (rule[field] !== undefined) compareVersions(rule[field], '0.0.0');
   }
   const targets = new Set();

@@ -1,5 +1,6 @@
 // Keep the SDK in the initial Metro bundle. Dynamic imports trigger a second
 // development-server request when a foreground/headless download starts.
+import { Platform as NativePlatform } from "react-native";
 import { Innertube, Platform, Player } from "youtubei.js/react-native";
 import { nativeFetch, bounded } from "./requests";
 import { playbackFetch } from "./playback";
@@ -78,7 +79,7 @@ export function createYouTubeService(
           );
         }
         yt.session.player = player;
-      });
+      }, { preferMP4Audio: NativePlatform.OS === "ios" });
     },
   };
 }
