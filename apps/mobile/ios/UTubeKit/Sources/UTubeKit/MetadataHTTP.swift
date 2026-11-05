@@ -44,7 +44,8 @@ public final class MetadataHTTP: NSObject, URLSessionDataDelegate, @unchecked Se
     lock.lock(); defer { lock.unlock() }
     pending[dataTask.taskIdentifier]?.response = response as? HTTPURLResponse
     let limit = Policy.metadataLimit(response.url)
-    if response.expectedContentLength > limit { pending[dataTask.taskIdentifier]?.failure = Failure("METADATA_TOO_LARGE"); completionHandler(.cancel) }
+    // HEAD reports the media file's size, not a metadata response body.
+    if dataTask.originalRequest?.httpMethod != "HEAD", response.expectedContentLength > limit { pending[dataTask.taskIdentifier]?.failure = Failure("METADATA_TOO_LARGE"); completionHandler(.cancel) }
     else { completionHandler(.allow) }
   }
   public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {

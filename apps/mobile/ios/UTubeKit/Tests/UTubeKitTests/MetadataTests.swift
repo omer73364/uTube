@@ -4,11 +4,12 @@ import Foundation
 private final class FixtureProtocol: URLProtocol {
   static var payload = Data()
   static var stalled = false
+  static var headers = ["X-Fixture": "yes"]
   override class func canInit(with request: URLRequest) -> Bool { true }
   override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
   override func startLoading() {
     if Self.stalled { return }
-    client?.urlProtocol(self, didReceive: HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["X-Fixture": "yes"])!, cacheStoragePolicy: .notAllowed)
+    client?.urlProtocol(self, didReceive: HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: Self.headers)!, cacheStoragePolicy: .notAllowed)
     client?.urlProtocol(self, didLoad: Self.payload)
     client?.urlProtocolDidFinishLoading(self)
   }
@@ -38,6 +39,18 @@ final class MetadataTests: XCTestCase {
       }
       XCTFail("Oversized metadata must be rejected")
     } catch {}
+  }
+  func testLargeMediaHeadReturnsSizeWithoutDownloadingBody() async throws {
+    FixtureProtocol.stalled = false; FixtureProtocol.payload = Data()
+    FixtureProtocol.headers = ["X-Fixture": "yes", "Content-Length": "50000000"]
+    defer { FixtureProtocol.headers = ["X-Fixture": "yes"] }
+    let http = transport(); defer { http.close() }
+    let value: [String: Any] = try await withCheckedThrowingContinuation { continuation in
+      http.request(id: "size", url: "https://scontent.fbcdn.net/video.mp4", method: "HEAD", headers: [:], body: nil) { continuation.resume(with: $0) }
+    }
+    XCTAssertEqual(value["status"] as? Int, 200)
+    XCTAssertEqual((value["headers"] as? [String: String])?["content-length"], "50000000")
+    XCTAssertEqual(value["body"] as? String, "")
   }
   func testCancellationSettlesPromise() async {
     FixtureProtocol.stalled = true
